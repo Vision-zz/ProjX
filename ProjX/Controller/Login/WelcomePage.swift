@@ -121,15 +121,25 @@ class WelcomePage: ELDSViewController {
 }
 
 extension WelcomePage: SignUpDelegate, SignInDelegate {
-    func signUpButtonPressed() {
+    func signUpSwitchButtonPressed() {
         signInVC.dismiss(animated: true) { [weak self] in
             self?.present(self!.signUpVC, animated: true)
         }
     }
 
-    func signInButtonPressed() {
+    func successfulLogin() {
+        signInVC.dismiss(animated: true) {
+            SceneDelegate.shared?.switchToHomePageVC()
+        }
+    }
+
+    func signInSwitchButtonPressed() {
         signUpVC.dismiss(animated: true) { [weak self] in
             self?.present(self!.signInVC, animated: true)
         }
+    }
+
+    func successfulRegister() {
+        print("Register button press")
     }
 }

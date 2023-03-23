@@ -16,8 +16,9 @@ class BaseLoginViewTableViewTableViewController: UITableViewController {
         textField.placeholder = "Username"
         textField.borderStyle = .roundedRect
         textField.clearButtonMode = .whileEditing
-        textField.backgroundColor = Constants.Background.getColor(for: .secondary)
+        textField.backgroundColor = GlobalConstants.Background.getColor(for: .secondary)
         textField.returnKeyType = .next
+        textField.autocapitalizationType = .none
         return textField
     }()
 
@@ -32,12 +33,13 @@ class BaseLoginViewTableViewTableViewController: UITableViewController {
         let passwordRuleDescriptor = "required: upper; required: lower; required: digit; required: special; minlength: 8;"
         textField.passwordRules = UITextInputPasswordRules(descriptor: passwordRuleDescriptor)
         textField.textContentType = .oneTimeCode
-        textField.backgroundColor = Constants.Background.getColor(for: .secondary)
+        textField.backgroundColor = GlobalConstants.Background.getColor(for: .secondary)
+        textField.autocapitalizationType = .none
         textField.returnKeyType = .done
         return textField
     }()
 
-    lazy var usernameDetailLabel: ELDSLabel = {
+    lazy var usernameErrorLabel: ELDSLabel = {
         let label = ELDSLabel()
         label.insets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
         label.font = .systemFont(ofSize: 12)
@@ -46,7 +48,7 @@ class BaseLoginViewTableViewTableViewController: UITableViewController {
         return label
     }()
 
-    lazy var passwordDetailLabel: ELDSLabel = {
+    lazy var passwordErrorLabel: ELDSLabel = {
         let label = ELDSLabel()
         label.insets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
         label.font = .systemFont(ofSize: 12)
@@ -71,9 +73,9 @@ class BaseLoginViewTableViewTableViewController: UITableViewController {
     }
 
     fileprivate func configureBaseUI() {
-        view.backgroundColor = Constants.Background.getColor(for: .primary)
+        view.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
         tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(onTap)))
-        tableView.backgroundColor = Constants.Background.getColor(for: .primary)
+        tableView.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
         tableView.isScrollEnabled = false
         tableView.separatorStyle = .none
         tableView.allowsSelection = false

@@ -11,8 +11,9 @@ class InputValidator {
 
 
     public static func validate(username: String) -> Bool {
-        let usernameRegex = /[^a-zA-Z0-9_]/
-        if username.firstMatch(of: usernameRegex) != nil {
+        let usernameRegex = /[^a-z0-9_]/
+        let match = username.firstMatch(of: usernameRegex)
+        if match != nil {
             return false
         }
         return true

@@ -9,15 +9,13 @@ import UIKit
 
 class ELDSViewController: UIViewController {
 
-
-    // MARK: Functions
     override func viewDidLoad() {
         super.viewDidLoad()
         configureBaseUI()
     }
 
     private func configureBaseUI() {
-        self.view.backgroundColor = Constants.Background.getColor(for: .primary)
+        self.view.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
         self.navigationController?.navigationBar.prefersLargeTitles = true
     }
 

@@ -24,10 +24,9 @@ extension UITextField {
         var config = UIButton.Configuration.plain()
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: -16, bottom: 0, trailing: 0)
         button.configuration = config
-        button.frame = CGRect(x: CGFloat(self.frame.size.width - 30), y: CGFloat(5), width: CGFloat(20), height: CGFloat(20))
         button.addTarget(self, action: #selector(togglePasswordView), for: .touchDown)
         self.rightView = button
-        self.rightViewMode = .whileEditing
+        self.rightViewMode = .always
     }
 
     @objc fileprivate func togglePasswordView(_ sender: UIButton) {

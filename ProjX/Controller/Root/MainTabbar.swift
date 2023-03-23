@@ -49,7 +49,6 @@ class MainTabbar: UITabBarController {
 
         tabBar.tintColor = .label
         tabBar.isTranslucent = true
-        tabBar.barTintColor = .red
         viewControllers = [home, browse, team, updates, profile]
 
 

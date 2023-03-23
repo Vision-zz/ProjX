@@ -21,8 +21,8 @@ class SignupVC: ELDSTableViewController {
 
     func configureUI() {
         title = "Sign Up"
-        view.backgroundColor = Constants.Background.getColor(for: .primary)
-        tableView.backgroundColor = Constants.Background.getColor(for: .primary)
+        view.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
+        tableView.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "SignInCell")
         tableView.delegate = self

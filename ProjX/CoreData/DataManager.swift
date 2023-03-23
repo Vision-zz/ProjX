@@ -18,8 +18,10 @@ class DataManager {
 
     private init() {}
 
-    func a() {
-        
+    func getAllUsers() -> [User] {
+        let users = try? context.fetch(User.fetchRequest())
+        guard let users = users else { return [] }
+        return users
     }
 
 }

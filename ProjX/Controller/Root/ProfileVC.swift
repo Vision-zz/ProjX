@@ -9,21 +9,35 @@ import UIKit
 
 class ProfileVC: ELDSViewController {
 
+    lazy var logoutButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Logout", for: .normal)
+        button.addTarget(self, action: #selector(logoutButtonOnClick), for: .touchDown)
+        return button
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        configureUI()
+        configureConstraints()
     }
-    
 
-    /*
-    // MARK: - Navigation
+    private func configureUI() {
+        view.addSubview(logoutButton)
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
     }
-    */
+
+    private func configureConstraints() {
+        NSLayoutConstraint.activate([
+            logoutButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            logoutButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        ])
+    }
+
+    @objc private func logoutButtonOnClick() {
+        SessionManager.shared.logout()
+    }
 
 }

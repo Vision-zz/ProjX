@@ -14,35 +14,75 @@ class SigninVC: BaseLoginViewTableViewTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        configureUI()
+        configureView()
     }
 
-    private func configureUI() {
+    private func configureView() {
         title = "Sign In"
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "SignInCell")
-        tableView.delegate = self
-        tableView.dataSource = self
-        usernameTextField.delegate = self
-        passwordTextField.delegate = self
+        usernameTextField.addTarget(self, action: #selector(usernameTextEdited), for: .editingChanged)
+        passwordTextField.addTarget(self, action: #selector(passwordTextEdited), for: .editingChanged)
     }
 
-    @objc func signUpButtonPressed() {
-        signInDelegate?.signUpButtonPressed()
+    @objc func signUpSwitchButtonPressed() {
+        signInDelegate?.signUpSwitchButtonPressed()
     }
 
-    @objc func signInButtonOnClick() {
-        var isEmpty = false
-        if usernameTextField.text == nil || usernameTextField.text!.isEmpty {
-            isEmpty = true
-            usernameDetailLabel.text = "This is a required field*"
+    @objc func loginButtonOnClick() {
+        resetUsernameErrorLabel()
+        resetPasswordErrorLabel()
+        let username = usernameTextField.text
+        let password = passwordTextField.text
+        guard let username = username, let password = password, !username.isEmpty, !password.isEmpty else {
+            if username == nil || username!.isEmpty {
+                usernameErrorLabel.text = "This is a required field*"
+            }
+            if passwordTextField.text == nil || passwordTextField.text!.isEmpty {
+                passwordErrorLabel.text = "This is a required field*"
+            }
+            return
         }
 
-        if passwordTextField.text == nil || passwordTextField.text!.isEmpty {
-            isEmpty = true
-            passwordDetailLabel.text = "This is a required field*"
+        let authenticationStatus = SessionManager.shared.authenticate(username: username, password: password)
+
+        switch authenticationStatus {
+            case .failure(let failureReason):
+                switch failureReason {
+                    case .invalidPassowrd:
+                        passwordErrorLabel.text = "Invalid password"
+                    case .userNotFound:
+                        usernameErrorLabel.text = "User not found"
+                }
+            case .success:
+                signInDelegate?.successfulLogin()
         }
 
-        guard !isEmpty else { return }
+    }
+
+    @objc private func usernameTextEdited() {
+        resetUsernameErrorLabel()
+        guard let text = usernameTextField.text else { return }
+        if !InputValidator.validate(username: text) {
+            usernameErrorLabel.text = "Invalid characters in username"
+        }
+    }
+
+    @objc private func passwordTextEdited() {
+        resetPasswordErrorLabel()
+    }
+
+    private func resetUsernameErrorLabel() {
+        guard let text = usernameErrorLabel.text, !text.isEmpty else {
+            return
+        }
+        usernameErrorLabel.text = ""
+    }
+
+    private func resetPasswordErrorLabel() {
+        guard let text = passwordErrorLabel.text, !text.isEmpty else {
+            return
+        }
+        passwordErrorLabel.text = ""
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -50,11 +90,11 @@ class SigninVC: BaseLoginViewTableViewTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return section == 0 ? usernameDetailLabel : section == 1 ? passwordDetailLabel : nil
+        return section == 0 ? usernameErrorLabel : section == 1 ? passwordErrorLabel : nil
     }
 
     private func configureCellForLoginButton(_ cell: UITableViewCell) {
-        loginButton.addTarget(self, action: #selector(signInButtonOnClick), for: .touchUpInside)
+        loginButton.addTarget(self, action: #selector(loginButtonOnClick), for: .touchUpInside)
         cell.contentView.addSubview(loginButton)
         NSLayoutConstraint.activate([
             loginButton.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.4),
@@ -76,7 +116,7 @@ class SigninVC: BaseLoginViewTableViewTableViewController {
         button.setTitle("Sign Up", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 14)
         button.tintColor = .link
-        button.addTarget(self, action: #selector(signUpButtonPressed), for: .touchUpInside)
+        button.addTarget(self, action: #selector(signUpSwitchButtonPressed), for: .touchUpInside)
 
         let customView = UIView()
         customView.translatesAutoresizingMaskIntoConstraints = false
@@ -104,7 +144,7 @@ class SigninVC: BaseLoginViewTableViewTableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SignInCell", for: indexPath)
 
-        cell.backgroundColor = Constants.Background.getColor(for: .primary)
+        cell.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
 
         if indexPath.section == 2 {
             configureCellForLoginButton(cell)
@@ -123,18 +163,4 @@ class SigninVC: BaseLoginViewTableViewTableViewController {
         }
         return cell
     }
-
-}
-
-extension SigninVC: UITextFieldDelegate {
-
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        print(textField.text ?? "nil")
-        print(textField.tag)
-        if textField.text != nil && textField.text == "Hello" {
-            signUpButtonPressed()
-        }
-        return true
-    }
-
 }

@@ -8,9 +8,11 @@
 import Foundation
 
 protocol SignInDelegate {
-    func signUpButtonPressed()
+    func signUpSwitchButtonPressed()
+    func successfulLogin()
 }
 
 protocol SignUpDelegate {
-    func signInButtonPressed()
+    func signInSwitchButtonPressed()
+    func successfulRegister()
 }

@@ -9,107 +9,149 @@ import UIKit
 
 private let reuseIdentifier = "Cell"
 
-class HomeVC: UICollectionViewController {
+class HomeVC: ELDSCollectionViewController {
 
-    convenience init() {
-        self.init(collectionViewLayout: UICollectionViewFlowLayout())
+    enum CollectionViewElement {
+        static let headerKind = "CollectionViewHeaderKind"
+        static let headerReuseIdentifier = "CollectionViewHeader"
     }
 
-    override init(collectionViewLayout layout: UICollectionViewLayout) {
-        super.init(collectionViewLayout: layout)
+    struct SectionData {
+        let sectionName: String
+        let sectionIndex: Int
+        var rows: [TaskItem]
+        var sortRowsBy: ((TaskItem, TaskItem) -> Bool)? {
+            didSet {
+                guard let sortRowsBy = sortRowsBy else { return }
+                rows.sort(by: sortRowsBy)
+            }
+        }
     }
 
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    var dataSource: [SectionData] = []
+
+    var emptyPlaceholder: [(large: String, secondary: String)] = [
+        ("Don't see anything?", "Great! You don't have any upcoming tasks"),
+        ("Can't find what you're looking for?", "Create some tasks to view them here"),
+        ("No tasks?", "Create a task for yourself and be productive"),
+        ("Hmm.. There's nothing here?", "Looks like you don't have much tasks assigned to you"),
+    ]
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Register cell classes
-        self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-
-        // Do any additional setup after loading the view.
+        configureUI()
+        configureDatasource()
+        updateHomeLayout()
+        registerSubviews()
     }
 
-    func updateHomeLayout() {
-
-//        let provider = UICollectionViewCompositionalLayoutSectionProvider = { (section, env) in
-//
-//
-////            let group = NSCollectionLayoutGroup(layoutSize: groupSize, supplementaryItems: [it])
-//
-//            let section = NSCollectionLayoutSection(group: group)
-//
-//        }
-//
-//        let layout = UICollectionViewCompositionalLayout()
-//        collectionView.setCollectionViewLayout(layout, animated: true)
+    private func registerSubviews() {
+        self.collectionView.register(HomeCollectionViewTaskCell.self, forCellWithReuseIdentifier: HomeCollectionViewTaskCell.identifier)
+        self.collectionView.register(HomeCollectionViewEmptyPlaceholderCell.self, forCellWithReuseIdentifier: HomeCollectionViewEmptyPlaceholderCell.identifier)
+        self.collectionView.register(HomeCollectionViewHeaderView.self, forSupplementaryViewOfKind: CollectionViewElement.headerKind, withReuseIdentifier: CollectionViewElement.headerReuseIdentifier)
     }
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
+    private func configureUI() {
+        title = "Home"
     }
-    */
+
+    private func updateHomeLayout() {
+        let provider: UICollectionViewCompositionalLayoutSectionProvider = { [unowned self] (section, environment) in
+            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+            let groupWidth: NSCollectionLayoutDimension = .fractionalWidth(dataSource[section].rows.count == 0 ? 1 : GlobalConstants.Device.isIpad ? 0.232 : 0.43)
+            let groupHeight: NSCollectionLayoutDimension = .fractionalWidth(dataSource[section].rows.count == 0 ? 1 :GlobalConstants.Device.isIpad ? 0.18 : 0.30)
+            let groupSize = NSCollectionLayoutSize(widthDimension: groupWidth, heightDimension: groupHeight)
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+
+            let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(GlobalConstants.Device.isIpad ? 0.10 : 0.20))
+            let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: CollectionViewElement.headerKind, alignment: .top)
+
+            let layoutSection = NSCollectionLayoutSection(group: group)
+            layoutSection.boundarySupplementaryItems = [sectionHeader]
+            layoutSection.interGroupSpacing = 12
+            layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
+
+            layoutSection.orthogonalScrollingBehavior = self.dataSource[section].rows.count == 0 ? .none : .continuousGroupLeadingBoundary
+            return layoutSection
+        }
+
+        let config = UICollectionViewCompositionalLayoutConfiguration()
+        config.interSectionSpacing = 20
+        let layout = UICollectionViewCompositionalLayout(sectionProvider: provider, configuration: config)
+        collectionView.setCollectionViewLayout(layout, animated: true)
+    }
+
+    private func configureDatasource() {
+        let selectedTeam = SessionManager.shared.signedInUser?.selectedTeam
+        guard let selectedTeam = selectedTeam else { return }
+        guard !selectedTeam.tasks.isEmpty else { return }
+
+        var upcomingTasks = [TaskItem]()
+        var recentlyCreated = [TaskItem]()
+        var createdByYou = [TaskItem]()
+        var otherTasks = [TaskItem]()
+
+        for task in selectedTeam.tasks {
+            let assignedToYouCondition = task.assignedTo != nil && task.assignedTo!.userID == SessionManager.shared.signedInUser?.userID
+            let upcomingTaskCondition = task.deadline! < Date().addingTimeInterval(3 * 24 * 60 * 60 * 1000)
+            let recentlyCreatedCondition = task.createdAt!.isToday()
+            let createdByYouCondition = task.createdBy != nil && task.createdBy!.userID == SessionManager.shared.signedInUser?.userID
+
+            if  upcomingTaskCondition && assignedToYouCondition {
+                upcomingTasks.append(task)
+            }
+            if recentlyCreatedCondition && assignedToYouCondition {
+                recentlyCreated.append(task)
+            }
+            if createdByYouCondition && assignedToYouCondition {
+                createdByYou.append(task)
+            }
+            if !upcomingTaskCondition && !recentlyCreatedCondition && !createdByYouCondition && assignedToYouCondition {
+                otherTasks.append(task)
+            }
+        }
+
+        dataSource.append(SectionData(sectionName: "Upcoming Tasks", sectionIndex: 0, rows: upcomingTasks))
+        dataSource.append(SectionData(sectionName: "Recently Created", sectionIndex: 1, rows: recentlyCreated))
+        dataSource.append(SectionData(sectionName: "Created by You", sectionIndex: 2, rows: createdByYou))
+        dataSource.append(SectionData(sectionName: "Other Tasks", sectionIndex: 3, rows: otherTasks))
+    }
 
     // MARK: UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+        return dataSource.count
     }
 
-
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
-        return 0
+        return dataSource[section].rows.count == 0 ? 1 : dataSource[section].rows.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
-    
-        // Configure the cell
-    
+        guard dataSource[indexPath.section].rows.count == 0 else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCollectionViewEmptyPlaceholderCell.identifier, for: indexPath) as! HomeCollectionViewEmptyPlaceholderCell
+            cell.configureTitles(large: emptyPlaceholder[indexPath.section].large, secondary: emptyPlaceholder[indexPath.section].secondary)
+            return cell
+        }
+
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCollectionViewTaskCell.identifier, for: indexPath) as! HomeCollectionViewTaskCell
+        cell.data = dataSource[indexPath.section].rows[indexPath.row]
         return cell
     }
 
+    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CollectionViewElement.headerReuseIdentifier, for: indexPath)
+        return headerView
+    }
+
+
     // MARK: UICollectionViewDelegate
 
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return true
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(indexPath)
     }
-    */
-
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
-    
-    }
-    */
 
 }

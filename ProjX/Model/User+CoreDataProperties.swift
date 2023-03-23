@@ -23,6 +23,7 @@ extension User {
     @NSManaged public var userID: UUID?
     @NSManaged public var username: String?
     @NSManaged public var userTeams: [UUID]?
+    @NSManaged public var selectedTeamID: UUID?
 
 }
 

@@ -8,9 +8,18 @@
 
 import Foundation
 import CoreData
-
+import UIKit
 
 public class Team: NSManagedObject {
+
+    var teamIconImage: UIImage? {
+        get {
+            guard let teamIcon = teamIcon else {
+                return nil
+            }
+            return UIImage(data: teamIcon)
+        }
+    }
 
     var tasks: [TaskItem] {
         get {

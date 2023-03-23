@@ -37,4 +37,27 @@ public class User: NSManagedObject {
         }
     }
 
+    var selectedTeam: Team? {
+        get {
+            teams.first(where: { $0.teamID != nil && $0.teamID! == selectedTeamID })
+        }
+    }
+
+    var roleInCurrentTeam: UserRole {
+        get {
+            guard let selectedTeam = selectedTeam else {
+                return .none
+            }
+            if selectedTeam.teamOwnerID! == userID {
+                return .owner
+            } else if selectedTeam.teamAdmins.contains(where: { $0.userID! == userID }) {
+                return .admin
+            } else if selectedTeam.teamMembers.contains(where: { $0.userID! == userID }) {
+                return .member
+            } else {
+                return .none
+            }
+        }
+    }
+
 }

@@ -27,6 +27,7 @@
         <attribute name="name" attributeType="String"/>
         <attribute name="password" attributeType="String"/>
         <attribute name="profileImage" optional="YES" attributeType="Binary"/>
+        <attribute name="selectedTeamID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="userID" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="username" attributeType="String"/>
         <attribute name="userTeams" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[UUID]"/>

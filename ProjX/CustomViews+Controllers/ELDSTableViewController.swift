@@ -15,8 +15,8 @@ class ELDSTableViewController: UITableViewController {
     }
 
     private func configureBaseUI() {
-        self.view.backgroundColor = Constants.Background.getColor(for: .primary)
-        self.tableView.backgroundColor = Constants.Background.getColor(for: .primary)
+        self.view.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
+        self.tableView.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
         self.navigationController?.navigationBar.prefersLargeTitles = true
     }
 

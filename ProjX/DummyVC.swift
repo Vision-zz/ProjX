@@ -12,16 +12,36 @@ class DummyVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-//        configureStuff()
-        fetchStuff()
+        configureStuff()
+//        fetchStuff()
+//        deleteAllData()
     }
 
     func fetchStuff() {
         let users = try? DataManager.shared.context.fetch(User.fetchRequest())
         print(users?.count ?? -1)
-        print(users![0].name)
         let teams = try? DataManager.shared.context.fetch(Team.fetchRequest())
         print(teams?.count ?? -1)
+    }
+
+    func deleteAllData() {
+        let teams = try? DataManager.shared.context.fetch(Team.fetchRequest())
+        guard let teams = teams else {
+            return
+        }
+        print(teams.count)
+        for team in teams {
+            DataManager.shared.context.delete(team)
+        }
+        let users = try? DataManager.shared.context.fetch(User.fetchRequest())
+        guard let users = users else {
+            return
+        }
+        print(users.count)
+        for user in users {
+            DataManager.shared.context.delete(user)
+        }
+        DataManager.shared.saveContext()
     }
 
     func configureStuff() {
