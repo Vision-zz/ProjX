@@ -12,10 +12,9 @@ class TeamTableViewCell: UITableViewCell {
     lazy var teamIcon: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-//        imageView.layer.cornerRadius = 20
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = [ .systemBlue, .systemYellow, .systemPink, .systemCyan, .systemRed, .systemBrown].randomElement()
+        imageView.tintColor = .label
         return imageView
     }()
 
@@ -41,14 +40,6 @@ class TeamTableViewCell: UITableViewCell {
 
     func configureCellData(teamIcon: UIImage? = nil, teamName: String) {
         self.teamName.text = teamName
-        guard let teamIcon = teamIcon else {
-            var sfSymbolPrefix = "questionmark"
-            if !teamName.isEmpty && String(teamName.first!).firstMatch(of: /[^a-zA-Z]/) == nil {
-                sfSymbolPrefix = String(teamName.first!)
-            }
-            self.teamIcon.image = UIImage(systemName: "\(sfSymbolPrefix.lowercased()).square.fill")
-            return
-        }
         self.teamIcon.image = teamIcon
     }
 

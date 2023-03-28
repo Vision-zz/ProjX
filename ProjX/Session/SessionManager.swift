@@ -10,8 +10,9 @@ import UIKit
 
 class SessionManager {
 
-    enum AuthenticationFailure {
-        case userNotFound, invalidPassowrd
+    enum AuthenticationFailure: String {
+        case userNotFound = "User not found"
+        case invalidPassowrd = "Invalid password"
     }
 
     enum AuthenticationStatus {
@@ -40,6 +41,14 @@ class SessionManager {
         signedInUser = nil
         UserDefaults.standard.set(nil, forKey: GlobalConstants.UserDefaultsKey.currentLoggedInUserID)
         SceneDelegate.shared?.switchToWelcomePageVC()
+    }
+
+    func changeSelectedTeam(to team: Team) {
+        guard let teamID = team.teamID, teamID != signedInUser?.selectedTeamID else {
+            return
+        }
+        signedInUser?.selectedTeam = team
+        DataManager.shared.saveContext()
     }
 
 }

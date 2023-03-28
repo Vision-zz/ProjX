@@ -1,13 +1,22 @@
 //
-//  ELDSTableViewController.swift
+//  BaseViewController.swift
 //  ProjX
 //
-//  Created by Sathya on 20/03/23.
+//  Created by Sathya on 16/03/23.
 //
 
 import UIKit
 
-class ELDSTableViewController: UITableViewController {
+class PROJXViewController: UIViewController {
+
+    override var hidesBottomBarWhenPushed: Bool {
+        get {
+            return true
+        }
+        set {
+            super.hidesBottomBarWhenPushed = newValue
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16,9 +25,7 @@ class ELDSTableViewController: UITableViewController {
 
     private func configureBaseUI() {
         self.view.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
-        self.tableView.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
         self.navigationController?.navigationBar.prefersLargeTitles = true
     }
-
 
 }

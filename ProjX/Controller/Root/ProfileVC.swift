@@ -7,13 +7,22 @@
 
 import UIKit
 
-class ProfileVC: ELDSViewController {
+class ProfileVC: PROJXViewController {
+
+    override var hidesBottomBarWhenPushed: Bool {
+        get {
+            return false
+        }
+        set {
+            super.hidesBottomBarWhenPushed = newValue
+        }
+    }
 
     lazy var logoutButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Logout", for: .normal)
-        button.addTarget(self, action: #selector(logoutButtonOnClick), for: .touchDown)
+        button.addTarget(self, action: #selector(logoutButtonOnClick), for: .touchUpInside)
         return button
     }()
 
@@ -26,7 +35,6 @@ class ProfileVC: ELDSViewController {
 
     private func configureUI() {
         view.addSubview(logoutButton)
-
     }
 
     private func configureConstraints() {

@@ -12,12 +12,16 @@ import UIKit
 
 public class Team: NSManagedObject {
 
-    var teamIconImage: UIImage? {
+    var teamIconImage: UIImage {
         get {
             guard let teamIcon = teamIcon else {
-                return nil
+                var sfSymbolPrefix = "questionmark"
+                if let teamName = teamName, (!teamName.isEmpty && String(teamName.first!).firstMatch(of: /[^a-zA-Z]/) == nil) {
+                    sfSymbolPrefix = String(teamName.first!)
+                }
+                return UIImage(systemName: "\(sfSymbolPrefix.lowercased()).square.fill")!
             }
-            return UIImage(data: teamIcon)
+            return UIImage(data: teamIcon) ?? UIImage(systemName: "questionmark.square.fill")!
         }
     }
 
@@ -100,4 +104,20 @@ public class Team: NSManagedObject {
             teamMembersID = arr
         }
     }
+
+    func regeneratePasscode() {
+        let allTeamJoinCodes = DataManager.shared.getAllTeams().map({ $0.teamJoinPasscode })
+        var newCode = Util.generateAlphanumericString(of: 15)
+        while allTeamJoinCodes.contains(newCode) {
+            newCode = Util.generateAlphanumericString(of: 12)
+        }
+        teamJoinPasscode = newCode
+        DataManager.shared.saveContext()
+    }
+
+    func delete() {
+        DataManager.shared.context.delete(self)
+        DataManager.shared.saveContext()
+    }
+
 }

@@ -25,10 +25,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let signedInUser = users.first(where: { $0.userID != nil && $0.userID!.uuidString == userID })
         if let signedInUser = signedInUser {
             SessionManager.shared.signedInUser = signedInUser
-            window?.rootViewController = UINavigationController(rootViewController: MainTabbar())
+            window?.rootViewController = MainTabbar()
         } else {
             window?.rootViewController = UINavigationController(rootViewController: WelcomePage())
         }
+
         window?.makeKeyAndVisible()
     }
 
@@ -41,9 +42,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func switchToHomePageVC() {
         guard let window = window else { return }
-        window.rootViewController = UINavigationController(rootViewController: MainTabbar())
+        window.rootViewController = MainTabbar()
         window.makeKeyAndVisible()
-        UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
+        UIView.transition(with: window, duration: 0.3, options: [.transitionCrossDissolve, .preferredFramesPerSecond60], animations: nil, completion: nil)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

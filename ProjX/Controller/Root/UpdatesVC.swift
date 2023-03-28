@@ -7,7 +7,16 @@
 
 import UIKit
 
-class UpdatesVC: ELDSViewController {
+class UpdatesVC: PROJXViewController {
+
+    override var hidesBottomBarWhenPushed: Bool {
+        get {
+            return false
+        }
+        set {
+            super.hidesBottomBarWhenPushed = newValue
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()

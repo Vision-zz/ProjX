@@ -12,9 +12,11 @@ class DummyVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        print("Running")
+        view.backgroundColor = .systemRed
         configureStuff()
-//        fetchStuff()
-//        deleteAllData()
+            //        fetchStuff()
+            //        deleteAllData()
     }
 
     func fetchStuff() {
@@ -170,5 +172,4 @@ class DummyVC: UIViewController {
         print("saving")
         DataManager.shared.saveContext()
     }
-
 }

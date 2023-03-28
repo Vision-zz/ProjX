@@ -1,5 +1,5 @@
 //
-//  ELDSLabel.swift
+//  PROJXLabel.swift
 //  ProjX
 //
 //  Created by Sathya on 20/03/23.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ELDSLabel: UILabel {
+class PROJXLabel: UILabel {
 
     var insets: UIEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 

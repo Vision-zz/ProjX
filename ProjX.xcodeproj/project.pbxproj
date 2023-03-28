@@ -11,28 +11,34 @@
 		AF3DB87029C4288600097A71 /* WelcomePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF3DB86F29C4288600097A71 /* WelcomePage.swift */; };
 		AF3DB87329C433FD00097A71 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF3DB87229C433FD00097A71 /* UIColor+Extension.swift */; };
 		AF3DB87A29C4431500097A71 /* ProjXDB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = AF3DB87829C4431500097A71 /* ProjXDB.xcdatamodeld */; };
+		AF59E0AC29D03AFE00B4AF7C /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF59E0AB29D03AFE00B4AF7C /* Util.swift */; };
+		AF59E0B029D18F9800B4AF7C /* SignupStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF59E0AF29D18F9800B4AF7C /* SignupStatus.swift */; };
+		AF59E0B429D1A0F000B4AF7C /* TeamProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF59E0B329D1A0F000B4AF7C /* TeamProfileCell.swift */; };
+		AF59E0B629D1A0FD00B4AF7C /* TeamOwnerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF59E0B529D1A0FD00B4AF7C /* TeamOwnerCell.swift */; };
+		AF59E0BD29D30D8700B4AF7C /* EditTeamVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF59E0BC29D30D8700B4AF7C /* EditTeamVC.swift */; };
 		AF60B0D929C2D70B0070B4E0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF60B0D829C2D70B0070B4E0 /* AppDelegate.swift */; };
 		AF60B0DB29C2D70B0070B4E0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF60B0DA29C2D70B0070B4E0 /* SceneDelegate.swift */; };
 		AF60B0E229C2D70D0070B4E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AF60B0E129C2D70D0070B4E0 /* Assets.xcassets */; };
 		AF60B0E529C2D70D0070B4E0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AF60B0E329C2D70D0070B4E0 /* LaunchScreen.storyboard */; };
 		AF60B0EF29C2D8F50070B4E0 /* GlobalConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF60B0EE29C2D8F50070B4E0 /* GlobalConstants.swift */; };
-		AF60B0F229C2EDFF0070B4E0 /* ELDSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF60B0F129C2EDFF0070B4E0 /* ELDSViewController.swift */; };
+		AF60B0F229C2EDFF0070B4E0 /* PROJXViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF60B0F129C2EDFF0070B4E0 /* PROJXViewController.swift */; };
 		AF60B0F929C2F1F30070B4E0 /* MainTabbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF60B0F829C2F1F30070B4E0 /* MainTabbar.swift */; };
-		AF60B0FE29C2F3E70070B4E0 /* BrowseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF60B0FD29C2F3E70070B4E0 /* BrowseVC.swift */; };
+		AF60B0FE29C2F3E70070B4E0 /* TasksVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF60B0FD29C2F3E70070B4E0 /* TasksVC.swift */; };
 		AF60B10029C2F4060070B4E0 /* TeamsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF60B0FF29C2F4060070B4E0 /* TeamsVC.swift */; };
 		AF60B10229C2F4100070B4E0 /* UpdatesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF60B10129C2F4100070B4E0 /* UpdatesVC.swift */; };
 		AF60B10429C2F41F0070B4E0 /* ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF60B10329C2F41F0070B4E0 /* ProfileVC.swift */; };
-		AF94034129C86590001FAA7A /* ELDSTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94034029C86590001FAA7A /* ELDSTableViewController.swift */; };
+		AF869CE829CDA7BE00E0A2AE /* CreateTeamVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF869CE729CDA7BE00E0A2AE /* CreateTeamVC.swift */; };
+		AF869CEA29CDA7ED00E0A2AE /* JoinTeamVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF869CE929CDA7ED00E0A2AE /* JoinTeamVC.swift */; };
+		AF869CEC29CDC9AB00E0A2AE /* TeamDelegates.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF869CEB29CDC9AB00E0A2AE /* TeamDelegates.swift */; };
+		AF94034129C86590001FAA7A /* PROJXTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94034029C86590001FAA7A /* PROJXTableViewController.swift */; };
 		AF94036D29C877E1001FAA7A /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94036C29C877E1001FAA7A /* DataManager.swift */; };
-		AF94037829C87F75001FAA7A /* TaskItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94037429C87F75001FAA7A /* TaskItem+CoreDataClass.swift */; };
-		AF94037929C87F75001FAA7A /* TaskItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94037529C87F75001FAA7A /* TaskItem+CoreDataProperties.swift */; };
-		AF94037D29C8B606001FAA7A /* BaseLoginViewTableViewTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94037C29C8B606001FAA7A /* BaseLoginViewTableViewTableViewController.swift */; };
+		AF94037D29C8B606001FAA7A /* BaseLoginViewTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94037C29C8B606001FAA7A /* BaseLoginViewTableView.swift */; };
 		AF94037F29C9711B001FAA7A /* DummyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94037E29C9711B001FAA7A /* DummyVC.swift */; };
 		AF94038629C98F43001FAA7A /* User+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94038429C98F43001FAA7A /* User+CoreDataClass.swift */; };
 		AF94038729C98F43001FAA7A /* User+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94038529C98F43001FAA7A /* User+CoreDataProperties.swift */; };
 		AF94039229C995A9001FAA7A /* Team+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94039029C995A9001FAA7A /* Team+CoreDataClass.swift */; };
 		AF94039329C995A9001FAA7A /* Team+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94039129C995A9001FAA7A /* Team+CoreDataProperties.swift */; };
-		AF94039629C9ABF8001FAA7A /* ELDSCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94039529C9ABF8001FAA7A /* ELDSCollectionViewController.swift */; };
+		AF94039629C9ABF8001FAA7A /* PROJXCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94039529C9ABF8001FAA7A /* PROJXCollectionViewController.swift */; };
 		AF94039929C9B00C001FAA7A /* HomeCollectionViewTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94039829C9B00C001FAA7A /* HomeCollectionViewTaskCell.swift */; };
 		AF9403CE29CA12E2001FAA7A /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403CD29CA12E2001FAA7A /* Date+Extension.swift */; };
 		AF9403D029CA9BCF001FAA7A /* HomeCollectionViewHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403CF29CA9BCF001FAA7A /* HomeCollectionViewHeaderView.swift */; };
@@ -40,12 +46,16 @@
 		AF9403D429CAE5CA001FAA7A /* HomeCollectionViewEmptyPlaceholderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403D329CAE5CA001FAA7A /* HomeCollectionViewEmptyPlaceholderCell.swift */; };
 		AF9403D629CAE71A001FAA7A /* UserRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403D529CAE71A001FAA7A /* UserRole.swift */; };
 		AF9403DA29CB0D69001FAA7A /* TeamTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403D929CB0D69001FAA7A /* TeamTableViewCell.swift */; };
+		AF9403DE29CC1041001FAA7A /* TeamInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403DD29CC1041001FAA7A /* TeamInfoVC.swift */; };
+		AF9403E029CC124F001FAA7A /* TaskStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403DF29CC124F001FAA7A /* TaskStatus.swift */; };
+		AF9403E329CC13C1001FAA7A /* TaskItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403E129CC13C1001FAA7A /* TaskItem+CoreDataClass.swift */; };
+		AF9403E429CC13C1001FAA7A /* TaskItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403E229CC13C1001FAA7A /* TaskItem+CoreDataProperties.swift */; };
 		AF9AB1C029C82C0500246A39 /* StatusUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9AB1BF29C82C0500246A39 /* StatusUpdate.swift */; };
 		AFE258D329C496580017ADFB /* SignupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE258D229C496580017ADFB /* SignupVC.swift */; };
 		AFE258D529C49CF00017ADFB /* SigninVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE258D429C49CF00017ADFB /* SigninVC.swift */; };
 		AFE258D729C49DA30017ADFB /* LoginDelegates.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE258D629C49DA30017ADFB /* LoginDelegates.swift */; };
 		AFE258DC29C6EC320017ADFB /* UITextField+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE258DB29C6EC320017ADFB /* UITextField+Extension.swift */; };
-		AFE258E129C818860017ADFB /* ELDSLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE258E029C818860017ADFB /* ELDSLabel.swift */; };
+		AFE258E129C818860017ADFB /* PROJXLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE258E029C818860017ADFB /* PROJXLabel.swift */; };
 		AFE258E429C81B1D0017ADFB /* InputValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE258E329C81B1D0017ADFB /* InputValidator.swift */; };
 /* End PBXBuildFile section */
 
@@ -54,30 +64,35 @@
 		AF3DB86F29C4288600097A71 /* WelcomePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomePage.swift; sourceTree = "<group>"; };
 		AF3DB87229C433FD00097A71 /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		AF3DB87929C4431500097A71 /* EnceladusDB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EnceladusDB.xcdatamodel; sourceTree = "<group>"; };
-		AF60B0D529C2D70B0070B4E0 /* ProjX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = ProjX.app; path = "/Users/sathya-pt6217/Documents/Swift/ProjX/build/Debug-iphoneos/ProjX.app"; sourceTree = "<absolute>"; };
+		AF59E0AB29D03AFE00B4AF7C /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
+		AF59E0AF29D18F9800B4AF7C /* SignupStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupStatus.swift; sourceTree = "<group>"; };
+		AF59E0B329D1A0F000B4AF7C /* TeamProfileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamProfileCell.swift; sourceTree = "<group>"; };
+		AF59E0B529D1A0FD00B4AF7C /* TeamOwnerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamOwnerCell.swift; sourceTree = "<group>"; };
+		AF59E0BC29D30D8700B4AF7C /* EditTeamVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTeamVC.swift; sourceTree = "<group>"; };
 		AF60B0D829C2D70B0070B4E0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AF60B0DA29C2D70B0070B4E0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		AF60B0E129C2D70D0070B4E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AF60B0E429C2D70D0070B4E0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AF60B0E629C2D70D0070B4E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AF60B0EE29C2D8F50070B4E0 /* GlobalConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalConstants.swift; sourceTree = "<group>"; };
-		AF60B0F129C2EDFF0070B4E0 /* ELDSViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ELDSViewController.swift; sourceTree = "<group>"; };
+		AF60B0F129C2EDFF0070B4E0 /* PROJXViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PROJXViewController.swift; sourceTree = "<group>"; };
 		AF60B0F829C2F1F30070B4E0 /* MainTabbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabbar.swift; sourceTree = "<group>"; };
-		AF60B0FD29C2F3E70070B4E0 /* BrowseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseVC.swift; sourceTree = "<group>"; };
+		AF60B0FD29C2F3E70070B4E0 /* TasksVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksVC.swift; sourceTree = "<group>"; };
 		AF60B0FF29C2F4060070B4E0 /* TeamsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamsVC.swift; sourceTree = "<group>"; };
 		AF60B10129C2F4100070B4E0 /* UpdatesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatesVC.swift; sourceTree = "<group>"; };
 		AF60B10329C2F41F0070B4E0 /* ProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVC.swift; sourceTree = "<group>"; };
-		AF94034029C86590001FAA7A /* ELDSTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ELDSTableViewController.swift; sourceTree = "<group>"; };
+		AF869CE729CDA7BE00E0A2AE /* CreateTeamVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTeamVC.swift; sourceTree = "<group>"; };
+		AF869CE929CDA7ED00E0A2AE /* JoinTeamVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinTeamVC.swift; sourceTree = "<group>"; };
+		AF869CEB29CDC9AB00E0A2AE /* TeamDelegates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamDelegates.swift; sourceTree = "<group>"; };
+		AF94034029C86590001FAA7A /* PROJXTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PROJXTableViewController.swift; sourceTree = "<group>"; };
 		AF94036C29C877E1001FAA7A /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
-		AF94037429C87F75001FAA7A /* TaskItem+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TaskItem+CoreDataClass.swift"; sourceTree = "<group>"; };
-		AF94037529C87F75001FAA7A /* TaskItem+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TaskItem+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		AF94037C29C8B606001FAA7A /* BaseLoginViewTableViewTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseLoginViewTableViewTableViewController.swift; sourceTree = "<group>"; };
+		AF94037C29C8B606001FAA7A /* BaseLoginViewTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseLoginViewTableView.swift; sourceTree = "<group>"; };
 		AF94037E29C9711B001FAA7A /* DummyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyVC.swift; sourceTree = "<group>"; };
 		AF94038429C98F43001FAA7A /* User+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataClass.swift"; sourceTree = "<group>"; };
 		AF94038529C98F43001FAA7A /* User+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		AF94039029C995A9001FAA7A /* Team+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Team+CoreDataClass.swift"; sourceTree = "<group>"; };
 		AF94039129C995A9001FAA7A /* Team+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Team+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		AF94039529C9ABF8001FAA7A /* ELDSCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ELDSCollectionViewController.swift; sourceTree = "<group>"; };
+		AF94039529C9ABF8001FAA7A /* PROJXCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PROJXCollectionViewController.swift; sourceTree = "<group>"; };
 		AF94039829C9B00C001FAA7A /* HomeCollectionViewTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCollectionViewTaskCell.swift; sourceTree = "<group>"; };
 		AF9403CD29CA12E2001FAA7A /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
 		AF9403CF29CA9BCF001FAA7A /* HomeCollectionViewHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCollectionViewHeaderView.swift; sourceTree = "<group>"; };
@@ -85,13 +100,18 @@
 		AF9403D329CAE5CA001FAA7A /* HomeCollectionViewEmptyPlaceholderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCollectionViewEmptyPlaceholderCell.swift; sourceTree = "<group>"; };
 		AF9403D529CAE71A001FAA7A /* UserRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRole.swift; sourceTree = "<group>"; };
 		AF9403D929CB0D69001FAA7A /* TeamTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamTableViewCell.swift; sourceTree = "<group>"; };
+		AF9403DD29CC1041001FAA7A /* TeamInfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamInfoVC.swift; sourceTree = "<group>"; };
+		AF9403DF29CC124F001FAA7A /* TaskStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStatus.swift; sourceTree = "<group>"; };
+		AF9403E129CC13C1001FAA7A /* TaskItem+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TaskItem+CoreDataClass.swift"; sourceTree = "<group>"; };
+		AF9403E229CC13C1001FAA7A /* TaskItem+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TaskItem+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		AF9AB1BF29C82C0500246A39 /* StatusUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusUpdate.swift; sourceTree = "<group>"; };
 		AFE258D229C496580017ADFB /* SignupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupVC.swift; sourceTree = "<group>"; };
 		AFE258D429C49CF00017ADFB /* SigninVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigninVC.swift; sourceTree = "<group>"; };
 		AFE258D629C49DA30017ADFB /* LoginDelegates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDelegates.swift; sourceTree = "<group>"; };
 		AFE258DB29C6EC320017ADFB /* UITextField+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Extension.swift"; sourceTree = "<group>"; };
-		AFE258E029C818860017ADFB /* ELDSLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ELDSLabel.swift; sourceTree = "<group>"; };
+		AFE258E029C818860017ADFB /* PROJXLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PROJXLabel.swift; sourceTree = "<group>"; };
 		AFE258E329C81B1D0017ADFB /* InputValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputValidator.swift; sourceTree = "<group>"; };
+		AFF520B929CDFDAC001450F5 /* ProjX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProjX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +128,7 @@
 		AF3DB85A29C317D500097A71 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				AF9403E529CC1830001FAA7A /* TeamInfo */,
 				AF94039729C9AFEF001FAA7A /* Root */,
 			);
 			path = View;
@@ -117,10 +138,9 @@
 			isa = PBXGroup;
 			children = (
 				AF3DB86F29C4288600097A71 /* WelcomePage.swift */,
-				AF94037C29C8B606001FAA7A /* BaseLoginViewTableViewTableViewController.swift */,
+				AF94037C29C8B606001FAA7A /* BaseLoginViewTableView.swift */,
 				AFE258D229C496580017ADFB /* SignupVC.swift */,
 				AFE258D429C49CF00017ADFB /* SigninVC.swift */,
-				AFE258D629C49DA30017ADFB /* LoginDelegates.swift */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -148,20 +168,32 @@
 			children = (
 				AF3DB87829C4431500097A71 /* ProjXDB.xcdatamodeld */,
 				AF94036C29C877E1001FAA7A /* DataManager.swift */,
+				AF59E0AF29D18F9800B4AF7C /* SignupStatus.swift */,
 			);
 			path = CoreData;
+			sourceTree = "<group>";
+		};
+		AF59E0BB29D2A45500B4AF7C /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				AF869CEB29CDC9AB00E0A2AE /* TeamDelegates.swift */,
+				AFE258D629C49DA30017ADFB /* LoginDelegates.swift */,
+			);
+			path = Delegates;
 			sourceTree = "<group>";
 		};
 		AF60B0CC29C2D70B0070B4E0 = {
 			isa = PBXGroup;
 			children = (
 				AF60B0D729C2D70B0070B4E0 /* ProjX */,
+				AFF520B929CDFDAC001450F5 /* ProjX.app */,
 			);
 			sourceTree = "<group>";
 		};
 		AF60B0D729C2D70B0070B4E0 /* ProjX */ = {
 			isa = PBXGroup;
 			children = (
+				AF59E0BB29D2A45500B4AF7C /* Delegates */,
 				AFE258E229C81B050017ADFB /* Util */,
 				AF3DB87729C442FD00097A71 /* CoreData */,
 				AF3DB87429C4422300097A71 /* Session */,
@@ -170,7 +202,7 @@
 				AF60B0F729C2F1070070B4E0 /* Controller */,
 				AF3DB85A29C317D500097A71 /* View */,
 				AF60B0F029C2ED730070B4E0 /* CustomViews+Controllers */,
-				AF60B0ED29C2D8470070B4E0 /* Config */,
+				AF60B0ED29C2D8470070B4E0 /* Helper+Config */,
 				AF60B0EC29C2D7CB0070B4E0 /* Structure */,
 				AF94037E29C9711B001FAA7A /* DummyVC.swift */,
 			);
@@ -189,21 +221,21 @@
 			path = Structure;
 			sourceTree = "<group>";
 		};
-		AF60B0ED29C2D8470070B4E0 /* Config */ = {
+		AF60B0ED29C2D8470070B4E0 /* Helper+Config */ = {
 			isa = PBXGroup;
 			children = (
 				AF60B0EE29C2D8F50070B4E0 /* GlobalConstants.swift */,
 			);
-			path = Config;
+			path = "Helper+Config";
 			sourceTree = "<group>";
 		};
 		AF60B0F029C2ED730070B4E0 /* CustomViews+Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				AF60B0F129C2EDFF0070B4E0 /* ELDSViewController.swift */,
-				AF94034029C86590001FAA7A /* ELDSTableViewController.swift */,
-				AFE258E029C818860017ADFB /* ELDSLabel.swift */,
-				AF94039529C9ABF8001FAA7A /* ELDSCollectionViewController.swift */,
+				AF60B0F129C2EDFF0070B4E0 /* PROJXViewController.swift */,
+				AF94034029C86590001FAA7A /* PROJXTableViewController.swift */,
+				AFE258E029C818860017ADFB /* PROJXLabel.swift */,
+				AF94039529C9ABF8001FAA7A /* PROJXCollectionViewController.swift */,
 			);
 			path = "CustomViews+Controllers";
 			sourceTree = "<group>";
@@ -211,14 +243,15 @@
 		AF60B0F629C2F0E50070B4E0 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				AF9403E129CC13C1001FAA7A /* TaskItem+CoreDataClass.swift */,
+				AF9403E229CC13C1001FAA7A /* TaskItem+CoreDataProperties.swift */,
 				AF94039029C995A9001FAA7A /* Team+CoreDataClass.swift */,
 				AF94039129C995A9001FAA7A /* Team+CoreDataProperties.swift */,
 				AF94038429C98F43001FAA7A /* User+CoreDataClass.swift */,
 				AF94038529C98F43001FAA7A /* User+CoreDataProperties.swift */,
-				AF94037429C87F75001FAA7A /* TaskItem+CoreDataClass.swift */,
-				AF94037529C87F75001FAA7A /* TaskItem+CoreDataProperties.swift */,
 				AF9AB1BF29C82C0500246A39 /* StatusUpdate.swift */,
 				AF9403D529CAE71A001FAA7A /* UserRole.swift */,
+				AF9403DF29CC124F001FAA7A /* TaskStatus.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -226,6 +259,7 @@
 		AF60B0F729C2F1070070B4E0 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				AF9403DC29CC1017001FAA7A /* Teams */,
 				AF3DB86829C346E400097A71 /* Login */,
 				AF60B0FA29C2F3A20070B4E0 /* Root */,
 			);
@@ -236,7 +270,7 @@
 			isa = PBXGroup;
 			children = (
 				AF3DB85B29C3182E00097A71 /* HomeVC.swift */,
-				AF60B0FD29C2F3E70070B4E0 /* BrowseVC.swift */,
+				AF60B0FD29C2F3E70070B4E0 /* TasksVC.swift */,
 				AF60B0FF29C2F4060070B4E0 /* TeamsVC.swift */,
 				AF60B10129C2F4100070B4E0 /* UpdatesVC.swift */,
 				AF60B10329C2F41F0070B4E0 /* ProfileVC.swift */,
@@ -256,10 +290,31 @@
 			path = Root;
 			sourceTree = "<group>";
 		};
+		AF9403DC29CC1017001FAA7A /* Teams */ = {
+			isa = PBXGroup;
+			children = (
+				AF9403DD29CC1041001FAA7A /* TeamInfoVC.swift */,
+				AF869CE729CDA7BE00E0A2AE /* CreateTeamVC.swift */,
+				AF869CE929CDA7ED00E0A2AE /* JoinTeamVC.swift */,
+				AF59E0BC29D30D8700B4AF7C /* EditTeamVC.swift */,
+			);
+			path = Teams;
+			sourceTree = "<group>";
+		};
+		AF9403E529CC1830001FAA7A /* TeamInfo */ = {
+			isa = PBXGroup;
+			children = (
+				AF59E0B329D1A0F000B4AF7C /* TeamProfileCell.swift */,
+				AF59E0B529D1A0FD00B4AF7C /* TeamOwnerCell.swift */,
+			);
+			path = TeamInfo;
+			sourceTree = "<group>";
+		};
 		AFE258E229C81B050017ADFB /* Util */ = {
 			isa = PBXGroup;
 			children = (
 				AFE258E329C81B1D0017ADFB /* InputValidator.swift */,
+				AF59E0AB29D03AFE00B4AF7C /* Util.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -281,7 +336,7 @@
 			);
 			name = ProjX;
 			productName = Enceladus;
-			productReference = AF60B0D529C2D70B0070B4E0 /* ProjX.app */;
+			productReference = AFF520B929CDFDAC001450F5 /* ProjX.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -334,44 +389,54 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AF59E0B029D18F9800B4AF7C /* SignupStatus.swift in Sources */,
 				AF60B10429C2F41F0070B4E0 /* ProfileVC.swift in Sources */,
 				AF3DB85C29C3182E00097A71 /* HomeVC.swift in Sources */,
 				AF3DB87A29C4431500097A71 /* ProjXDB.xcdatamodeld in Sources */,
-				AF94037D29C8B606001FAA7A /* BaseLoginViewTableViewTableViewController.swift in Sources */,
+				AF94037D29C8B606001FAA7A /* BaseLoginViewTableView.swift in Sources */,
 				AF3DB87329C433FD00097A71 /* UIColor+Extension.swift in Sources */,
+				AF59E0B429D1A0F000B4AF7C /* TeamProfileCell.swift in Sources */,
 				AF9403D429CAE5CA001FAA7A /* HomeCollectionViewEmptyPlaceholderCell.swift in Sources */,
 				AF9AB1C029C82C0500246A39 /* StatusUpdate.swift in Sources */,
 				AF60B0F929C2F1F30070B4E0 /* MainTabbar.swift in Sources */,
 				AF9403DA29CB0D69001FAA7A /* TeamTableViewCell.swift in Sources */,
 				AF94039929C9B00C001FAA7A /* HomeCollectionViewTaskCell.swift in Sources */,
 				AF3DB87029C4288600097A71 /* WelcomePage.swift in Sources */,
+				AF59E0AC29D03AFE00B4AF7C /* Util.swift in Sources */,
+				AF9403E429CC13C1001FAA7A /* TaskItem+CoreDataProperties.swift in Sources */,
 				AF94038729C98F43001FAA7A /* User+CoreDataProperties.swift in Sources */,
 				AF94038629C98F43001FAA7A /* User+CoreDataClass.swift in Sources */,
+				AF59E0BD29D30D8700B4AF7C /* EditTeamVC.swift in Sources */,
 				AF9403D029CA9BCF001FAA7A /* HomeCollectionViewHeaderView.swift in Sources */,
 				AF60B10229C2F4100070B4E0 /* UpdatesVC.swift in Sources */,
 				AF9403D229CAB1FA001FAA7A /* SessionManager.swift in Sources */,
 				AF60B0D929C2D70B0070B4E0 /* AppDelegate.swift in Sources */,
+				AF869CEC29CDC9AB00E0A2AE /* TeamDelegates.swift in Sources */,
 				AF94039229C995A9001FAA7A /* Team+CoreDataClass.swift in Sources */,
-				AF60B0FE29C2F3E70070B4E0 /* BrowseVC.swift in Sources */,
-				AF94037829C87F75001FAA7A /* TaskItem+CoreDataClass.swift in Sources */,
-				AF94037929C87F75001FAA7A /* TaskItem+CoreDataProperties.swift in Sources */,
+				AF9403E029CC124F001FAA7A /* TaskStatus.swift in Sources */,
+				AF60B0FE29C2F3E70070B4E0 /* TasksVC.swift in Sources */,
 				AFE258D729C49DA30017ADFB /* LoginDelegates.swift in Sources */,
 				AFE258E429C81B1D0017ADFB /* InputValidator.swift in Sources */,
 				AF94037F29C9711B001FAA7A /* DummyVC.swift in Sources */,
 				AF94036D29C877E1001FAA7A /* DataManager.swift in Sources */,
+				AF9403DE29CC1041001FAA7A /* TeamInfoVC.swift in Sources */,
+				AF869CEA29CDA7ED00E0A2AE /* JoinTeamVC.swift in Sources */,
 				AF60B10029C2F4060070B4E0 /* TeamsVC.swift in Sources */,
-				AF94039629C9ABF8001FAA7A /* ELDSCollectionViewController.swift in Sources */,
+				AF94039629C9ABF8001FAA7A /* PROJXCollectionViewController.swift in Sources */,
+				AF59E0B629D1A0FD00B4AF7C /* TeamOwnerCell.swift in Sources */,
 				AF9403CE29CA12E2001FAA7A /* Date+Extension.swift in Sources */,
-				AF60B0F229C2EDFF0070B4E0 /* ELDSViewController.swift in Sources */,
+				AF60B0F229C2EDFF0070B4E0 /* PROJXViewController.swift in Sources */,
 				AFE258D329C496580017ADFB /* SignupVC.swift in Sources */,
 				AFE258DC29C6EC320017ADFB /* UITextField+Extension.swift in Sources */,
 				AF9403D629CAE71A001FAA7A /* UserRole.swift in Sources */,
 				AF94039329C995A9001FAA7A /* Team+CoreDataProperties.swift in Sources */,
-				AFE258E129C818860017ADFB /* ELDSLabel.swift in Sources */,
+				AFE258E129C818860017ADFB /* PROJXLabel.swift in Sources */,
 				AFE258D529C49CF00017ADFB /* SigninVC.swift in Sources */,
-				AF94034129C86590001FAA7A /* ELDSTableViewController.swift in Sources */,
+				AF94034129C86590001FAA7A /* PROJXTableViewController.swift in Sources */,
 				AF60B0DB29C2D70B0070B4E0 /* SceneDelegate.swift in Sources */,
+				AF869CE829CDA7BE00E0A2AE /* CreateTeamVC.swift in Sources */,
 				AF60B0EF29C2D8F50070B4E0 /* GlobalConstants.swift in Sources */,
+				AF9403E329CC13C1001FAA7A /* TaskItem+CoreDataClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

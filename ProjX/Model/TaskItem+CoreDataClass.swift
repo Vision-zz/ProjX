@@ -2,7 +2,7 @@
 //  TaskItem+CoreDataClass.swift
 //  ProjX
 //
-//  Created by Sathya on 20/03/23.
+//  Created by Sathya on 23/03/23.
 //
 //
 
@@ -13,7 +13,17 @@ import CoreData
 public class TaskItem: NSManagedObject {
 
     public override var description: String {
-        return "TaskItem"
+        "TaskItem"
+    }
+
+    var taskStatus: TaskStatus {
+        get {
+            let rawValue = taskStatusID < 0 ? 0 : taskStatusID
+            return TaskStatus.init(rawValue: rawValue)!
+        }
+        set {
+            taskStatusID = newValue.rawValue
+        }
     }
 
 }

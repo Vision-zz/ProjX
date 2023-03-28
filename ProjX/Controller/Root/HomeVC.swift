@@ -9,7 +9,16 @@ import UIKit
 
 private let reuseIdentifier = "Cell"
 
-class HomeVC: ELDSCollectionViewController {
+class HomeVC: PROJXCollectionViewController {
+
+    override var hidesBottomBarWhenPushed: Bool {
+        get {
+            return false
+        }
+        set {
+            super.hidesBottomBarWhenPushed = newValue
+        }
+    }
 
     enum CollectionViewElement {
         static let headerKind = "CollectionViewHeaderKind"

@@ -7,12 +7,12 @@
 
 import Foundation
 
-protocol SignInDelegate {
+protocol SignInDelegate: AnyObject {
     func signUpSwitchButtonPressed()
     func successfulLogin()
 }
 
-protocol SignUpDelegate {
+protocol SignUpDelegate: AnyObject {
     func signInSwitchButtonPressed()
-    func successfulRegister()
+    func successfulRegister(user: User)
 }

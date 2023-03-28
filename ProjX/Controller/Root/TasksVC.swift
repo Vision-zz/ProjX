@@ -7,14 +7,22 @@
 
 import UIKit
 
-class BrowseVC: ELDSViewController {
+class TasksVC: PROJXViewController {
+
+    override var hidesBottomBarWhenPushed: Bool {
+        get {
+            return false
+        }
+        set {
+            super.hidesBottomBarWhenPushed = newValue
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Browse"
+        title = "Tasks"
         // Do any additional setup after loading the view.
     }
-    
 
     /*
     // MARK: - Navigation

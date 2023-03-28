@@ -1,5 +1,5 @@
 //
-//  ELDSCollectionViewController.swift
+//  PROJXCollectionViewController.swift
 //  ProjX
 //
 //  Created by Sathya on 21/03/23.
@@ -9,7 +9,16 @@ import UIKit
 
 private let reuseIdentifier = "Cell"
 
-class ELDSCollectionViewController: UICollectionViewController {
+class PROJXCollectionViewController: UICollectionViewController {
+
+    override var hidesBottomBarWhenPushed: Bool {
+        get {
+            return true
+        }
+        set {
+            super.hidesBottomBarWhenPushed = newValue
+        }
+    }
 
     convenience init() {
         self.init(collectionViewLayout: UICollectionViewFlowLayout())
@@ -26,7 +35,6 @@ class ELDSCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureBaseUI()
-
     }
 
     private func configureBaseUI() {

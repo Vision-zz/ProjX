@@ -7,21 +7,29 @@
 
 import UIKit
 
-class SigninVC: BaseLoginViewTableViewTableViewController {
+class SigninVC: BaseLoginViewTableView {
+    
+    weak var signInDelegate: SignInDelegate? = nil
 
-    var signInDelegate: SignInDelegate?
+    lazy var footerViews =  [
+        0: usernameErrorLabel,
+        1: passwordErrorLabel
+    ]
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         configureView()
     }
 
     private func configureView() {
         title = "Sign In"
+        passwordTextField.returnKeyType = .go
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "SignInCell")
         usernameTextField.addTarget(self, action: #selector(usernameTextEdited), for: .editingChanged)
         passwordTextField.addTarget(self, action: #selector(passwordTextEdited), for: .editingChanged)
+        usernameTextField.delegate = self
+        passwordTextField.delegate = self
+        navigationItem.largeTitleDisplayMode = .always
     }
 
     @objc func signUpSwitchButtonPressed() {
@@ -29,8 +37,8 @@ class SigninVC: BaseLoginViewTableViewTableViewController {
     }
 
     @objc func loginButtonOnClick() {
-        resetUsernameErrorLabel()
-        resetPasswordErrorLabel()
+        resetErrorLabel(usernameErrorLabel)
+        resetErrorLabel(passwordErrorLabel)
         let username = usernameTextField.text
         let password = passwordTextField.text
         guard let username = username, let password = password, !username.isEmpty, !password.isEmpty else {
@@ -40,6 +48,11 @@ class SigninVC: BaseLoginViewTableViewTableViewController {
             if passwordTextField.text == nil || passwordTextField.text!.isEmpty {
                 passwordErrorLabel.text = "This is a required field*"
             }
+            return
+        }
+
+        guard InputValidator.validate(username: username) else {
+            usernameErrorLabel.text = "Invalid characters in username"
             return
         }
 
@@ -56,11 +69,10 @@ class SigninVC: BaseLoginViewTableViewTableViewController {
             case .success:
                 signInDelegate?.successfulLogin()
         }
-
     }
 
     @objc private func usernameTextEdited() {
-        resetUsernameErrorLabel()
+        resetErrorLabel(usernameErrorLabel)
         guard let text = usernameTextField.text else { return }
         if !InputValidator.validate(username: text) {
             usernameErrorLabel.text = "Invalid characters in username"
@@ -68,21 +80,7 @@ class SigninVC: BaseLoginViewTableViewTableViewController {
     }
 
     @objc private func passwordTextEdited() {
-        resetPasswordErrorLabel()
-    }
-
-    private func resetUsernameErrorLabel() {
-        guard let text = usernameErrorLabel.text, !text.isEmpty else {
-            return
-        }
-        usernameErrorLabel.text = ""
-    }
-
-    private func resetPasswordErrorLabel() {
-        guard let text = passwordErrorLabel.text, !text.isEmpty else {
-            return
-        }
-        passwordErrorLabel.text = ""
+        resetErrorLabel(passwordErrorLabel)
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -90,66 +88,18 @@ class SigninVC: BaseLoginViewTableViewTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return section == 0 ? usernameErrorLabel : section == 1 ? passwordErrorLabel : nil
-    }
-
-    private func configureCellForLoginButton(_ cell: UITableViewCell) {
-        loginButton.addTarget(self, action: #selector(loginButtonOnClick), for: .touchUpInside)
-        cell.contentView.addSubview(loginButton)
-        NSLayoutConstraint.activate([
-            loginButton.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.4),
-            loginButton.centerXAnchor.constraint(equalTo: cell.centerXAnchor),
-            loginButton.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
-        ])
-    }
-
-    private func configureCellForSignUpSwitch(_ cell: UITableViewCell) {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Don't have an account?"
-        label.textColor = .label
-        label.font = .systemFont(ofSize: 13)
-        label.textAlignment = .right
-
-        let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Sign Up", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 14)
-        button.tintColor = .link
-        button.addTarget(self, action: #selector(signUpSwitchButtonPressed), for: .touchUpInside)
-
-        let customView = UIView()
-        customView.translatesAutoresizingMaskIntoConstraints = false
-
-        customView.addSubview(label)
-        customView.addSubview(button)
-        cell.contentView.addSubview(customView)
-
-        NSLayoutConstraint.activate([
-
-            label.leadingAnchor.constraint(equalTo: customView.leadingAnchor),
-            label.centerYAnchor.constraint(equalTo: customView.centerYAnchor),
-
-            button.leadingAnchor.constraint(equalTo: label.trailingAnchor, constant: 5),
-            button.centerYAnchor.constraint(equalTo: customView.centerYAnchor),
-
-            customView.widthAnchor.constraint(equalToConstant: label.intrinsicContentSize.width + button.intrinsicContentSize.width),
-            customView.heightAnchor.constraint(equalTo: cell.contentView.heightAnchor),
-            customView.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-            customView.centerXAnchor.constraint(equalTo: cell.contentView.centerXAnchor),
-        ])
-
+        return footerViews[section]
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SignInCell", for: indexPath)
 
-        cell.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
+        cell.backgroundColor = .clear
 
         if indexPath.section == 2 {
-            configureCellForLoginButton(cell)
+            configureCellForLoginButton(cell, title: "Sign In", selector: #selector(loginButtonOnClick))
         } else if indexPath.section == 3 {
-            configureCellForSignUpSwitch(cell)
+            configureCellForLoginTypeSwitch(cell, buttonSelector: #selector(signUpSwitchButtonPressed), labelText: "Don't have an account?", buttonTitle: "Sign Up")
         } else {
             let textFieldToAdd = indexPath.section == 0 ? usernameTextField : passwordTextField
             cell.contentView.addSubview(textFieldToAdd)
@@ -163,4 +113,21 @@ class SigninVC: BaseLoginViewTableViewTableViewController {
         }
         return cell
     }
+}
+
+extension SigninVC: UITextFieldDelegate {
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        switch textField {
+            case usernameTextField:
+                passwordTextField.becomeFirstResponder()
+            case passwordTextField:
+                fallthrough
+            default:
+                loginButtonOnClick()
+                textField.resignFirstResponder()
+        }
+        return false
+    }
+
 }

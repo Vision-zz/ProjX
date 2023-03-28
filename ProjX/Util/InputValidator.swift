@@ -19,9 +19,18 @@ class InputValidator {
         return true
     }
 
-    func calculatePasswordComplexityPercentage(password: String) -> Int {
+    public static func validate(email: String) -> Bool {
+        let emailRegex = /[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/
+        let match = email.firstMatch(of: emailRegex)
+        if match == nil {
+            return false
+        }
+        return true
+    }
+
+    public static func calculatePasswordComplexityPercentage(_ password: String) -> Double {
         let length = password.count
-        var complexity = 0
+        var complexity: Double = 0
 
         let uppercasePattern = "[A-Z]"
         if password.range(of: uppercasePattern, options: .regularExpression) != nil {
@@ -45,41 +54,58 @@ class InputValidator {
 
         let characters = "!@#$%^&*()_-+={[}]|\\:;\"'<,>.?/~`"
         var charCount = 0
-        for character in characters {
-            if password.contains(character) {
+        for character in password {
+            if characters.contains(character) {
                 charCount += 1
             }
         }
 
-        var complexityPercentage = 0
+        var complexityPercentage: Double = 0
 
+        if length >= 2 {
+            complexityPercentage += 2
+        }
+        if length >= 5 {
+            complexityPercentage += 3
+        }
         if length >= 8 {
             complexityPercentage += 10
         }
         if length >= 12 {
-            complexityPercentage += 15
+            complexityPercentage += 10
         }
         if length >= 16 {
             complexityPercentage += 15
         }
-        if length >= 24 {
+        if length >= 20 {
             complexityPercentage += 15
+        }
+        if complexity >= 1 {
+            complexityPercentage += 7.5
+        }
+        if complexity >= 2 {
+            complexityPercentage += 7.5
         }
         if complexity >= 3 {
-            complexityPercentage += 15
+            complexityPercentage += 7.5
         }
         if complexity == 4 {
-            complexityPercentage += 15
+            complexityPercentage += 7.5
         }
 
-        if charCount > 3 {
+        if charCount >= 1 {
             complexityPercentage += 5
         }
 
-        if charCount > 5 {
-            complexityPercentage += 10
+        if charCount >= 3 {
+            complexityPercentage += 5
         }
 
+        if charCount >= 5 {
+            complexityPercentage += 5
+        }
+
+        print(password, complexityPercentage)
         return complexityPercentage
     }
 

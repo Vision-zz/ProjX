@@ -19,9 +19,52 @@ class DataManager {
     private init() {}
 
     func getAllUsers() -> [User] {
-        let users = try? context.fetch(User.fetchRequest())
-        guard let users = users else { return [] }
-        return users
+        return (try? context.fetch(User.fetchRequest())) ?? []
+    }
+
+    func getAllTeams() -> [Team] {
+        return (try? context.fetch(Team.fetchRequest())) ?? []
+    }
+
+    func getUserMatching(_ predicate: (User) -> Bool) -> User? {
+        let users = getAllUsers()
+        for user in users {
+            if predicate(user) {
+                return user
+            }
+        }
+        return nil
+    }
+
+    func getTeamMatching(_ predicate: (Team) -> Bool) -> Team? {
+        let teams = getAllTeams()
+        for team in teams {
+            if predicate(team) {
+                return team
+            }
+        }
+        return nil
+    }
+
+    func createUser(username: String, password: String, name: String, emailID: String, profileImage: UIImage? = nil) -> SignupStatus {
+        let user = getUserMatching({ $0.username != nil && $0.username == username })
+        guard user == nil else {
+            return .failure(.usernameNotAvailable)
+        }
+
+        let newUser = User(context: context)
+        newUser.username = username
+        newUser.password = password
+        newUser.name = name
+        newUser.emailID = emailID
+        if profileImage != nil {
+            newUser.userProfileImage = profileImage!
+        }
+        newUser.userTeams = []
+        newUser.userID = UUID()
+        saveContext()
+
+        return .success(newUser)
     }
 
 }
