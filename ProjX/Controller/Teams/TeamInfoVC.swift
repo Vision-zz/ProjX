@@ -12,6 +12,9 @@ class TeamInfoVC: PROJXTableViewController {
     lazy var team: Team! = nil
     weak var delegate: TeamExitDelegate? = nil
 
+    lazy var teamAdmins: [User] = team.teamAdmins.sorted(by: { $0.name! < $1.name! })
+    lazy var teamMembers: [User] = team.teamMembers.sorted(by: { $0.name! < $1.name! })
+
     convenience init(team: Team) {
         self.init(style: .insetGrouped)
         self.team = team
@@ -31,12 +34,17 @@ class TeamInfoVC: PROJXTableViewController {
     }
 
     private func configureView() {
-        tableView.allowsSelection = false
+        tableView.allowsSelection = true
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TeamInfoCell")
         tableView.register(TeamProfileCell.self, forCellReuseIdentifier: TeamProfileCell.identifier)
         tableView.register(TeamOwnerCell.self, forCellReuseIdentifier: TeamOwnerCell.identifier)
         title = "Team Info"
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editTeam))
+    }
+
+    private func reloadUserData() {
+        teamAdmins = team.teamAdmins.sorted(by: { $0.name! < $1.name! })
+        teamMembers = team.teamMembers.sorted(by: { $0.name! < $1.name! })
     }
 
     @objc func editTeam() {
@@ -55,9 +63,9 @@ class TeamInfoVC: PROJXTableViewController {
             case 2:
                 return 3
             case 3:
-                return team.teamAdmins.count
+                return teamAdmins.count
             default:
-                return team.teamMembers.count
+                return teamMembers.count
         }
     }
 
@@ -72,9 +80,9 @@ class TeamInfoVC: PROJXTableViewController {
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
             case 3:
-                return "Admins - \(team.teamAdmins.count)"
+                return "Admins - \(teamAdmins.count)"
             case 4:
-                return "Members - \(team.teamMembers.count)"
+                return "Members - \(teamMembers.count)"
             default:
                 return nil
         }
@@ -104,7 +112,7 @@ class TeamInfoVC: PROJXTableViewController {
     }
 
     private func configureMembersViewCell(for cell: UITableViewCell, at indexPath: IndexPath) {
-        let users = indexPath.section == 3 ? team.teamAdmins : team.teamMembers
+        let users = indexPath.section == 3 ? teamAdmins : teamMembers
         var config = cell.defaultContentConfiguration()
         config.image = users[indexPath.row].userProfileImage
         config.imageProperties.tintColor = .label
@@ -138,31 +146,40 @@ class TeamInfoVC: PROJXTableViewController {
                     }
                 })
                 cell.backgroundColor = GlobalConstants.Background.getColor(for: .secondary)
+                cell.selectionStyle = .none
                 return cell
             case 1:
                 let cell = tableView.dequeueReusableCell(withIdentifier: TeamOwnerCell.identifier, for: indexPath) as! TeamOwnerCell
                 guard let owner = team.teamOwner else { return cell }
                 cell.configureCell(user: owner)
                 cell.backgroundColor = GlobalConstants.Background.getColor(for: .secondary)
+                cell.selectionStyle = .none
                 return cell
             case 2:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "TeamInfoCell", for: indexPath)
                 configureKeyValueCell(for: cell, at: indexPath)
                 cell.backgroundColor = GlobalConstants.Background.getColor(for: .secondary)
+                cell.selectionStyle = .none
                 return cell
             default:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "TeamInfoCell", for: indexPath)
                 configureMembersViewCell(for: cell, at: indexPath)
                 cell.backgroundColor = GlobalConstants.Background.getColor(for: .secondary)
+                cell.selectionStyle = .none
                 return cell
         }
     }
 
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
-
             tableView.contentInset = UIEdgeInsets(top: -(cell.frame.origin.y), left: 0, bottom: 0, right: 0)
         }
+    }
+
+    private func reloadSections(_ indexSet: IndexSet) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { [weak self] in
+            self?.tableView.reloadSections(indexSet, with: .none)
+        })
     }
 
     override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
@@ -171,28 +188,92 @@ class TeamInfoVC: PROJXTableViewController {
         }
 
         if indexPath.section == 2 && indexPath.row == 0 {
-            var passcodeRowContextMenuActionProvider: UIContextMenuActionProvider = { _ in
+            let passcodeRowContextMenuActionProvider: UIContextMenuActionProvider = { [weak self] _ in
                 let copyAction = UIAction(title: "Copy", image: UIImage(systemName: "square.fill.on.square.fill")) { [weak self] _ in
                     UIPasteboard.general.string = self?.team.teamJoinPasscode
                 }
 
-                let regenerate = UIAction(title: "Join Team", image: UIImage(systemName: "arrow.2.squarepath")) { [weak self] _ in
-                    self?.team.regeneratePasscode()
+                var children: [UIMenuElement] = [copyAction]
+
+                if let self = self, SessionManager.shared.signedInUser != nil && SessionManager.shared.signedInUser!.isOwner(self.team) {
+                    let regenerate = UIAction(title: "Regenerate", image: UIImage(systemName: "arrow.2.squarepath")) { [weak self] _ in
+                        self?.team.regeneratePasscode()
+                        tableView.reloadRows(at: [IndexPath(row: 0, section: 2)], with: .fade)
+                    }
+                    children.append(regenerate)
                 }
 
-                let menu = UIMenu(children: [copyAction, regenerate])
+                let menu = UIMenu(children: children)
+
                 return menu
             }
             return UIContextMenuConfiguration(identifier: indexPath as NSCopying, previewProvider: nil, actionProvider: passcodeRowContextMenuActionProvider)
         }
 
-//        var memberRowContextMenuActionProvider: UIContextMenuActionProvider = { _ in
-//
-//        }
-//
-//        var adminRowContextMenuActionProvider: UIContextMenuActionProvider = { _ in
-//
-//        }
+        if indexPath.section == 3 && SessionManager.shared.signedInUser!.isOwner(team) {
+            let adminRowContextMenuActionProvider: UIContextMenuActionProvider = { [weak self] _ in
+                let demote = UIAction(title: "Demote to Member") { [weak self] _ in
+                    guard let user = self?.teamAdmins[indexPath.row] else { return }
+                    self!.team.makeUserMember(user)
+                    self!.reloadUserData()
+                    let index = self!.teamMembers.firstIndex(where: { $0.userID != nil && $0.userID == user.userID })
+                    guard let index = index else {
+                        tableView.reloadData()
+                        return
+                    }
+                    tableView.moveRow(at: indexPath, to: IndexPath(row: index, section: 4))
+                    self?.reloadSections(IndexSet(arrayLiteral: 3, 4))
+                }
+
+                let remove = UIAction(title: "Remove from team") { [weak self] _ in
+                    guard let user = self?.teamAdmins[indexPath.row], let team = self?.team else { return }
+                    user.leave(team: team)
+                    let index = self?.teamAdmins.firstIndex(where: { $0.userID != nil && $0.userID == user.userID  })
+                    self?.reloadUserData()
+                    tableView.reloadData()
+                }
+
+
+                let menu = UIMenu(children: [demote, remove])
+                return menu
+            }
+            return UIContextMenuConfiguration(identifier: indexPath as NSCopying, previewProvider: nil, actionProvider: adminRowContextMenuActionProvider)
+        }
+
+        if indexPath.section == 4 && (SessionManager.shared.signedInUser!.isOwner(team) || SessionManager.shared.signedInUser?.roleIn(team: team) == .admin) {
+            let memberRowContextMenuActionProvider: UIContextMenuActionProvider = { [weak self] _ in
+                var children: [UIMenuElement] = []
+
+                if SessionManager.shared.signedInUser!.isOwner(self!.team) {
+                    let promote = UIAction(title: "Promote to Admin") { [weak self] _ in
+                        guard let user = self?.teamMembers[indexPath.row] else { return }
+                        self?.team.makeUserAdmin(user)
+                        self!.reloadUserData()
+                        let index = self!.teamAdmins.firstIndex(where: { $0.userID != nil && $0.userID == user.userID })
+                        guard let index = index else {
+                            tableView.reloadData()
+                            return
+                        }
+                        tableView.moveRow(at: indexPath, to: IndexPath(row: index, section: 3))
+                        self?.reloadSections(IndexSet(arrayLiteral: 3, 4))
+                    }
+                    children.append(promote)
+                }
+
+                let remove = UIAction(title: "Remove from team") { [weak self] _ in
+                    guard let user = self?.teamMembers[indexPath.row], let team = self?.team else { return }
+                    user.leave(team: team)
+                    let index = self?.teamMembers.firstIndex(where: { $0.userID != nil && $0.userID == user.userID  })
+                    self?.reloadUserData()
+                    tableView.reloadData()
+                }
+
+                children.append(remove)
+                let menu = UIMenu(children: children)
+                return menu
+            }
+            return UIContextMenuConfiguration(identifier: indexPath as NSCopying, previewProvider: nil, actionProvider: memberRowContextMenuActionProvider)
+        }
 
         return nil
     }

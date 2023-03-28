@@ -14,9 +14,9 @@ class DummyVC: UIViewController {
 
         print("Running")
         view.backgroundColor = .systemRed
+//                    fetchStuff()
+        deleteAllData()
         configureStuff()
-            //        fetchStuff()
-            //        deleteAllData()
     }
 
     func fetchStuff() {
@@ -150,7 +150,7 @@ class DummyVC: UIViewController {
 
         team1.teamOwner = user1
         team1.teamAdmins = [user2, user3]
-        team1.teamMembers = [user5, user6, user7]
+        team1.teamMembers = [user5, user6, user7, user12, user11, user10]
 
         team2.teamOwner = user4
         team2.teamAdmins = [user5, user8]
@@ -165,9 +165,9 @@ class DummyVC: UIViewController {
         user7.teams = [team1]
         user8.teams = [team2]
         user9.teams = [team2]
-        user10.teams = [team2]
-        user11.teams = []
-        user12.teams = []
+        user10.teams = [team1, team2]
+        user11.teams = [team1]
+        user12.teams = [team1]
 
         print("saving")
         DataManager.shared.saveContext()

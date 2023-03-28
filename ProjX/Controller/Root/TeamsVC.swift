@@ -88,7 +88,9 @@ class TeamsVC: PROJXTableViewController {
         title = "Team"
 
         let newAction = UIAction(title: "Create Team") { _ in
-            print("New")
+            let createTeamVc = CreateTeamVC()
+            createTeamVc.delegate = self
+            self.navigationController?.present(createTeamVc, animated: true)
         }
 
         let joinAction = UIAction(title: "Join Team") { [weak self] _ in

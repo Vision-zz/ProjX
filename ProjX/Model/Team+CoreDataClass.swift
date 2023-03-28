@@ -105,6 +105,29 @@ public class Team: NSManagedObject {
         }
     }
 
+    func makeUserAdmin(_ user: User) {
+        guard let userID = user.userID, userID != teamOwnerID, !teamAdmins.contains(where: { $0.userID == userID }) else { return }
+        teamAdmins.append(user)
+
+        let teamMemberIndex = teamMembersID?.firstIndex(where: { $0 == userID })
+        if let teamMemberIndex = teamMemberIndex {
+            teamMembersID?.remove(at: teamMemberIndex)
+        }
+
+        DataManager.shared.saveContext()
+    }
+
+    func makeUserMember(_ user: User) {
+        guard let userID = user.userID, userID != teamOwnerID, !teamMembers.contains(where: { $0.userID == userID }) else { return }
+        teamMembers.append(user)
+
+        let teamAdminIndex = teamAdminsID?.firstIndex(where: { $0 == userID })
+        if let teamAdminIndex = teamAdminIndex {
+            teamAdminsID?.remove(at: teamAdminIndex)
+        }
+        DataManager.shared.saveContext()
+    }
+
     func regeneratePasscode() {
         let allTeamJoinCodes = DataManager.shared.getAllTeams().map({ $0.teamJoinPasscode })
         var newCode = Util.generateAlphanumericString(of: 15)

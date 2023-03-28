@@ -9,6 +9,8 @@ import UIKit
 
 class CreateTeamVC: PROJXTableViewController {
 
+    weak var delegate: CreateTeamDelegate? = nil
+
     override func viewDidLoad() {
         super.viewDidLoad()
 

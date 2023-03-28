@@ -41,6 +41,14 @@ class TeamProfileCell: UITableViewCell {
         return config
     }()
 
+    lazy var teamOptionsButton: UIButton = {
+        
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+
+        return button
+    }()
+
     lazy var leaveButton: UIButton = {
         let leaveButton = UIButton()
         leaveButton.translatesAutoresizingMaskIntoConstraints = false

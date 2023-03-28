@@ -9,10 +9,6 @@ import UIKit
 
 class JoinTeamVC: PROJXViewController {
 
-    deinit {
-        print("Deinit Join Team VC")
-    }
-
     weak var delegate: JoinTeamDelegate? = nil
 
     lazy var passcodeSearchController: UISearchController = {

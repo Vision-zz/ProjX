@@ -116,19 +116,17 @@ public class User: NSManagedObject {
             selectedTeamID = nil
         }
 
-        switch roleIn(team: team) {
-            case .none, .owner:
-                return
-            case .admin:
-                guard let teamAdminsID = team.teamAdminsID else { return }
-                let indexInTeam = teamAdminsID.firstIndex(where: { $0 == userID })
-                guard let indexInTeam = indexInTeam else { return }
-                team.teamAdmins.remove(at: indexInTeam)
-            case .member:
-                guard let teamMembersID = team.teamMembersID else { return }
-                let indexInTeam = teamMembersID.firstIndex(where: { $0 == userID })
-                guard let indexInTeam = indexInTeam else { return }
-                team.teamMembers.remove(at: indexInTeam)
+        let indexInAdminArr = team.teamAdminsID?.firstIndex(where: { $0 == userID })
+        let indexInMemberArr = team.teamMembersID?.firstIndex(where: { $0 == userID })
+
+        if indexInAdminArr != nil {
+            team.teamAdminsID?.remove(at: indexInAdminArr!)
+            return
+        }
+
+        if indexInMemberArr != nil {
+            team.teamMembersID?.remove(at: indexInMemberArr!)
+            return
         }
 
         DataManager.shared.saveContext()
