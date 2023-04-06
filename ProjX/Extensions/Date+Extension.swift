@@ -10,10 +10,9 @@ import Foundation
 extension Date {
     func convertToString(with format: String = "dd/M/yyyy hh:mm a") -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en-US")
         var dateFormat = format
         if self.isToday() {
-            dateFormat = "Today hh:mm a"
+            dateFormat = "'Today' hh:mm a"
         }
         dateFormatter.dateFormat = dateFormat
         let str = dateFormatter.string(from: self)

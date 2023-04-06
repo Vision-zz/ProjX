@@ -56,6 +56,7 @@ class DummyVC: UIViewController {
         team1.teamName = "Yoho"
         team1.teamJoinPasscode = "JoinYoho"
         team1.tasks = []
+        team1.teamCreatedAt = Date()
 
         let team2 = Team(context: DataManager.shared.context)
         team2.teamID = UUID()
@@ -63,6 +64,7 @@ class DummyVC: UIViewController {
         team2.teamName = "Bccenture"
         team2.teamJoinPasscode = "JoinBccenture"
         team2.tasks = []
+        team2.teamCreatedAt = Date()
 
         let user1 = User(context: DataManager.shared.context)
         user1.userID = UUID()
@@ -70,6 +72,7 @@ class DummyVC: UIViewController {
         user1.password = "Test@123"
         user1.emailID = "arun@gmail.com"
         user1.name = "Arunprasadh"
+        user1.notificationUpdates = []
 
         let user2 = User(context: DataManager.shared.context)
         user2.userID = UUID()
@@ -77,6 +80,7 @@ class DummyVC: UIViewController {
         user2.password = "Test@123"
         user2.emailID = "devi.ks@gmail.com"
         user2.name = "Devi"
+        user2.notificationUpdates = []
 
         let user3 = User(context: DataManager.shared.context)
         user3.userID = UUID()
@@ -84,6 +88,7 @@ class DummyVC: UIViewController {
         user3.password = "Test@123"
         user3.emailID = "sathya.jd@gmail.com"
         user3.name = "Sathya Narayanan"
+        user3.notificationUpdates = []
 
         let user4 = User(context: DataManager.shared.context)
         user4.userID = UUID()
@@ -91,6 +96,7 @@ class DummyVC: UIViewController {
         user4.password = "Test@123"
         user4.emailID = "madhu.s@gmail.com"
         user4.name = "Madhu"
+        user4.notificationUpdates = []
 
         let user5 = User(context: DataManager.shared.context)
         user5.userID = UUID()
@@ -98,6 +104,7 @@ class DummyVC: UIViewController {
         user5.password = "Test@123"
         user5.emailID = "sankar@gmail.com"
         user5.name = "Sankar"
+        user5.notificationUpdates = []
 
         let user6 = User(context: DataManager.shared.context)
         user6.userID = UUID()
@@ -105,13 +112,15 @@ class DummyVC: UIViewController {
         user6.password = "Test@123"
         user6.emailID = "shivaneesh@gmail.com"
         user6.name = "Shivaneesh"
+        user6.notificationUpdates = []
 
         let user7 = User(context: DataManager.shared.context)
         user7.userID = UUID()
         user7.username = "durga_devi"
         user7.password = "Test@123"
         user7.emailID = "durgadevi@gmail.com"
-        user7.name = "DurgaDevi"
+        user7.name = "Durga Devi"
+        user7.notificationUpdates = []
 
         let user8 = User(context: DataManager.shared.context)
         user8.userID = UUID()
@@ -119,6 +128,7 @@ class DummyVC: UIViewController {
         user8.password = "Test@123"
         user8.emailID = "dinesh@gmail.com"
         user8.name = "Dinesh"
+        user8.notificationUpdates = []
 
         let user9 = User(context: DataManager.shared.context)
         user9.userID = UUID()
@@ -126,6 +136,7 @@ class DummyVC: UIViewController {
         user9.password = "Test@123"
         user9.emailID = "ajay@gmail.com"
         user9.name = "Ajay"
+        user9.notificationUpdates = []
 
         let user10 = User(context: DataManager.shared.context)
         user10.userID = UUID()
@@ -133,6 +144,7 @@ class DummyVC: UIViewController {
         user10.password = "Test@123"
         user10.emailID = "sasi.sd@gmail.com"
         user10.name = "Sasi"
+        user10.notificationUpdates = []
 
         let user11 = User(context: DataManager.shared.context)
         user11.userID = UUID()
@@ -140,6 +152,7 @@ class DummyVC: UIViewController {
         user11.password = "Test@123"
         user11.emailID = "amalan@gmail.com"
         user11.name = "Amalan"
+        user11.notificationUpdates = []
 
         let user12 = User(context: DataManager.shared.context)
         user12.userID = UUID()
@@ -147,6 +160,7 @@ class DummyVC: UIViewController {
         user12.password = "Test@123"
         user12.emailID = "nabusan@gmail.com"
         user12.name = "Nabusan"
+        user12.notificationUpdates = []
 
         team1.teamOwner = user1
         team1.teamAdmins = [user2, user3]

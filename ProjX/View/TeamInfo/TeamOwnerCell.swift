@@ -8,7 +8,12 @@
 import UIKit
 
 class TeamOwnerCell: UITableViewCell {
-
+#if DEBUG
+    deinit {
+        print("Deinit TeamOwnerCell")
+    }
+#endif
+    
     static let identifier = "TeamOwnerCell"
 
     lazy var icon: UIImageView = {
@@ -16,6 +21,7 @@ class TeamOwnerCell: UITableViewCell {
         icon.translatesAutoresizingMaskIntoConstraints = false
         icon.clipsToBounds = true
         icon.contentMode = .scaleAspectFit
+        icon.layer.cornerRadius = 3
         icon.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         icon.tintColor = .label
         return icon
@@ -64,7 +70,7 @@ class TeamOwnerCell: UITableViewCell {
     }
 
     func configureCell(user: User) {
-        icon.image = user.userProfileImage
+        icon.image = user.getUserProfileIcon(reduceTo: CGSize(width: 15, height: 15))
         name.text = user.name ?? "-"
 
     }

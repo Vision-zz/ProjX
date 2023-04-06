@@ -38,13 +38,20 @@ class BaseLoginViewTableView: PROJXTableViewController {
     }
 
     private func configureBaseUI() {
+        navigationController?.navigationBar.prefersLargeTitles = false
         tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(onTap)))
-        view.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
-        tableView.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
+        view.backgroundColor = GlobalConstants.Background.primary
+        tableView.backgroundColor = GlobalConstants.Background.primary
         tableView.separatorStyle = .none
         tableView.allowsSelection = false
         tableView.keyboardDismissMode = .onDrag
         tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 20))
+        let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelButtonPressed))
+        self.navigationItem.leftBarButtonItem = cancelButton
+    }
+
+    @objc func cancelButtonPressed() {
+        self.dismiss(animated: true)
     }
 
     func createErrorLabel() -> PROJXLabel {
@@ -69,8 +76,9 @@ class BaseLoginViewTableView: PROJXTableViewController {
         textField.placeholder = placeholder
         textField.borderStyle = .roundedRect
         textField.clearButtonMode = .whileEditing
-        textField.backgroundColor = GlobalConstants.Background.getColor(for: .secondary)
+        textField.backgroundColor = GlobalConstants.Background.secondary
         textField.autocapitalizationType = .none
+        textField.autocorrectionType = .no
         textField.returnKeyType = .next
         return textField
     }

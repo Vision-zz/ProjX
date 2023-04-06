@@ -12,19 +12,6 @@ import UIKit
 
 public class Team: NSManagedObject {
 
-    var teamIconImage: UIImage {
-        get {
-            guard let teamIcon = teamIcon else {
-                var sfSymbolPrefix = "questionmark"
-                if let teamName = teamName, (!teamName.isEmpty && String(teamName.first!).firstMatch(of: /[^a-zA-Z]/) == nil) {
-                    sfSymbolPrefix = String(teamName.first!)
-                }
-                return UIImage(systemName: "\(sfSymbolPrefix.lowercased()).square.fill")!
-            }
-            return UIImage(data: teamIcon) ?? UIImage(systemName: "questionmark.square.fill")!
-        }
-    }
-
     var tasks: [TaskItem] {
         get {
             let fetchedData = try? DataManager.shared.context.fetch(TaskItem.fetchRequest())
@@ -105,6 +92,44 @@ public class Team: NSManagedObject {
         }
     }
 
+    var isSelected: Bool {
+        return SessionManager.shared.signedInUser?.selectedTeamID != nil && SessionManager.shared.signedInUser!.selectedTeamID == teamID
+    }
+
+    func hasTeamIcon() -> Bool {
+        guard let name = teamID?.uuidString else { return false }
+        return DataManager.shared.imageExists(with: name)
+    }
+
+    func getTeamIcon(reduceTo size: CGSize? = nil) -> UIImage {
+        let defaultImage = Util.generateInitialImage(from: teamName!) ?? UIImage(systemName: "questionmark.square.fill")!
+        guard let name = teamID?.uuidString else { return defaultImage }
+        let image = DataManager.shared.loadImage(with: name)
+
+        guard let size = size else {
+            return image ?? defaultImage
+        }
+
+        guard let image = image,
+              let data = image.pngData(),
+              let downsampledImage = Util.downsampleImage(from: data, to: size)
+        else {
+            return defaultImage
+        }
+
+        return downsampledImage
+    }
+
+    func setTeamIcon(image: UIImage) {
+        guard let name = teamID?.uuidString else { return }
+        DataManager.shared.saveImage(image, with: name)
+    }
+
+    func removeTeamIcon() {
+        guard let name = teamID?.uuidString else { return }
+        DataManager.shared.removeImage(with: name)
+    }
+
     func makeUserAdmin(_ user: User) {
         guard let userID = user.userID, userID != teamOwnerID, !teamAdmins.contains(where: { $0.userID == userID }) else { return }
         teamAdmins.append(user)
@@ -139,6 +164,9 @@ public class Team: NSManagedObject {
     }
 
     func delete() {
+        teamOwner?.userTeams?.removeAll(where: { $0 == teamID })
+        teamMembers.forEach({ $0.userTeams?.removeAll(where: { $0 == teamID }) })
+        teamAdmins.forEach({ $0.userTeams?.removeAll(where: { $0 == teamID }) })
         DataManager.shared.context.delete(self)
         DataManager.shared.saveContext()
     }

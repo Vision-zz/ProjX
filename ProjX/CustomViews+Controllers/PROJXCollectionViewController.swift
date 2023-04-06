@@ -38,8 +38,8 @@ class PROJXCollectionViewController: UICollectionViewController {
     }
 
     private func configureBaseUI() {
-        self.view.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
-        self.collectionView.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
+        self.view.backgroundColor = GlobalConstants.Background.primary
+        self.collectionView.backgroundColor = GlobalConstants.Background.primary
         self.navigationController?.navigationBar.prefersLargeTitles = true
     }
 

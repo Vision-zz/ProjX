@@ -8,6 +8,11 @@
 import UIKit
 
 class SignupVC: BaseLoginViewTableView {
+#if DEBUG
+    deinit {
+        print("Deinit SignupVC")
+    }
+#endif
 
     weak var signUpDelegate: SignUpDelegate? = nil
 
@@ -121,8 +126,12 @@ class SignupVC: BaseLoginViewTableView {
         passwordTextField.addTarget(self, action: #selector(passwordTextFieldEdited), for: .editingChanged)
         confirmPasswordTextField.addTarget(self, action: #selector(confirmPasswordTextFieldEdited), for: .editingChanged)
         emailTextField.addTarget(self, action: #selector(emailTextFieldEdited), for: .editingChanged)
-        navigationItem.largeTitleDisplayMode = .always
 
+        usernameTextField.delegate = self
+        displayNameTextField.delegate = self
+        emailTextField.delegate = self
+        passwordTextField.delegate = self
+        confirmPasswordTextField.delegate = self
     }
 
     @objc private func usernameTextFieldEdited() {
@@ -224,11 +233,29 @@ class SignupVC: BaseLoginViewTableView {
                     passwordStrengthBar.heightAnchor.constraint(equalToConstant: 4)
                 ])
             }
-
         }
-
-
         return cell
     }
 
+}
+
+extension SignupVC: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        switch textField {
+            case usernameTextField:
+                displayNameTextField.becomeFirstResponder()
+            case displayNameTextField:
+                emailTextField.becomeFirstResponder()
+            case emailTextField:
+                passwordTextField.becomeFirstResponder()
+            case passwordTextField:
+                confirmPasswordTextField.becomeFirstResponder()
+            case confirmPasswordTextField:
+                fallthrough
+            default:
+                signUpButtonOnClick()
+                textField.resignFirstResponder()
+        }
+        return false
+    }
 }

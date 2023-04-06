@@ -104,7 +104,7 @@ class HomeVC: PROJXCollectionViewController {
         var otherTasks = [TaskItem]()
 
         for task in selectedTeam.tasks {
-            let assignedToYouCondition = task.assignedTo != nil && task.assignedTo!.userID == SessionManager.shared.signedInUser?.userID
+            let assignedToYouCondition = task.assignedTo != nil && task.assignedTo == SessionManager.shared.signedInUser?.userID
             let upcomingTaskCondition = task.deadline! < Date().addingTimeInterval(3 * 24 * 60 * 60 * 1000)
             let recentlyCreatedCondition = task.createdAt!.isToday()
             let createdByYouCondition = task.createdBy != nil && task.createdBy!.userID == SessionManager.shared.signedInUser?.userID

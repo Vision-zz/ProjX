@@ -26,4 +26,9 @@ public class TaskItem: NSManagedObject {
         }
     }
 
+    var assignedToUser: User? {
+        guard let assignedTo = assignedTo else { return nil }
+        return DataManager.shared.getUserMatching({ $0.userID == assignedTo })
+    }
+
 }

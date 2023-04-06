@@ -8,6 +8,11 @@
 import UIKit
 
 class JoinTeamVC: PROJXViewController {
+#if DEBUG
+    deinit {
+        print("Deinit JoinTeamVC")
+    }
+#endif
 
     weak var delegate: JoinTeamDelegate? = nil
 
@@ -17,8 +22,9 @@ class JoinTeamVC: PROJXViewController {
         searchController.searchBar.barTintColor = .clear
         searchController.searchBar.backgroundColor = .clear
         searchController.searchBar.delegate = self
-        searchController.searchBar.setImage(UIImage(systemName: "plus"), for: .search, state: .normal)
+        searchController.searchBar.searchTextField.leftView = nil
         searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchBar.searchTextField.autocorrectionType = .no
         return searchController
     }()
 
@@ -39,7 +45,7 @@ class JoinTeamVC: PROJXViewController {
         button.setTitle("Join", for: .normal)
         button.addTarget(self, action: #selector(joinButtonClickced), for: .touchUpInside)
         button.backgroundColor = .systemBlue
-        button.layer.cornerRadius = 15
+        button.layer.cornerRadius = 10
         return button
     }()
 
@@ -63,7 +69,8 @@ class JoinTeamVC: PROJXViewController {
         NSLayoutConstraint.activate([
             joinButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             joinButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            joinButton.widthAnchor.constraint(equalToConstant: 120),
+            joinButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
+            joinButton.heightAnchor.constraint(equalToConstant: 40),
 
             invalidResultLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             invalidResultLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -10),

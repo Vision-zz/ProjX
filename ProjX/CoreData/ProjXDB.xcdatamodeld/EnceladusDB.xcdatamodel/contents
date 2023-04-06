@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22D68" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="TaskItem" representedClassName=".TaskItem" syncable="YES">
-        <attribute name="assignedTo" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="User"/>
+        <attribute name="assignedTo" optional="YES" attributeType="UUID" valueTransformerName="NSSecureUnarchiveFromData" usesScalarValueType="NO" customClassName="User"/>
         <attribute name="category" attributeType="String"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="createdBy" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="User"/>
@@ -16,7 +16,7 @@
         <attribute name="categories" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
         <attribute name="tasksID" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[UUID]"/>
         <attribute name="teamAdminsID" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[UUID]"/>
-        <attribute name="teamIcon" optional="YES" attributeType="Binary"/>
+        <attribute name="teamCreatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="teamID" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="teamJoinPasscode" attributeType="String"/>
         <attribute name="teamMembersID" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[UUID]"/>
@@ -26,8 +26,8 @@
     <entity name="User" representedClassName=".User" syncable="YES">
         <attribute name="emailID" attributeType="String"/>
         <attribute name="name" attributeType="String"/>
+        <attribute name="notificationUpdates" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[NotificationUpdate]"/>
         <attribute name="password" attributeType="String"/>
-        <attribute name="profileImage" optional="YES" attributeType="Binary"/>
         <attribute name="selectedTeamID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="userID" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="username" attributeType="String"/>

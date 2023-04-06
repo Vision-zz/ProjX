@@ -51,7 +51,6 @@ class MainTabbar: UITabBarController {
         self.tabBar.isTranslucent = true
         self.viewControllers = [browse, team, updates, profile]
 
-
     }
 
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {

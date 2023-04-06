@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TasksVC: PROJXViewController {
+class TasksVC: PROJXTableViewController {
 
     override var hidesBottomBarWhenPushed: Bool {
         get {
@@ -18,20 +18,22 @@ class TasksVC: PROJXViewController {
         }
     }
 
+    lazy var dataSource: [TaskItem] = []
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureView()
+    }
+
+    private func configureView() {
         title = "Tasks"
-        // Do any additional setup after loading the view.
+        
     }
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
+//    private func configureDataSource() {
+//        var task = TaskItem(context: DataManager.shared.context)
+//        task.
+//        dataSource.append(TaskI)
+//    }
 
 }

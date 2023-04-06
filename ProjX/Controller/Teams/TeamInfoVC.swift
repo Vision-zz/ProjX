@@ -9,6 +9,11 @@ import UIKit
 
 class TeamInfoVC: PROJXTableViewController {
 
+    deinit {
+        print("Deinit TeamInfoVC")
+    }
+
+
     lazy var team: Team! = nil
     weak var delegate: TeamExitDelegate? = nil
 
@@ -35,20 +40,16 @@ class TeamInfoVC: PROJXTableViewController {
 
     private func configureView() {
         tableView.allowsSelection = true
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TeamInfoCell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TeamInfoKeyValueCell")
         tableView.register(TeamProfileCell.self, forCellReuseIdentifier: TeamProfileCell.identifier)
         tableView.register(TeamOwnerCell.self, forCellReuseIdentifier: TeamOwnerCell.identifier)
+        tableView.register(PROJXImageTextCell.self, forCellReuseIdentifier: PROJXImageTextCell.identifier)
         title = "Team Info"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editTeam))
     }
 
     private func reloadUserData() {
         teamAdmins = team.teamAdmins.sorted(by: { $0.name! < $1.name! })
         teamMembers = team.teamMembers.sorted(by: { $0.name! < $1.name! })
-    }
-
-    @objc func editTeam() {
-
     }
     // MARK: - Table view data source
 
@@ -71,7 +72,7 @@ class TeamInfoVC: PROJXTableViewController {
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
-            return 250
+            return 100
         } else {
             return 44
         }
@@ -111,60 +112,38 @@ class TeamInfoVC: PROJXTableViewController {
         cell.contentConfiguration = config
     }
 
-    private func configureMembersViewCell(for cell: UITableViewCell, at indexPath: IndexPath) {
+    private func configureMembersViewCell(for cell: PROJXImageTextCell, at indexPath: IndexPath) {
         let users = indexPath.section == 3 ? teamAdmins : teamMembers
-        var config = cell.defaultContentConfiguration()
-        config.image = users[indexPath.row].userProfileImage
-        config.imageProperties.tintColor = .label
-        config.text = users[indexPath.row].name ?? "-"
-        cell.contentConfiguration = config
+        cell.cellImageView.contentMode = .scaleAspectFill
+        cell.configureCellData(text: users[indexPath.row].name ?? "-", image: users[indexPath.row].getUserProfileIcon(reduceTo: CGSize(width: 15, height: 15)))
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
             case 0:
                 let cell = tableView.dequeueReusableCell(withIdentifier: TeamProfileCell.identifier, for: indexPath) as! TeamProfileCell
-                cell.configureCell(team: team, onExitHandler: { [weak self] in
-                    guard self != nil else { return }
-                    if let signedInUserID = SessionManager.shared.signedInUser?.userID, self?.team.teamOwnerID == signedInUserID {
-                        let alert = UIAlertController(title: "Are you sure?", message: "Do you want to delete team '\(self!.team.teamName!)'", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
-                            self?.team.delete()
-                            self?.delegate?.teamExited()
-                        }))
-                        alert.addAction(UIAlertAction(title: "Go back", style: .cancel))
-                        self?.present(alert, animated: true)
-                    } else {
-                        let alert = UIAlertController(title: "Are you sure?", message: "Do you want to leave team '\(self!.team.teamName!)'", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "Leave", style: .destructive, handler: { [weak self] _ in
-                            guard self != nil else { return }
-                            SessionManager.shared.signedInUser?.leave(team: self!.team)
-                            self?.delegate?.teamExited()
-                        }))
-                        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-                        self?.present(alert, animated: true)
-                    }
-                })
-                cell.backgroundColor = GlobalConstants.Background.getColor(for: .secondary)
+                cell.teamOptionsDelegate = self
+                cell.configureCell(team: team)
+                cell.backgroundColor = GlobalConstants.Background.secondary
                 cell.selectionStyle = .none
                 return cell
             case 1:
                 let cell = tableView.dequeueReusableCell(withIdentifier: TeamOwnerCell.identifier, for: indexPath) as! TeamOwnerCell
                 guard let owner = team.teamOwner else { return cell }
                 cell.configureCell(user: owner)
-                cell.backgroundColor = GlobalConstants.Background.getColor(for: .secondary)
+                cell.backgroundColor = GlobalConstants.Background.secondary
                 cell.selectionStyle = .none
                 return cell
             case 2:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "TeamInfoCell", for: indexPath)
+                let cell = tableView.dequeueReusableCell(withIdentifier: "TeamInfoKeyValueCell", for: indexPath)
                 configureKeyValueCell(for: cell, at: indexPath)
-                cell.backgroundColor = GlobalConstants.Background.getColor(for: .secondary)
+                cell.backgroundColor = GlobalConstants.Background.secondary
                 cell.selectionStyle = .none
                 return cell
             default:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "TeamInfoCell", for: indexPath)
+                let cell = tableView.dequeueReusableCell(withIdentifier: PROJXImageTextCell.identifier, for: indexPath) as! PROJXImageTextCell
                 configureMembersViewCell(for: cell, at: indexPath)
-                cell.backgroundColor = GlobalConstants.Background.getColor(for: .secondary)
+                cell.backgroundColor = GlobalConstants.Background.secondary
                 cell.selectionStyle = .none
                 return cell
         }
@@ -176,15 +155,22 @@ class TeamInfoVC: PROJXTableViewController {
         }
     }
 
-    private func reloadSections(_ indexSet: IndexSet) {
+    private func reloadSections() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { [weak self] in
-            self?.tableView.reloadSections(indexSet, with: .none)
+            self?.tableView.reloadSections(IndexSet(arrayLiteral: 3, 4), with: .none)
+            self?.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
         })
     }
 
     override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        if indexPath.section == 0 || indexPath.section == 1 {
+        if indexPath.section == 1 {
             return nil
+        }
+
+        if indexPath.section == 0 {
+            return UIContextMenuConfiguration(identifier: indexPath as NSCopying, previewProvider: nil, actionProvider: { [weak self] _ in
+                return MenuProvider.getTeamProfileOptionsMenu(for: self!.team, delegate: self)
+            })
         }
 
         if indexPath.section == 2 && indexPath.row == 0 {
@@ -222,15 +208,15 @@ class TeamInfoVC: PROJXTableViewController {
                         return
                     }
                     tableView.moveRow(at: indexPath, to: IndexPath(row: index, section: 4))
-                    self?.reloadSections(IndexSet(arrayLiteral: 3, 4))
+                    self!.reloadSections()
                 }
 
-                let remove = UIAction(title: "Remove from team") { [weak self] _ in
+                let remove = UIAction(title: "Remove from team", attributes: .destructive) { [weak self] _ in
                     guard let user = self?.teamAdmins[indexPath.row], let team = self?.team else { return }
                     user.leave(team: team)
-                    let index = self?.teamAdmins.firstIndex(where: { $0.userID != nil && $0.userID == user.userID  })
-                    self?.reloadUserData()
-                    tableView.reloadData()
+                    self!.reloadUserData()
+                    tableView.deleteRows(at: [indexPath], with: .middle)
+                    self!.reloadSections()
                 }
 
 
@@ -255,17 +241,17 @@ class TeamInfoVC: PROJXTableViewController {
                             return
                         }
                         tableView.moveRow(at: indexPath, to: IndexPath(row: index, section: 3))
-                        self?.reloadSections(IndexSet(arrayLiteral: 3, 4))
+                        self!.reloadSections()
                     }
                     children.append(promote)
                 }
 
-                let remove = UIAction(title: "Remove from team") { [weak self] _ in
+                let remove = UIAction(title: "Remove from team", attributes: .destructive) { [weak self] _ in
                     guard let user = self?.teamMembers[indexPath.row], let team = self?.team else { return }
                     user.leave(team: team)
-                    let index = self?.teamMembers.firstIndex(where: { $0.userID != nil && $0.userID == user.userID  })
-                    self?.reloadUserData()
-                    tableView.reloadData()
+                    self!.reloadUserData()
+                    tableView.deleteRows(at: [indexPath], with: .middle)
+                    self!.reloadSections()
                 }
 
                 children.append(remove)
@@ -278,4 +264,53 @@ class TeamInfoVC: PROJXTableViewController {
         return nil
     }
     
+}
+
+extension TeamInfoVC: TeamOptionsDelegate {
+    func teamSelectButtonPressed() {
+        SessionManager.shared.changeSelectedTeam(to: team)
+    }
+
+    func teamEditButtonPressed() {
+        let createTeamVc = CreateEditTeamVC(editingTeam: self.team)
+        createTeamVc.delegate = self
+        let nav = UINavigationController(rootViewController: createTeamVc)
+        nav.modalPresentationStyle = .formSheet
+        if let sheet = nav.sheetPresentationController {
+            sheet.detents = [.custom(resolver: { _ in return 300 }), .large()]
+            sheet.preferredCornerRadius = 20
+            sheet.prefersGrabberVisible = true
+        }
+        self.present(nav, animated: true)
+    }
+
+    func teamExitButtonPressed() {
+        if let signedInUserID = SessionManager.shared.signedInUser?.userID, self.team.teamOwnerID == signedInUserID {
+            let alert = UIAlertController(title: "Are you sure?", message: "Do you want to delete team '\(self.team.teamName!)'", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
+                self?.team.delete()
+                self?.delegate?.teamExited()
+            }))
+            alert.addAction(UIAlertAction(title: "Go back", style: .cancel))
+            self.present(alert, animated: true)
+        } else {
+            let alert = UIAlertController(title: "Are you sure?", message: "Do you want to leave team '\(self.team.teamName!)'", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Leave", style: .destructive, handler: { [weak self] _ in
+                guard self != nil else { return }
+                SessionManager.shared.signedInUser?.leave(team: self!.team)
+                self?.delegate?.teamExited()
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            self.present(alert, animated: true)
+        }
+    }
+
+}
+
+extension TeamInfoVC: CreateEditTeamDelegate {
+    func changesSaved(_ team: Team) {
+        dismiss(animated: true) { [weak self] in
+            self?.tableView.reloadData()
+        }
+    }
 }

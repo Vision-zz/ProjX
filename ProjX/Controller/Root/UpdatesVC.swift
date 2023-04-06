@@ -20,8 +20,11 @@ class UpdatesVC: PROJXViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureView()
+    }
 
-        // Do any additional setup after loading the view.
+    private func configureView() {
+        title = "Updates"
     }
     
 

@@ -84,31 +84,57 @@ class TeamsVC: PROJXTableViewController {
         tableView.reloadData()
     }
 
+//    override func viewWillDisappear(_ animated: Bool) {
+//        super.viewWillDisappear(animated)
+//        dataSource = []
+//        tableView.reloadData()
+//    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        dataSource = []
+    }
+
     private func configureUI() {
         title = "Team"
 
-        let newAction = UIAction(title: "Create Team") { _ in
-            let createTeamVc = CreateTeamVC()
+        let newAction = UIAction(title: "Create Team") { [weak self] _ in
+            let createTeamVc = CreateEditTeamVC()
             createTeamVc.delegate = self
-            self.navigationController?.present(createTeamVc, animated: true)
+            let nav = UINavigationController(rootViewController: createTeamVc)
+            nav.modalPresentationStyle = .formSheet
+            if let sheet = nav.sheetPresentationController {
+                sheet.detents = [.custom(resolver: { _ in return 300 }), .large()]
+                sheet.preferredCornerRadius = 20
+                sheet.prefersGrabberVisible = true
+            }
+            self?.present(nav, animated: true)
         }
 
         let joinAction = UIAction(title: "Join Team") { [weak self] _ in
             let joinVC = JoinTeamVC()
             joinVC.delegate = self
-            self?.navigationController?.present(UINavigationController(rootViewController: joinVC), animated: true)
+            let nav = UINavigationController(rootViewController: joinVC)
+            nav.modalPresentationStyle = .formSheet
+            if let sheet = nav.sheetPresentationController {
+                sheet.detents = [.custom(resolver: { _ in return 300 }), .large()]
+                sheet.preferredCornerRadius = 20
+                sheet.prefersGrabberVisible = true
+            }
+            self?.present(nav, animated: true)
         }
         let menu = UIMenu(children: [newAction, joinAction])
         navigationItem.rightBarButtonItem = UIBarButtonItem(systemItem: .add, menu: menu)
     }
 
     private func configureTableView() {
-        tableView.register(TeamTableViewCell.self, forCellReuseIdentifier: "TeamsTableViewCell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TeamsTableViewCell")
+        tableView.register(PROJXImageTextCell.self, forCellReuseIdentifier: PROJXImageTextCell.identifier)
         tableView.backgroundView = noDataStack
     }
 
     private func configureDatasource() {
-        dataSource.removeAll()
+        dataSource = []
         noDataStack.isHidden = true
         let userTeams = SessionManager.shared.signedInUser?.teams
         guard let userTeams = userTeams else { return }
@@ -142,8 +168,11 @@ class TeamsVC: PROJXTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "TeamsTableViewCell", for: indexPath) as! TeamTableViewCell
-        cell.configureCellData(teamIcon: dataSource[indexPath.section].rows[indexPath.row].teamIconImage, teamName: dataSource[indexPath.section].rows[indexPath.row].teamName ?? "")
+        let cell = tableView.dequeueReusableCell(withIdentifier: PROJXImageTextCell.identifier, for: indexPath) as! PROJXImageTextCell
+        cell.backgroundColor = GlobalConstants.Background.secondary
+        cell.accessoryType = .disclosureIndicator
+        cell.cellImageView.contentMode = .scaleAspectFill
+        cell.configureCellData(text: dataSource[indexPath.section].rows[indexPath.row].teamName ?? "---", image: dataSource[indexPath.section].rows[indexPath.row].getTeamIcon(reduceTo: CGSize(width: 15, height: 15)))
         return cell
     }
 
@@ -159,7 +188,7 @@ class TeamsVC: PROJXTableViewController {
 
 }
 
-extension TeamsVC: JoinTeamDelegate, CreateTeamDelegate, TeamExitDelegate {
+extension TeamsVC: JoinTeamDelegate, CreateEditTeamDelegate, TeamExitDelegate {
 
     private func dismissAndDisplayInfo(of team: Team) {
         dismiss(animated: true) { [weak self] in
@@ -175,7 +204,7 @@ extension TeamsVC: JoinTeamDelegate, CreateTeamDelegate, TeamExitDelegate {
         dismissAndDisplayInfo(of: team)
     }
 
-    func created(_ team: Team) {
+    func changesSaved(_ team: Team) {
         dismissAndDisplayInfo(of: team)
     }
 

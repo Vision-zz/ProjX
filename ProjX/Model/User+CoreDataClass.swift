@@ -70,20 +70,33 @@ public class User: NSManagedObject {
         }
     }
 
-    var userProfileImage: UIImage {
-        get {
-            guard let profileImage = profileImage else {
-                var sfSymbolPrefix = "questionmark"
-                if let userName = name, (!userName.isEmpty && String(userName.first!).firstMatch(of: /[^a-zA-Z]/) == nil) {
-                    sfSymbolPrefix = String(userName.first!)
-                }
-                return UIImage(systemName: "\(sfSymbolPrefix.lowercased()).square.fill")!
-            }
-            return UIImage(data: profileImage) ?? UIImage(systemName: "questionmark.square.fill")!
+    func getUserProfileIcon(reduceTo size: CGSize? = nil) -> UIImage {
+        let defaultImage = Util.generateInitialImage(from: name!) ?? UIImage(systemName: "questionmark.square.fill")!
+        guard let name = userID?.uuidString else { return defaultImage }
+        let image = DataManager.shared.loadImage(with: name)
+
+        guard let size = size else {
+            return image ?? defaultImage
         }
-        set {
-            profileImage = newValue.pngData()
+
+        guard let image = image,
+              let data = image.pngData(),
+              let downsampledImage = Util.downsampleImage(from: data, to: size)
+        else {
+            return defaultImage
         }
+
+        return downsampledImage
+    }
+
+    func hasUserProfileIcon() -> Bool {
+        guard let name = userID?.uuidString else { return false }
+        return DataManager.shared.imageExists(with: name)
+    }
+
+    func setUserProfileIcon(image: UIImage) {
+        guard let name = userID?.uuidString else { return }
+        DataManager.shared.saveImage(image, with: name)
     }
 
     func isOwner(_ team: Team) -> Bool {
@@ -121,12 +134,10 @@ public class User: NSManagedObject {
 
         if indexInAdminArr != nil {
             team.teamAdminsID?.remove(at: indexInAdminArr!)
-            return
         }
 
         if indexInMemberArr != nil {
             team.teamMembersID?.remove(at: indexInMemberArr!)
-            return
         }
 
         DataManager.shared.saveContext()

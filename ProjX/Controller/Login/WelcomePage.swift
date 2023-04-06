@@ -8,6 +8,11 @@
 import UIKit
 
 class WelcomePage: PROJXViewController {
+#if DEBUG
+    deinit {
+        print("Deinit WelcomePage")
+    }
+#endif
 
     lazy var logoImage: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "ProjX3D"))
@@ -139,6 +144,10 @@ extension WelcomePage: SignUpDelegate, SignInDelegate {
         let navController = UINavigationController(rootViewController: signInVC)
         navController.modalPresentationStyle = .formSheet
         self.present(navController, animated: true)
+    }
+
+    @objc private func cancelButtonPressed() {
+        dismiss(animated: true)
     }
 
     func signUpSwitchButtonPressed() {

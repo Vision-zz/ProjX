@@ -18,6 +18,7 @@ extension User {
 
     @NSManaged public var emailID: String?
     @NSManaged public var name: String?
+    @NSManaged public var notificationUpdates: [NotificationUpdate]?
     @NSManaged public var password: String?
     @NSManaged public var profileImage: Data?
     @NSManaged public var userID: UUID?

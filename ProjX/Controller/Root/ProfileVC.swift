@@ -34,6 +34,7 @@ class ProfileVC: PROJXViewController {
     }
 
     private func configureUI() {
+        title = "Profile"
         view.addSubview(logoutButton)
     }
 

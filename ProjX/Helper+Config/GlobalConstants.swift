@@ -9,14 +9,10 @@ import Foundation
 import UIKit
 
 enum GlobalConstants {
-    public enum Background: String {
-        case primary = "UIPrimaryBackground"
-        case secondary = "UISecondaryBackground"
-        case shadow = "UIShadow"
 
-        public static func getColor(for colorType: Background) -> UIColor {
-            return UIColor(named: colorType.rawValue)!
-        }
+    enum Background {
+        static var primary: UIColor { UIColor(named: "UIPrimaryBackground")! }
+        static var secondary: UIColor { UIColor(named:"UISecondaryBackground")! }
     }
 
     enum Device {

@@ -24,8 +24,8 @@ class PROJXTableViewController: UITableViewController {
     }
 
     private func configureBaseUI() {
-        self.view.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
-        self.tableView.backgroundColor = GlobalConstants.Background.getColor(for: .primary)
+        self.view.backgroundColor = GlobalConstants.Background.primary
+        self.tableView.backgroundColor = GlobalConstants.Background.primary
         self.navigationController?.navigationBar.prefersLargeTitles = true
     }
 

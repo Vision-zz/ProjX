@@ -11,14 +11,16 @@ protocol JoinTeamDelegate: AnyObject {
     func joined(_ team: Team)
 }
 
-protocol CreateTeamDelegate: AnyObject {
-    func created(_ team: Team)
+protocol CreateEditTeamDelegate: AnyObject {
+    func changesSaved(_ team: Team)
 }
 
 protocol TeamExitDelegate: AnyObject {
     func teamExited()
 }
 
-protocol TeamExitButtonDelegate: AnyObject {
+protocol TeamOptionsDelegate: AnyObject {
+    func teamSelectButtonPressed()
+    func teamEditButtonPressed()
     func teamExitButtonPressed()
 }

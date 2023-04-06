@@ -8,6 +8,11 @@
 import UIKit
 
 class SigninVC: BaseLoginViewTableView {
+#if DEBUG
+    deinit {
+        print("Deinit SigninVC")
+    }
+#endif
     
     weak var signInDelegate: SignInDelegate? = nil
 
@@ -29,7 +34,6 @@ class SigninVC: BaseLoginViewTableView {
         passwordTextField.addTarget(self, action: #selector(passwordTextEdited), for: .editingChanged)
         usernameTextField.delegate = self
         passwordTextField.delegate = self
-        navigationItem.largeTitleDisplayMode = .always
     }
 
     @objc func signUpSwitchButtonPressed() {

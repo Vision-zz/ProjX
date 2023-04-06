@@ -16,7 +16,7 @@ extension TaskItem {
         return NSFetchRequest<TaskItem>(entityName: "TaskItem")
     }
 
-    @NSManaged public var assignedTo: User?
+    @NSManaged public var assignedTo: UUID?
     @NSManaged public var category: String?
     @NSManaged public var createdAt: Date?
     @NSManaged public var createdBy: User?

@@ -19,12 +19,12 @@ extension Team {
     @NSManaged public var categories: [String]?
     @NSManaged public var tasksID: [UUID]?
     @NSManaged public var teamAdminsID: [UUID]?
-    @NSManaged public var teamIcon: Data?
     @NSManaged public var teamID: UUID?
     @NSManaged public var teamMembersID: [UUID]?
     @NSManaged public var teamName: String?
     @NSManaged public var teamOwnerID: UUID?
     @NSManaged public var teamJoinPasscode: String?
+    @NSManaged public var teamCreatedAt: Date?
 
 }
 

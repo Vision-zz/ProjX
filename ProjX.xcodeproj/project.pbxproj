@@ -15,7 +15,8 @@
 		AF59E0B029D18F9800B4AF7C /* SignupStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF59E0AF29D18F9800B4AF7C /* SignupStatus.swift */; };
 		AF59E0B429D1A0F000B4AF7C /* TeamProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF59E0B329D1A0F000B4AF7C /* TeamProfileCell.swift */; };
 		AF59E0B629D1A0FD00B4AF7C /* TeamOwnerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF59E0B529D1A0FD00B4AF7C /* TeamOwnerCell.swift */; };
-		AF59E0BD29D30D8700B4AF7C /* EditTeamVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF59E0BC29D30D8700B4AF7C /* EditTeamVC.swift */; };
+		AF59E0BF29D448EC00B4AF7C /* MenuProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF59E0BE29D448EC00B4AF7C /* MenuProvider.swift */; };
+		AF59E0C329D5706300B4AF7C /* PROJXImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF59E0C229D5706300B4AF7C /* PROJXImagePicker.swift */; };
 		AF60B0D929C2D70B0070B4E0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF60B0D829C2D70B0070B4E0 /* AppDelegate.swift */; };
 		AF60B0DB29C2D70B0070B4E0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF60B0DA29C2D70B0070B4E0 /* SceneDelegate.swift */; };
 		AF60B0E229C2D70D0070B4E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AF60B0E129C2D70D0070B4E0 /* Assets.xcassets */; };
@@ -27,7 +28,7 @@
 		AF60B10029C2F4060070B4E0 /* TeamsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF60B0FF29C2F4060070B4E0 /* TeamsVC.swift */; };
 		AF60B10229C2F4100070B4E0 /* UpdatesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF60B10129C2F4100070B4E0 /* UpdatesVC.swift */; };
 		AF60B10429C2F41F0070B4E0 /* ProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF60B10329C2F41F0070B4E0 /* ProfileVC.swift */; };
-		AF869CE829CDA7BE00E0A2AE /* CreateTeamVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF869CE729CDA7BE00E0A2AE /* CreateTeamVC.swift */; };
+		AF869CE829CDA7BE00E0A2AE /* CreateEditTeamVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF869CE729CDA7BE00E0A2AE /* CreateEditTeamVC.swift */; };
 		AF869CEA29CDA7ED00E0A2AE /* JoinTeamVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF869CE929CDA7ED00E0A2AE /* JoinTeamVC.swift */; };
 		AF869CEC29CDC9AB00E0A2AE /* TeamDelegates.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF869CEB29CDC9AB00E0A2AE /* TeamDelegates.swift */; };
 		AF94034129C86590001FAA7A /* PROJXTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94034029C86590001FAA7A /* PROJXTableViewController.swift */; };
@@ -45,7 +46,6 @@
 		AF9403D229CAB1FA001FAA7A /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403D129CAB1FA001FAA7A /* SessionManager.swift */; };
 		AF9403D429CAE5CA001FAA7A /* HomeCollectionViewEmptyPlaceholderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403D329CAE5CA001FAA7A /* HomeCollectionViewEmptyPlaceholderCell.swift */; };
 		AF9403D629CAE71A001FAA7A /* UserRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403D529CAE71A001FAA7A /* UserRole.swift */; };
-		AF9403DA29CB0D69001FAA7A /* TeamTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403D929CB0D69001FAA7A /* TeamTableViewCell.swift */; };
 		AF9403DE29CC1041001FAA7A /* TeamInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403DD29CC1041001FAA7A /* TeamInfoVC.swift */; };
 		AF9403E029CC124F001FAA7A /* TaskStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403DF29CC124F001FAA7A /* TaskStatus.swift */; };
 		AF9403E329CC13C1001FAA7A /* TaskItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403E129CC13C1001FAA7A /* TaskItem+CoreDataClass.swift */; };
@@ -57,6 +57,9 @@
 		AFE258DC29C6EC320017ADFB /* UITextField+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE258DB29C6EC320017ADFB /* UITextField+Extension.swift */; };
 		AFE258E129C818860017ADFB /* PROJXLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE258E029C818860017ADFB /* PROJXLabel.swift */; };
 		AFE258E429C81B1D0017ADFB /* InputValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE258E329C81B1D0017ADFB /* InputValidator.swift */; };
+		AFFE538529D6DB3F004668E8 /* PROJXImageTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFE538429D6DB3F004668E8 /* PROJXImageTextCell.swift */; };
+		AFFE538929DBF4A6004668E8 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFE538829DBF4A6004668E8 /* Logger.swift */; };
+		AFFE538C29DE94E1004668E8 /* NotificationUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFE538B29DE94E1004668E8 /* NotificationUpdate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,7 +71,8 @@
 		AF59E0AF29D18F9800B4AF7C /* SignupStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupStatus.swift; sourceTree = "<group>"; };
 		AF59E0B329D1A0F000B4AF7C /* TeamProfileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamProfileCell.swift; sourceTree = "<group>"; };
 		AF59E0B529D1A0FD00B4AF7C /* TeamOwnerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamOwnerCell.swift; sourceTree = "<group>"; };
-		AF59E0BC29D30D8700B4AF7C /* EditTeamVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTeamVC.swift; sourceTree = "<group>"; };
+		AF59E0BE29D448EC00B4AF7C /* MenuProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuProvider.swift; sourceTree = "<group>"; };
+		AF59E0C229D5706300B4AF7C /* PROJXImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PROJXImagePicker.swift; sourceTree = "<group>"; };
 		AF60B0D829C2D70B0070B4E0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AF60B0DA29C2D70B0070B4E0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		AF60B0E129C2D70D0070B4E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -81,7 +85,7 @@
 		AF60B0FF29C2F4060070B4E0 /* TeamsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamsVC.swift; sourceTree = "<group>"; };
 		AF60B10129C2F4100070B4E0 /* UpdatesVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatesVC.swift; sourceTree = "<group>"; };
 		AF60B10329C2F41F0070B4E0 /* ProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVC.swift; sourceTree = "<group>"; };
-		AF869CE729CDA7BE00E0A2AE /* CreateTeamVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTeamVC.swift; sourceTree = "<group>"; };
+		AF869CE729CDA7BE00E0A2AE /* CreateEditTeamVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEditTeamVC.swift; sourceTree = "<group>"; };
 		AF869CE929CDA7ED00E0A2AE /* JoinTeamVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinTeamVC.swift; sourceTree = "<group>"; };
 		AF869CEB29CDC9AB00E0A2AE /* TeamDelegates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamDelegates.swift; sourceTree = "<group>"; };
 		AF94034029C86590001FAA7A /* PROJXTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PROJXTableViewController.swift; sourceTree = "<group>"; };
@@ -99,7 +103,6 @@
 		AF9403D129CAB1FA001FAA7A /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		AF9403D329CAE5CA001FAA7A /* HomeCollectionViewEmptyPlaceholderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCollectionViewEmptyPlaceholderCell.swift; sourceTree = "<group>"; };
 		AF9403D529CAE71A001FAA7A /* UserRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRole.swift; sourceTree = "<group>"; };
-		AF9403D929CB0D69001FAA7A /* TeamTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamTableViewCell.swift; sourceTree = "<group>"; };
 		AF9403DD29CC1041001FAA7A /* TeamInfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamInfoVC.swift; sourceTree = "<group>"; };
 		AF9403DF29CC124F001FAA7A /* TaskStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStatus.swift; sourceTree = "<group>"; };
 		AF9403E129CC13C1001FAA7A /* TaskItem+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TaskItem+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -112,6 +115,9 @@
 		AFE258E029C818860017ADFB /* PROJXLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PROJXLabel.swift; sourceTree = "<group>"; };
 		AFE258E329C81B1D0017ADFB /* InputValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputValidator.swift; sourceTree = "<group>"; };
 		AFF520B929CDFDAC001450F5 /* ProjX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProjX.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AFFE538429D6DB3F004668E8 /* PROJXImageTextCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PROJXImageTextCell.swift; sourceTree = "<group>"; };
+		AFFE538829DBF4A6004668E8 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		AFFE538B29DE94E1004668E8 /* NotificationUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationUpdate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,7 +200,6 @@
 			isa = PBXGroup;
 			children = (
 				AF59E0BB29D2A45500B4AF7C /* Delegates */,
-				AFE258E229C81B050017ADFB /* Util */,
 				AF3DB87729C442FD00097A71 /* CoreData */,
 				AF3DB87429C4422300097A71 /* Session */,
 				AF3DB87129C433E900097A71 /* Extensions */,
@@ -224,7 +229,12 @@
 		AF60B0ED29C2D8470070B4E0 /* Helper+Config */ = {
 			isa = PBXGroup;
 			children = (
+				AFE258E329C81B1D0017ADFB /* InputValidator.swift */,
+				AF59E0AB29D03AFE00B4AF7C /* Util.swift */,
 				AF60B0EE29C2D8F50070B4E0 /* GlobalConstants.swift */,
+				AF59E0BE29D448EC00B4AF7C /* MenuProvider.swift */,
+				AF59E0C229D5706300B4AF7C /* PROJXImagePicker.swift */,
+				AFFE538829DBF4A6004668E8 /* Logger.swift */,
 			);
 			path = "Helper+Config";
 			sourceTree = "<group>";
@@ -236,6 +246,7 @@
 				AF94034029C86590001FAA7A /* PROJXTableViewController.swift */,
 				AFE258E029C818860017ADFB /* PROJXLabel.swift */,
 				AF94039529C9ABF8001FAA7A /* PROJXCollectionViewController.swift */,
+				AFFE538429D6DB3F004668E8 /* PROJXImageTextCell.swift */,
 			);
 			path = "CustomViews+Controllers";
 			sourceTree = "<group>";
@@ -252,6 +263,7 @@
 				AF9AB1BF29C82C0500246A39 /* StatusUpdate.swift */,
 				AF9403D529CAE71A001FAA7A /* UserRole.swift */,
 				AF9403DF29CC124F001FAA7A /* TaskStatus.swift */,
+				AFFE538B29DE94E1004668E8 /* NotificationUpdate.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -259,6 +271,7 @@
 		AF60B0F729C2F1070070B4E0 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				AFFE538A29DE8C8B004668E8 /* Tasks */,
 				AF9403DC29CC1017001FAA7A /* Teams */,
 				AF3DB86829C346E400097A71 /* Login */,
 				AF60B0FA29C2F3A20070B4E0 /* Root */,
@@ -285,7 +298,6 @@
 				AF94039829C9B00C001FAA7A /* HomeCollectionViewTaskCell.swift */,
 				AF9403D329CAE5CA001FAA7A /* HomeCollectionViewEmptyPlaceholderCell.swift */,
 				AF9403CF29CA9BCF001FAA7A /* HomeCollectionViewHeaderView.swift */,
-				AF9403D929CB0D69001FAA7A /* TeamTableViewCell.swift */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -294,9 +306,8 @@
 			isa = PBXGroup;
 			children = (
 				AF9403DD29CC1041001FAA7A /* TeamInfoVC.swift */,
-				AF869CE729CDA7BE00E0A2AE /* CreateTeamVC.swift */,
+				AF869CE729CDA7BE00E0A2AE /* CreateEditTeamVC.swift */,
 				AF869CE929CDA7ED00E0A2AE /* JoinTeamVC.swift */,
-				AF59E0BC29D30D8700B4AF7C /* EditTeamVC.swift */,
 			);
 			path = Teams;
 			sourceTree = "<group>";
@@ -310,13 +321,11 @@
 			path = TeamInfo;
 			sourceTree = "<group>";
 		};
-		AFE258E229C81B050017ADFB /* Util */ = {
+		AFFE538A29DE8C8B004668E8 /* Tasks */ = {
 			isa = PBXGroup;
 			children = (
-				AFE258E329C81B1D0017ADFB /* InputValidator.swift */,
-				AF59E0AB29D03AFE00B4AF7C /* Util.swift */,
 			);
-			path = Util;
+			path = Tasks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -399,21 +408,23 @@
 				AF9403D429CAE5CA001FAA7A /* HomeCollectionViewEmptyPlaceholderCell.swift in Sources */,
 				AF9AB1C029C82C0500246A39 /* StatusUpdate.swift in Sources */,
 				AF60B0F929C2F1F30070B4E0 /* MainTabbar.swift in Sources */,
-				AF9403DA29CB0D69001FAA7A /* TeamTableViewCell.swift in Sources */,
 				AF94039929C9B00C001FAA7A /* HomeCollectionViewTaskCell.swift in Sources */,
 				AF3DB87029C4288600097A71 /* WelcomePage.swift in Sources */,
 				AF59E0AC29D03AFE00B4AF7C /* Util.swift in Sources */,
+				AF59E0C329D5706300B4AF7C /* PROJXImagePicker.swift in Sources */,
 				AF9403E429CC13C1001FAA7A /* TaskItem+CoreDataProperties.swift in Sources */,
 				AF94038729C98F43001FAA7A /* User+CoreDataProperties.swift in Sources */,
 				AF94038629C98F43001FAA7A /* User+CoreDataClass.swift in Sources */,
-				AF59E0BD29D30D8700B4AF7C /* EditTeamVC.swift in Sources */,
 				AF9403D029CA9BCF001FAA7A /* HomeCollectionViewHeaderView.swift in Sources */,
+				AF59E0BF29D448EC00B4AF7C /* MenuProvider.swift in Sources */,
 				AF60B10229C2F4100070B4E0 /* UpdatesVC.swift in Sources */,
 				AF9403D229CAB1FA001FAA7A /* SessionManager.swift in Sources */,
 				AF60B0D929C2D70B0070B4E0 /* AppDelegate.swift in Sources */,
 				AF869CEC29CDC9AB00E0A2AE /* TeamDelegates.swift in Sources */,
+				AFFE538C29DE94E1004668E8 /* NotificationUpdate.swift in Sources */,
 				AF94039229C995A9001FAA7A /* Team+CoreDataClass.swift in Sources */,
 				AF9403E029CC124F001FAA7A /* TaskStatus.swift in Sources */,
+				AFFE538929DBF4A6004668E8 /* Logger.swift in Sources */,
 				AF60B0FE29C2F3E70070B4E0 /* TasksVC.swift in Sources */,
 				AFE258D729C49DA30017ADFB /* LoginDelegates.swift in Sources */,
 				AFE258E429C81B1D0017ADFB /* InputValidator.swift in Sources */,
@@ -424,6 +435,7 @@
 				AF60B10029C2F4060070B4E0 /* TeamsVC.swift in Sources */,
 				AF94039629C9ABF8001FAA7A /* PROJXCollectionViewController.swift in Sources */,
 				AF59E0B629D1A0FD00B4AF7C /* TeamOwnerCell.swift in Sources */,
+				AFFE538529D6DB3F004668E8 /* PROJXImageTextCell.swift in Sources */,
 				AF9403CE29CA12E2001FAA7A /* Date+Extension.swift in Sources */,
 				AF60B0F229C2EDFF0070B4E0 /* PROJXViewController.swift in Sources */,
 				AFE258D329C496580017ADFB /* SignupVC.swift in Sources */,
@@ -434,7 +446,7 @@
 				AFE258D529C49CF00017ADFB /* SigninVC.swift in Sources */,
 				AF94034129C86590001FAA7A /* PROJXTableViewController.swift in Sources */,
 				AF60B0DB29C2D70B0070B4E0 /* SceneDelegate.swift in Sources */,
-				AF869CE829CDA7BE00E0A2AE /* CreateTeamVC.swift in Sources */,
+				AF869CE829CDA7BE00E0A2AE /* CreateEditTeamVC.swift in Sources */,
 				AF60B0EF29C2D8F50070B4E0 /* GlobalConstants.swift in Sources */,
 				AF9403E329CC13C1001FAA7A /* TaskItem+CoreDataClass.swift in Sources */,
 			);
