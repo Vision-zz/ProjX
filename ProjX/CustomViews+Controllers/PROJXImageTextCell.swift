@@ -51,7 +51,6 @@ class PROJXImageTextCell: UITableViewCell {
 
     private func configureCellUI() {
         self.backgroundColor = GlobalConstants.Background.secondary
-        self.accessoryType = .disclosureIndicator
         contentView.addSubview(cellImageView)
         contentView.addSubview(cellTextLabel)
     }

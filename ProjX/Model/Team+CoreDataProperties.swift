@@ -16,7 +16,6 @@ extension Team {
         return NSFetchRequest<Team>(entityName: "Team")
     }
 
-    @NSManaged public var categories: [String]?
     @NSManaged public var tasksID: [UUID]?
     @NSManaged public var teamAdminsID: [UUID]?
     @NSManaged public var teamID: UUID?

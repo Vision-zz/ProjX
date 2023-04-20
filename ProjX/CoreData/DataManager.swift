@@ -22,10 +22,6 @@ class DataManager {
         return (try? context.fetch(User.fetchRequest())) ?? []
     }
 
-    func getAllTeams() -> [Team] {
-        return (try? context.fetch(Team.fetchRequest())) ?? []
-    }
-
     func getUserMatching(_ predicate: (User) -> Bool) -> User? {
         let users = getAllUsers()
         for user in users {
@@ -34,6 +30,10 @@ class DataManager {
             }
         }
         return nil
+    }
+
+    func getAllTeams() -> [Team] {
+        return (try? context.fetch(Team.fetchRequest())) ?? []
     }
 
     func getTeamMatching(_ predicate: (Team) -> Bool) -> Team? {
@@ -46,6 +46,14 @@ class DataManager {
         return nil
     }
 
+    func getAllTasks(for team: Team) -> [TaskItem] {
+        return (try? context.fetch(TaskItem.fetchRequest())) ?? []
+    }
+
+    func getTasks(for team: Team, matching predicate: (TaskItem) -> Bool) -> [TaskItem] {
+        return getAllTasks(for: team).filter(predicate)
+    }
+
     func createUser(username: String, password: String, name: String, emailID: String, profileImage: UIImage? = nil) -> SignupStatus {
         let user = getUserMatching({ $0.username != nil && $0.username == username })
         guard user == nil else {
@@ -53,34 +61,64 @@ class DataManager {
         }
 
         let newUser = User(context: context)
+        let userID = UUID()
         newUser.username = username
         newUser.password = password
         newUser.name = name
         newUser.emailID = emailID
-        newUser.profileImage = profileImage?.jpegData(compressionQuality: 1)
         newUser.userTeams = []
-        newUser.userID = UUID()
+        newUser.userID = userID
+        newUser.notificationUpdates = []
+
+        if profileImage != nil {
+            DataManager.shared.saveImage(profileImage!, with: userID.uuidString)
+        }
+
         saveContext()
 
         return .success(newUser)
     }
 
+    @discardableResult
     func createTeam(name: String, image: UIImage?) -> Team {
         let newTeam = Team(context: context)
         newTeam.teamID = UUID()
         newTeam.teamCreatedAt = Date()
         newTeam.teamName = name
+        if image != nil {
+            newTeam.setTeamIcon(image: image!)
+        }
         newTeam.teamOwnerID = SessionManager.shared.signedInUser!.userID
         newTeam.teamJoinPasscode = Util.generateAlphanumericString(of: 15)
-        newTeam.categories = []
         newTeam.teamMembersID = []
         newTeam.teamAdminsID = []
         newTeam.tasksID = []
 
         SessionManager.shared.signedInUser?.teams.append(newTeam)
-
+        if SessionManager.shared.signedInUser?.selectedTeam == nil {
+            SessionManager.shared.changeSelectedTeam(to: newTeam)
+        }
         saveContext()
         return newTeam
+    }
+
+    @discardableResult
+    func createTask(title: String, description: String, deadLine: Date, assignedTo: User, priority: TaskPriority) -> TaskItem {
+        let task = TaskItem(context: context)
+        task.taskID = UUID()
+        task.title = title
+        task.taskDescription = description
+        task.deadline = deadLine
+        task.assignedToUser = assignedTo
+        task.priority = priority.rawValue
+        task.createdAt = Date()
+        task.createdByUser = SessionManager.shared.signedInUser!
+        task.taskStatus = .incomplete
+        task.statusUpdates = []
+        SessionManager.shared.signedInUser?.selectedTeam?.tasksID?.append(task.taskID!)
+
+        saveContext()
+        return task
     }
 
     func saveImage(_ image: UIImage, with name: String) {

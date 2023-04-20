@@ -250,8 +250,8 @@ class CreateEditTeamVC: PROJXViewController {
             if teamIcon != nil {
                 self.editingTeam?.setTeamIcon(image: teamIcon!)
             }
-            DataManager.shared.saveContext()
             delegate?.changesSaved(self.editingTeam!)
+            DataManager.shared.saveContext()
         }
     }
 

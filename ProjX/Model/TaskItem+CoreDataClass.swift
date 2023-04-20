@@ -2,7 +2,7 @@
 //  TaskItem+CoreDataClass.swift
 //  ProjX
 //
-//  Created by Sathya on 23/03/23.
+//  Created by Sathya on 06/04/23.
 //
 //
 
@@ -26,9 +26,39 @@ public class TaskItem: NSManagedObject {
         }
     }
 
+    var taskPriority: TaskPriority {
+        get {
+            let rawValue = priority < 0 ? 0 : priority
+            return TaskPriority.init(rawValue: rawValue)!
+        }
+        set {
+            priority = newValue.rawValue
+        }
+    }
+
     var assignedToUser: User? {
-        guard let assignedTo = assignedTo else { return nil }
-        return DataManager.shared.getUserMatching({ $0.userID == assignedTo })
+        get {
+            guard let assignedTo = assignedTo else { return nil }
+            return DataManager.shared.getUserMatching({ $0.userID == assignedTo })
+        }
+        set {
+            assignedTo = newValue?.userID
+        }
+    }
+
+    var createdByUser: User {
+        get {
+            return DataManager.shared.getUserMatching({ $0.userID != nil && $0.userID == createdBy })!
+        }
+        set {
+            createdBy = newValue.userID
+        }
+    }
+
+    func markTaskAsCompleted() {
+        taskStatus = .complete
+        completedAt = Date()
+        DataManager.shared.saveContext()
     }
 
 }

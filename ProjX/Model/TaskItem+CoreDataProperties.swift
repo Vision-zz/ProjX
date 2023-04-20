@@ -2,7 +2,7 @@
 //  TaskItem+CoreDataProperties.swift
 //  ProjX
 //
-//  Created by Sathya on 23/03/23.
+//  Created by Sathya on 06/04/23.
 //
 //
 
@@ -16,16 +16,17 @@ extension TaskItem {
         return NSFetchRequest<TaskItem>(entityName: "TaskItem")
     }
 
-    @NSManaged public var assignedTo: UUID?
-    @NSManaged public var category: String?
+    @NSManaged public var priority: Int16
     @NSManaged public var createdAt: Date?
-    @NSManaged public var createdBy: User?
     @NSManaged public var deadline: Date?
+    @NSManaged public var completedAt: Date?
     @NSManaged public var statusUpdates: [StatusUpdate]?
     @NSManaged public var taskDescription: String?
     @NSManaged public var taskID: UUID?
-    @NSManaged public var title: String?
     @NSManaged public var taskStatusID: Int16
+    @NSManaged public var title: String?
+    @NSManaged public var createdBy: UUID?
+    @NSManaged public var assignedTo: UUID?
 
 }
 

@@ -93,7 +93,7 @@ class TeamInfoVC: PROJXTableViewController {
         guard indexPath.section == 2, indexPath.row < 3 else { return }
 
         let keyValueDict: [(key: String, value: String)] = [
-            ("Join code", "\"\(team.teamJoinPasscode ?? "-")\""),
+            ("Join code", "\(team.teamJoinPasscode ?? "-")"),
             ("Active Tasks", "\(team.tasks.filter({ $0.taskStatus == .incomplete }).count)"),
             ("Total Tasks", "\(team.tasks.count)")
         ]
@@ -115,7 +115,11 @@ class TeamInfoVC: PROJXTableViewController {
     private func configureMembersViewCell(for cell: PROJXImageTextCell, at indexPath: IndexPath) {
         let users = indexPath.section == 3 ? teamAdmins : teamMembers
         cell.cellImageView.contentMode = .scaleAspectFill
-        cell.configureCellData(text: users[indexPath.row].name ?? "-", image: users[indexPath.row].getUserProfileIcon(reduceTo: CGSize(width: 15, height: 15)))
+        var name = users[indexPath.row].name ?? "---"
+        if users[indexPath.row].userID == SessionManager.shared.signedInUser?.userID {
+            name += " (You)"
+        }
+        cell.configureCellData(text: name, image: users[indexPath.row].getUserProfileIcon(reduceTo: CGSize(width: 15, height: 15)))
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -269,6 +273,7 @@ class TeamInfoVC: PROJXTableViewController {
 extension TeamInfoVC: TeamOptionsDelegate {
     func teamSelectButtonPressed() {
         SessionManager.shared.changeSelectedTeam(to: team)
+        tableView.reloadSections(IndexSet(integer: 0), with: .none)
     }
 
     func teamEditButtonPressed() {
@@ -277,7 +282,7 @@ extension TeamInfoVC: TeamOptionsDelegate {
         let nav = UINavigationController(rootViewController: createTeamVc)
         nav.modalPresentationStyle = .formSheet
         if let sheet = nav.sheetPresentationController {
-            sheet.detents = [.custom(resolver: { _ in return 300 }), .large()]
+            sheet.detents = [.custom(resolver: { _ in return 350 }), .large()]
             sheet.preferredCornerRadius = 20
             sheet.prefersGrabberVisible = true
         }

@@ -23,6 +23,7 @@ class ProfileVC: PROJXViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Logout", for: .normal)
         button.addTarget(self, action: #selector(logoutButtonOnClick), for: .touchUpInside)
+        button.setTitleColor(.label, for: .normal)
         return button
     }()
 

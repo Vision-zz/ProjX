@@ -20,20 +20,17 @@ class TeamsVC: PROJXTableViewController {
 
     lazy var currentTeamID: String? = nil
 
-    lazy var noDataStack: UIStackView = {
+    lazy var noDataTableBackgroundView: UILabel = {
 
-        let titleAttributes: [NSAttributedString.Key: Any] = [
+        let title = NSMutableAttributedString(string: "Don't see anything here?\n", attributes: [
             .font: UIFont.systemFont(ofSize: 22, weight: .bold),
             .foregroundColor: UIColor.label,
-        ]
-
-        let descAttributes: [NSAttributedString.Key: Any] = [
+        ])
+        let desc = NSMutableAttributedString(string: "Press the + to create / join a team", attributes: [
             .font: UIFont.systemFont(ofSize: 14),
             .foregroundColor: UIColor.secondaryLabel
-        ]
+        ])
 
-        let title = NSMutableAttributedString(string: "Dont' see anthing here?\n", attributes: titleAttributes)
-        let desc = NSMutableAttributedString(string: "Press the + to create / join a team", attributes: descAttributes)
         title.append(desc)
 
         let noDataTitleLabel = UILabel()
@@ -41,13 +38,7 @@ class TeamsVC: PROJXTableViewController {
         noDataTitleLabel.attributedText = title
         noDataTitleLabel.numberOfLines = 0
         noDataTitleLabel.textAlignment = .center
-
-        let stack = UIStackView(arrangedSubviews: [noDataTitleLabel])
-        stack.axis = .vertical
-        stack.spacing = 15
-        stack.alignment = .center
-        stack.isHidden = true
-        return stack
+        return noDataTitleLabel
     }()
 
     struct SectionData {
@@ -84,19 +75,13 @@ class TeamsVC: PROJXTableViewController {
         tableView.reloadData()
     }
 
-//    override func viewWillDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(animated)
-//        dataSource = []
-//        tableView.reloadData()
-//    }
-
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         dataSource = []
     }
 
     private func configureUI() {
-        title = "Team"
+        title = "Teams"
 
         let newAction = UIAction(title: "Create Team") { [weak self] _ in
             let createTeamVc = CreateEditTeamVC()
@@ -104,7 +89,7 @@ class TeamsVC: PROJXTableViewController {
             let nav = UINavigationController(rootViewController: createTeamVc)
             nav.modalPresentationStyle = .formSheet
             if let sheet = nav.sheetPresentationController {
-                sheet.detents = [.custom(resolver: { _ in return 300 }), .large()]
+                sheet.detents = [.custom(resolver: { _ in return 350 }), .large()]
                 sheet.preferredCornerRadius = 20
                 sheet.prefersGrabberVisible = true
             }
@@ -130,19 +115,19 @@ class TeamsVC: PROJXTableViewController {
     private func configureTableView() {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TeamsTableViewCell")
         tableView.register(PROJXImageTextCell.self, forCellReuseIdentifier: PROJXImageTextCell.identifier)
-        tableView.backgroundView = noDataStack
+        tableView.backgroundView = noDataTableBackgroundView
     }
 
     private func configureDatasource() {
         dataSource = []
-        noDataStack.isHidden = true
+        noDataTableBackgroundView.isHidden = true
         let userTeams = SessionManager.shared.signedInUser?.teams
         guard let userTeams = userTeams else { return }
         let currentTeam = userTeams.first(where: { $0.teamID != nil && $0.teamID == SessionManager.shared.signedInUser?.selectedTeamID })
         currentTeamID = currentTeam?.teamID?.uuidString
         let otherTeams = userTeams.filter({ $0.teamID != nil && $0.teamID != SessionManager.shared.signedInUser?.selectedTeamID })
         if currentTeam == nil && otherTeams.isEmpty {
-            noDataStack.isHidden = false
+            noDataTableBackgroundView.isHidden = false
             return
         }
         dataSource.append(SectionData(section: 0, sectionHeader: "Current Team", rows: currentTeam != nil ? [currentTeam!] : []))

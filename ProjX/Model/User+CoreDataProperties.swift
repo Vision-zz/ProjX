@@ -20,7 +20,6 @@ extension User {
     @NSManaged public var name: String?
     @NSManaged public var notificationUpdates: [NotificationUpdate]?
     @NSManaged public var password: String?
-    @NSManaged public var profileImage: Data?
     @NSManaged public var userID: UUID?
     @NSManaged public var username: String?
     @NSManaged public var userTeams: [UUID]?

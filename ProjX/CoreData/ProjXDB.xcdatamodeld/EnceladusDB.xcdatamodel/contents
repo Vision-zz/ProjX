@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22D68" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22E261" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="TaskItem" representedClassName=".TaskItem" syncable="YES">
-        <attribute name="assignedTo" optional="YES" attributeType="UUID" valueTransformerName="NSSecureUnarchiveFromData" usesScalarValueType="NO" customClassName="User"/>
-        <attribute name="category" attributeType="String"/>
+        <attribute name="assignedTo" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="completedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="createdBy" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="User"/>
+        <attribute name="createdBy" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="deadline" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="priority" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="statusUpdates" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[StatusUpdate]"/>
         <attribute name="taskDescription" attributeType="String"/>
         <attribute name="taskID" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="taskStatusID" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="taskStatusID" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" attributeType="String"/>
     </entity>
     <entity name="Team" representedClassName=".Team" syncable="YES">
-        <attribute name="categories" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
         <attribute name="tasksID" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[UUID]"/>
         <attribute name="teamAdminsID" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[UUID]"/>
         <attribute name="teamCreatedAt" attributeType="Date" usesScalarValueType="NO"/>

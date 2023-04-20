@@ -101,9 +101,11 @@ class TeamProfileCell: UITableViewCell {
         ])
 
         teamName.append(teamCreatedAt)
-
         teamNameLabel.attributedText = teamName
-
+        if team.isSelected {
+            teamIcon.layer.borderWidth = 2
+            teamIcon.layer.borderColor = UIColor.systemGreen.cgColor
+        }
         configureButtonMenu(for: team)
     }
 

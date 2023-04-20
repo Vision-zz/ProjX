@@ -16,16 +16,10 @@ class MainTabbar: UITabBarController {
 
     private func configureTabbar() {
 
-//        let home = UINavigationController(rootViewController: HomeVC())
         let browse = UINavigationController(rootViewController: TasksVC())
         let team = UINavigationController(rootViewController: TeamsVC())
-        let updates = UINavigationController(rootViewController: UpdatesVC())
+//        let updates = UINavigationController(rootViewController: UpdatesVC())
         let profile = UINavigationController(rootViewController: ProfileVC())
-
-//        home.tabBarItem.image = UIImage(systemName: "house")
-//        home.tabBarItem.selectedImage = UIImage(systemName: "house.fill")
-//        home.title = "Home"
-//        home.navigationBar.prefersLargeTitles = true
 
         browse.tabBarItem.image = UIImage(systemName: "rectangle.stack")
         browse.tabBarItem.selectedImage = UIImage(systemName: "rectangle.stack.fill")
@@ -34,13 +28,13 @@ class MainTabbar: UITabBarController {
 
         team.tabBarItem.image = UIImage(systemName: "person.2")
         team.tabBarItem.selectedImage = UIImage(systemName: "person.2.fill")
-        team.title = "Team"
+        team.title = "Teams"
         team.navigationBar.prefersLargeTitles = true
 
-        updates.tabBarItem.image = UIImage(systemName: "bell")
-        updates.tabBarItem.selectedImage = UIImage(systemName: "bell.fill")
-        updates.title = "Updates"
-        updates.navigationBar.prefersLargeTitles = true
+//        updates.tabBarItem.image = UIImage(systemName: "bell")
+//        updates.tabBarItem.selectedImage = UIImage(systemName: "bell.fill")
+//        updates.title = "Updates"
+//        updates.navigationBar.prefersLargeTitles = true
 
         profile.tabBarItem.image = UIImage(systemName: "person.crop.circle")
         profile.tabBarItem.selectedImage = UIImage(systemName: "person.crop.circle.fill")
@@ -49,7 +43,7 @@ class MainTabbar: UITabBarController {
 
         self.tabBar.tintColor = .label
         self.tabBar.isTranslucent = true
-        self.viewControllers = [browse, team, updates, profile]
+        self.viewControllers = [browse, team, profile]
 
     }
 

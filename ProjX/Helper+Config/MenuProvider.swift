@@ -13,13 +13,12 @@ class MenuProvider {
             var children: [UIMenuElement] = []
 
             let selectTitle = team.isSelected ? "Selected" : "Select"
-            let image = team.isSelected ? UIImage(systemName: "checkmark.circle") : nil
-            children.append(UIAction(title: selectTitle, image: image, attributes: team.isSelected ? [.disabled] : []) { _ in
+            children.append(UIAction(title: selectTitle, image: UIImage(systemName: "checkmark.circle"), attributes: team.isSelected ? [.disabled] : []) { _ in
                 delegate?.teamSelectButtonPressed()
             })
 
             if SessionManager.shared.signedInUser!.isOwner(team) {
-                children.append(UIAction(title: "Edit", image: UIImage(systemName: "")) { _ in
+                children.append(UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { _ in
                     delegate?.teamEditButtonPressed()
                 })
             }

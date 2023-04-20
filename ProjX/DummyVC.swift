@@ -43,6 +43,14 @@ class DummyVC: UIViewController {
         for user in users {
             DataManager.shared.context.delete(user)
         }
+        let tasks = try? DataManager.shared.context.fetch(TaskItem.fetchRequest())
+        guard let tasks = tasks else {
+            return
+        }
+        print(tasks.count)
+        for taskItem in tasks {
+            DataManager.shared.context.delete(taskItem)
+        }
         DataManager.shared.saveContext()
     }
 
@@ -52,7 +60,6 @@ class DummyVC: UIViewController {
         
         let team1 = Team(context: DataManager.shared.context)
         team1.teamID = UUID()
-        team1.categories = ["Very High Priority", "High Priority", "Regular Priority", "Low Priority"]
         team1.teamName = "Yoho"
         team1.teamJoinPasscode = "JoinYoho"
         team1.tasks = []
@@ -60,7 +67,6 @@ class DummyVC: UIViewController {
 
         let team2 = Team(context: DataManager.shared.context)
         team2.teamID = UUID()
-        team2.categories = ["Important", "Normal", "Less Important"]
         team2.teamName = "Bccenture"
         team2.teamJoinPasscode = "JoinBccenture"
         team2.tasks = []
@@ -183,7 +189,141 @@ class DummyVC: UIViewController {
         user11.teams = [team1]
         user12.teams = [team1]
 
+        let task1 = TaskItem(context: DataManager.shared.context)
+        task1.taskID = UUID()
+        task1.createdAt = Date()
+        task1.title = "Task 1"
+        task1.taskDescription = "This is a task that needs to be finished within a particular amount of time. This task is named task 1"
+        task1.deadline = Date(timeIntervalSinceNow: 300000)
+        task1.createdByUser = user1
+        task1.assignedToUser = user2
+        task1.statusUpdates = []
+        task1.taskStatus = .incomplete
+        team1.tasksID?.append(task1.taskID!)
+
+        let task2 = TaskItem(context: DataManager.shared.context)
+        task2.taskID = UUID()
+        task2.createdAt = Date()
+        task2.title = "Task 2"
+        task2.taskDescription = "This is a task that needs to be finished within a particular amount of time. This task is named task 2"
+        task2.deadline = Date(timeIntervalSinceNow: 400000)
+        task2.createdByUser = user8
+        task2.assignedToUser = user10
+        task2.statusUpdates = []
+        task2.taskStatus = .incomplete
+        team2.tasksID?.append(task2.taskID!)
+
+        let task3 = TaskItem(context: DataManager.shared.context)
+        task3.taskID = UUID()
+        task3.createdAt = Date()
+        task3.title = "Task 3"
+        task3.taskDescription = "This is a task that needs to be finished within a particular amount of time. This task is named task 3"
+        task3.deadline = Date(timeIntervalSinceNow: 700000)
+        task3.createdByUser = user7
+        task3.assignedToUser = user7
+        task3.statusUpdates = []
+        task3.taskStatus = .incomplete
+        team1.tasksID?.append(task3.taskID!)
+
+        let task4 = TaskItem(context: DataManager.shared.context)
+        task4.taskID = UUID()
+        task4.createdAt = Date()
+        task4.title = "Task 4"
+        task4.taskDescription = "This is a task that needs to be finished within a particular amount of time. This task is named task 4"
+        task4.deadline = Date(timeIntervalSinceNow: 900000)
+        task4.createdByUser = user4
+        task4.assignedToUser = user2
+        task4.statusUpdates = []
+        task4.taskStatus = .incomplete
+        team2.tasksID?.append(task4.taskID!)
+
+        let task5 = TaskItem(context: DataManager.shared.context)
+        task5.taskID = UUID()
+        task5.createdAt = Date()
+        task5.title = "Task 5"
+        task5.taskDescription = "This is a task that needs to be finished within a particular amount of time. This task is named task 5"
+        task5.deadline = Date(timeIntervalSinceNow: 200000)
+        task5.createdByUser = user2
+        task5.assignedToUser = user12
+        task5.statusUpdates = []
+        task5.taskStatus = .incomplete
+        team1.tasksID?.append(task5.taskID!)
+
+
+        let task6 = TaskItem(context: DataManager.shared.context)
+        task6.taskID = UUID()
+        task6.createdAt = Date()
+        task6.title = "Task 6. This title is to test the marquee scroll of the titles if it is long"
+        task6.taskDescription = "This is a task that needs to be finished within a particular amount of time. This task is named task 6"
+        task6.deadline = Date(timeIntervalSinceNow: 300000)
+        task6.createdByUser = user5
+        task6.assignedToUser = user5
+        task6.statusUpdates = []
+        task6.taskStatus = .incomplete
+        team1.tasksID?.append(task6.taskID!)
+
+        let task7 = TaskItem(context: DataManager.shared.context)
+        task7.taskID = UUID()
+        task7.createdAt = Date()
+        task7.title = "Task 7"
+        task7.taskDescription = "This is a task that needs to be finished within a particular amount of time. This task is named task 7"
+        task7.deadline = Date(timeIntervalSinceNow: 400000)
+        task7.createdByUser = user4
+        task7.assignedToUser = user5
+        task7.statusUpdates = []
+        task7.taskStatus = .incomplete
+        team2.tasksID?.append(task7.taskID!)
+
+        let task8 = TaskItem(context: DataManager.shared.context)
+        task8.taskID = UUID()
+        task8.createdAt = Date()
+        task8.title = "Task 8"
+        task8.taskDescription = "This is a task that needs to be finished within a particular amount of time. This task is named task 8"
+        task8.deadline = Date(timeIntervalSinceNow: 700000)
+        task8.createdByUser = user3
+        task8.assignedToUser = user8
+        task8.statusUpdates = []
+        task8.taskStatus = .complete
+        team1.tasksID?.append(task8.taskID!)
+
+        let task9 = TaskItem(context: DataManager.shared.context)
+        task9.taskID = UUID()
+        task9.createdAt = Date()
+        task9.title = "Task 9"
+        task9.taskDescription = "This is a task that needs to be finished within a particular amount of time. This task is named task 9"
+        task9.deadline = Date(timeIntervalSinceNow: 900000)
+        task9.createdByUser = user8
+        task9.assignedToUser = user10
+        task9.statusUpdates = []
+        task9.taskStatus = .complete
+        team2.tasksID?.append(task9.taskID!)
+
+        let task10 = TaskItem(context: DataManager.shared.context)
+        task10.taskID = UUID()
+        task10.createdAt = Date()
+        task10.title = "Task 10"
+        task10.taskDescription = "This is a task that needs to be finished within a particular amount of time. This task is named task 10"
+        task10.deadline = Date(timeIntervalSinceNow: 200000)
+        task10.createdByUser = user2
+        task10.assignedToUser = user11
+        task10.statusUpdates = []
+        task10.taskStatus = .complete
+        team1.tasksID?.append(task10.taskID!)
+
+        let task11 = TaskItem(context: DataManager.shared.context)
+        task11.taskID = UUID()
+        task11.createdAt = Date()
+        task11.title = "Task 11"
+        task11.taskDescription = "This is a task that needs to be finished within a particular amount of time. This task is named task 11"
+        task11.deadline = Date(timeIntervalSinceNow: 200000)
+        task11.createdByUser = user2
+        task11.assignedToUser = user2
+        task11.statusUpdates = []
+        task11.taskStatus = .complete
+        team2.tasksID?.append(task10.taskID!)
+
         print("saving")
         DataManager.shared.saveContext()
     }
 }
+

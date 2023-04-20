@@ -23,4 +23,8 @@ extension Date {
         return Calendar.current.startOfDay(for: Date()) == Calendar.current.startOfDay(for: self)
     }
 
+    func isWithinADay() -> Bool {
+        return self.timeIntervalSince(Date().addingTimeInterval(-24 * 60 * 60)) < 0
+    }
+
 }

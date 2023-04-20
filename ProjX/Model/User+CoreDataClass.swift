@@ -11,6 +11,7 @@ import CoreData
 import UIKit
 
 public class User: NSManagedObject {
+
     public override var description: String {
         return "User"
     }
@@ -113,6 +114,9 @@ public class User: NSManagedObject {
         guard !isInTeam(team) else { return }
         self.teams.append(team)
         team.teamMembers.append(self)
+        if selectedTeam == nil {
+            selectedTeam = team
+        }
         DataManager.shared.saveContext()
     }
 
