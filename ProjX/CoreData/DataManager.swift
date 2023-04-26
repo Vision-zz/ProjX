@@ -54,6 +54,7 @@ class DataManager {
         return getAllTasks(for: team).filter(predicate)
     }
 
+    @discardableResult
     func createUser(username: String, password: String, name: String, emailID: String, profileImage: UIImage? = nil) -> SignupStatus {
         let user = getUserMatching({ $0.username != nil && $0.username == username })
         guard user == nil else {
@@ -62,6 +63,8 @@ class DataManager {
 
         let newUser = User(context: context)
         let userID = UUID()
+        newUser.createdAt = Date()
+        newUser.passLastUpdate = Date()
         newUser.username = username
         newUser.password = password
         newUser.name = name
@@ -79,8 +82,46 @@ class DataManager {
         return .success(newUser)
     }
 
+    func deleteUser(username: String) {
+        let user = getUserMatching({ $0.username != nil && $0.username == username })
+        guard let user = user else { return }
+
+        for team in user.teams {
+            if team.teamOwnerID! == user.userID {
+                if let admin = team.teamAdmins.first {
+                    team.teamOwnerID = admin.userID
+                } else {
+                    context.delete(team)
+                    continue
+                }
+            }
+            for task in team.tasks {
+                if task.createdBy != nil && task.createdBy == user.userID {
+                    if task.assignedTo != nil && task.assignedTo == user.userID! {
+                        context.delete(task)
+                        continue
+                    }
+                    if user.roleIn(team: team) == .member {
+                        context.delete(task)
+                        continue
+                    } else {
+                        task.createdBy = team.teamOwnerID
+                        continue
+                    }
+                }
+                if task.assignedTo != nil && task.assignedTo == user.userID! {
+                    task.assignedTo = team.allTeamMembers.randomElement()!.userID
+                }
+            }
+        }
+
+        context.delete(user)
+        saveContext()
+        SessionManager.shared.logout()
+    }
+
     @discardableResult
-    func createTeam(name: String, image: UIImage?) -> Team {
+    func createTeam(name: String, createdBy: User, image: UIImage?) -> Team {
         let newTeam = Team(context: context)
         newTeam.teamID = UUID()
         newTeam.teamCreatedAt = Date()
@@ -88,15 +129,15 @@ class DataManager {
         if image != nil {
             newTeam.setTeamIcon(image: image!)
         }
-        newTeam.teamOwnerID = SessionManager.shared.signedInUser!.userID
+        newTeam.teamOwnerID = createdBy.userID
         newTeam.teamJoinPasscode = Util.generateAlphanumericString(of: 15)
         newTeam.teamMembersID = []
         newTeam.teamAdminsID = []
         newTeam.tasksID = []
 
-        SessionManager.shared.signedInUser?.teams.append(newTeam)
-        if SessionManager.shared.signedInUser?.selectedTeam == nil {
-            SessionManager.shared.changeSelectedTeam(to: newTeam)
+        createdBy.teams.append(newTeam)
+        if createdBy.selectedTeam == nil {
+            SessionManager.shared.changeSelectedTeam(of: createdBy, to: newTeam)
         }
         saveContext()
         return newTeam
@@ -130,41 +171,34 @@ class DataManager {
               let compressedData = Util.downsampleImage(from: data, to: CGSize(width: 256, height: 256))?.pngData()
         else { return }
 
-
-
         if FileManager.default.fileExists(atPath: fileURL.path) {
             do {
                 try FileManager.default.removeItem(atPath: fileURL.path)
-                Logger.log("Removed old image at \(fileURL.path)")
-                print("Removed old image")
+                print("Removed old image at \(fileURL.path)")
             } catch let removeError {
-                Logger.log("Couldn't remove file at \(fileURL.path)", removeError)
+                print("Couldn't remove file at \(fileURL.path)", removeError)
             }
-
         }
 
         do {
             try compressedData.write(to: fileURL)
-            Logger.log("Successfully saved image to \(fileURL.path)")
+            print("Successfully saved image to \(fileURL.path)")
         } catch let error {
-            Logger.log("Error saving file with error", error)
+            print("Error saving file with error", error)
         }
     }
 
     func removeImage(with name: String) {
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
-
         let fileURL = documentsDirectory.appendingPathComponent(name)
 
         if FileManager.default.fileExists(atPath: fileURL.path) {
             do {
                 try FileManager.default.removeItem(atPath: fileURL.path)
-                Logger.log("Removed old image at \(fileURL.path)")
-                print("Removed old image")
+                print("Removed old image at \(fileURL.path)")
             } catch let removeError {
-                Logger.log("Couldn't remove file at \(fileURL.path)", removeError)
+                print("Couldn't remove file at \(fileURL.path)", removeError)
             }
-
         }
     }
 
@@ -185,6 +219,18 @@ class DataManager {
             return image
         }
         return nil
+    }
+
+    func setSelectedTheme(_ theme: GlobalConstants.Device.SelectedTheme) {
+        UserDefaults.standard.setValue(theme.rawValue, forKey: GlobalConstants.UserDefaultsKey.selectedTheme)
+        GlobalConstants.StructureDelegates.sceneDelegate?.changeUserInterfaceStyle()
+    }
+
+    func setSelectedAccentColor(_ accentColor: GlobalConstants.Colors.AccentColor) {
+        UserDefaults.standard.set(accentColor.rawValue, forKey: GlobalConstants.UserDefaultsKey.selectedAccentColor)
+        print("Set to user defaults")
+        GlobalConstants.StructureDelegates.appDelegate?.updateTheme()
+        print("Finish update theme")
     }
 
 }

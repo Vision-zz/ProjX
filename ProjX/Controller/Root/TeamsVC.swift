@@ -61,12 +61,26 @@ class TeamsVC: PROJXTableViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    private func configureNotifCenter() {
+        NotificationCenter.default.addObserver(self, selector: #selector(updateTeamTheme), name: Notification.Name("ThemeChanged"), object: nil)
+    }
+
+    @objc private func updateTeamTheme() {
+        configureDatasource()
+        tableView.reloadData()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         configureUI()
         configureDatasource()
         configureTableView()
+        configureNotifCenter()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -82,7 +96,6 @@ class TeamsVC: PROJXTableViewController {
 
     private func configureUI() {
         title = "Teams"
-
         let newAction = UIAction(title: "Create Team") { [weak self] _ in
             let createTeamVc = CreateEditTeamVC()
             createTeamVc.delegate = self
@@ -154,7 +167,6 @@ class TeamsVC: PROJXTableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: PROJXImageTextCell.identifier, for: indexPath) as! PROJXImageTextCell
-        cell.backgroundColor = GlobalConstants.Background.secondary
         cell.accessoryType = .disclosureIndicator
         cell.cellImageView.contentMode = .scaleAspectFill
         cell.configureCellData(text: dataSource[indexPath.section].rows[indexPath.row].teamName ?? "---", image: dataSource[indexPath.section].rows[indexPath.row].getTeamIcon(reduceTo: CGSize(width: 15, height: 15)))

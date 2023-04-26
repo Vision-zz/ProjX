@@ -50,7 +50,6 @@ class PROJXImageTextCell: UITableViewCell {
     }
 
     private func configureCellUI() {
-        self.backgroundColor = GlobalConstants.Background.secondary
         contentView.addSubview(cellImageView)
         contentView.addSubview(cellTextLabel)
     }

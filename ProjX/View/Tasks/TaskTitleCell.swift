@@ -39,7 +39,6 @@ class TaskTitleCell: UITableViewCell {
     }
 
     private func configureCellView() {
-        backgroundColor = GlobalConstants.Background.secondary
         contentView.addSubview(titleLabel)
 
         NSLayoutConstraint.activate([

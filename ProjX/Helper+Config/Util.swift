@@ -26,7 +26,7 @@ class Util {
         let frame = CGRect(x: 0, y: 0, width: 200, height: 200)
         let nameLabel = UILabel(frame: frame)
         nameLabel.textAlignment = .center
-        nameLabel.backgroundColor = .systemGray
+        nameLabel.backgroundColor = GlobalConstants.Colors.accentColor
         nameLabel.textColor = .white
         nameLabel.font = UIFont.boldSystemFont(ofSize: 90)
         var initials = ""

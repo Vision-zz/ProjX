@@ -77,6 +77,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
+    func updateTheme() {
+        NotificationCenter.default.post(name: Notification.Name("ThemeChanged"), object: nil)
+    }
 
 }
 

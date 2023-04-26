@@ -92,6 +92,12 @@ public class Team: NSManagedObject {
         }
     }
 
+    var allTeamMembers: [User] {
+        get {
+            return [teamOwner!] + teamAdmins + teamMembers
+        }
+    }
+
     var isSelected: Bool {
         return SessionManager.shared.signedInUser?.selectedTeamID != nil && SessionManager.shared.signedInUser!.selectedTeamID == teamID
     }

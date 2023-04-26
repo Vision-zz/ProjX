@@ -24,6 +24,8 @@ extension User {
     @NSManaged public var username: String?
     @NSManaged public var userTeams: [UUID]?
     @NSManaged public var selectedTeamID: UUID?
+    @NSManaged public var createdAt: Date?
+    @NSManaged public var passLastUpdate: Date?
 
 }
 

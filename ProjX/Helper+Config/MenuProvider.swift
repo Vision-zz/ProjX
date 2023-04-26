@@ -12,10 +12,11 @@ class MenuProvider {
         let menuElement = UIDeferredMenuElement.uncached { [weak delegate] completion in
             var children: [UIMenuElement] = []
 
-            let selectTitle = team.isSelected ? "Selected" : "Select"
-            children.append(UIAction(title: selectTitle, image: UIImage(systemName: "checkmark.circle"), attributes: team.isSelected ? [.disabled] : []) { _ in
-                delegate?.teamSelectButtonPressed()
-            })
+            if !team.isSelected {
+                children.append(UIAction(title: "Set as Current Team", image: UIImage(systemName: "checkmark.circle"), attributes: team.isSelected ? [.disabled] : []) { _ in
+                    delegate?.teamSelectButtonPressed()
+                })
+            }
 
             if SessionManager.shared.signedInUser!.isOwner(team) {
                 children.append(UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { _ in

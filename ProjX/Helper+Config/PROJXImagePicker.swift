@@ -23,7 +23,6 @@ class PROJXImagePicker {
         return config
     }()
 
-
     private init() { }
 
     func presentPicker(from viewController: UIViewController, handler: @escaping CompletionHandler) {

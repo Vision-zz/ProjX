@@ -128,26 +128,22 @@ class TeamInfoVC: PROJXTableViewController {
                 let cell = tableView.dequeueReusableCell(withIdentifier: TeamProfileCell.identifier, for: indexPath) as! TeamProfileCell
                 cell.teamOptionsDelegate = self
                 cell.configureCell(team: team)
-                cell.backgroundColor = GlobalConstants.Background.secondary
                 cell.selectionStyle = .none
                 return cell
             case 1:
                 let cell = tableView.dequeueReusableCell(withIdentifier: TeamOwnerCell.identifier, for: indexPath) as! TeamOwnerCell
                 guard let owner = team.teamOwner else { return cell }
                 cell.configureCell(user: owner)
-                cell.backgroundColor = GlobalConstants.Background.secondary
                 cell.selectionStyle = .none
                 return cell
             case 2:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "TeamInfoKeyValueCell", for: indexPath)
                 configureKeyValueCell(for: cell, at: indexPath)
-                cell.backgroundColor = GlobalConstants.Background.secondary
                 cell.selectionStyle = .none
                 return cell
             default:
                 let cell = tableView.dequeueReusableCell(withIdentifier: PROJXImageTextCell.identifier, for: indexPath) as! PROJXImageTextCell
                 configureMembersViewCell(for: cell, at: indexPath)
-                cell.backgroundColor = GlobalConstants.Background.secondary
                 cell.selectionStyle = .none
                 return cell
         }
@@ -272,7 +268,7 @@ class TeamInfoVC: PROJXTableViewController {
 
 extension TeamInfoVC: TeamOptionsDelegate {
     func teamSelectButtonPressed() {
-        SessionManager.shared.changeSelectedTeam(to: team)
+        SessionManager.shared.changeSelectedTeam(of: SessionManager.shared.signedInUser!, to: team)
         tableView.reloadSections(IndexSet(integer: 0), with: .none)
     }
 

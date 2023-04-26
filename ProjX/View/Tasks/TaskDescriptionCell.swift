@@ -40,7 +40,6 @@ class TaskDescriptionCell: UITableViewCell {
     }
 
     private func configureCellView() {
-        backgroundColor = GlobalConstants.Background.secondary
         contentView.addSubview(descriptionTextView)
         NSLayoutConstraint.activate([
             descriptionTextView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),

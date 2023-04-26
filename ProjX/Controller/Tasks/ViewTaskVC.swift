@@ -15,6 +15,31 @@ class ViewTaskVC: PROJXTableViewController {
         task.assignedTo != nil && task.assignedTo! == SessionManager.shared.signedInUser?.userID
     }
 
+    lazy var titleLabel: MarqueeLabel = {
+        let label = MarqueeLabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = .label
+        label.type = .continuous
+        label.numberOfLines = 1
+        label.contentMode = .center
+        label.speed = .rate(40)
+        label.textAlignment = .natural
+        label.font = .systemFont(ofSize: 24, weight: .bold)
+        return label
+    }()
+
+    lazy var titleHeaderView: UIView = {
+        let titleView = UIView()
+        titleView.backgroundColor = .clear
+        titleView.addSubview(titleLabel)
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: titleView.topAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: titleView.leadingAnchor, constant: 20),
+            titleLabel.trailingAnchor.constraint(equalTo: titleView.trailingAnchor, constant: -20),
+        ])
+        return titleView
+    }()
+
     convenience init(task: TaskItem) {
         self.init(style: .insetGrouped)
         self.task = task
@@ -31,14 +56,33 @@ class ViewTaskVC: PROJXTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureTitleLabelView()
     }
 
     private func configureView() {
         tableView.allowsSelection = true
+        navigationItem.largeTitleDisplayMode = .never
         tableView.register(TaskTitleCell.self, forCellReuseIdentifier: TaskTitleCell.identifier)
         tableView.register(TaskDescriptionCell.self, forCellReuseIdentifier: TaskDescriptionCell.identifier)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "ViewTaskCell")
     }
+
+    private func configureTitleLabelView() {
+        titleLabel.text = task.title
+        tableView.tableHeaderView = titleHeaderView
+        let newSize = tableView.tableHeaderView!.systemLayoutSizeFitting(CGSize(width: tableView.bounds.width, height: 0))
+        tableView.tableHeaderView!.frame.size.height = newSize.height + 40
+    }
+
+//    override func viewWillDisappear(_ animated: Bool) {
+//        navigationController?.navigationBar.prefersLargeTitles = true
+//        super.viewWillDisappear(animated)
+//    }
+
+//    override func viewDidDisappear(_ animated: Bool) {
+//        navigationController?.navigationBar.prefersLargeTitles = true
+//        super.viewDidDisappear(animated)
+//    }
 
     // MARK: - Table view data source
 
@@ -49,7 +93,7 @@ class ViewTaskVC: PROJXTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
             case 0:
-                return 2
+                return 1
             case 1:
                 return 1
             case 2:
@@ -152,7 +196,7 @@ class ViewTaskVC: PROJXTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        if indexPath.section == 0 && indexPath.row == 1 {
+        if indexPath.section == 0 {
             return indexPath
         }
         return nil
@@ -162,54 +206,48 @@ class ViewTaskVC: PROJXTableViewController {
 
         switch indexPath.section {
             case 0:
-                if indexPath.row == 0 {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: TaskTitleCell.identifier, for: indexPath) as! TaskTitleCell
-                    cell.configureTitle(task.title!)
-                    return cell
-                } else {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: TaskDescriptionCell.identifier) as! TaskDescriptionCell
-                    cell.configureDescription(task.taskDescription ?? "----")
-                    return cell
-                }
+                let cell = tableView.dequeueReusableCell(withIdentifier: TaskDescriptionCell.identifier) as! TaskDescriptionCell
+                cell.configureDescription(task.taskDescription ?? "----")
+                return cell
             case 1:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ViewTaskCell", for: indexPath)
-                cell.backgroundColor = GlobalConstants.Background.secondary
                 configureCategoryCell(cell)
                 return cell
             case 2:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ViewTaskCell", for: indexPath)
-                cell.backgroundColor = GlobalConstants.Background.secondary
                 configureUserInfoCell(cell, indexPath: indexPath)
                 return cell
             case 3:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ViewTaskCell", for: indexPath)
-                cell.backgroundColor = GlobalConstants.Background.secondary
                 configureTaskStatusInfoCell(cell, indexPath: indexPath)
                 return cell
             default:
                 let cell = UITableViewCell()
                 configureButtonCell(cell)
                 return cell
-                
         }
 
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.section == 0 && indexPath.row == 1 {
+        if indexPath.section == 0 {
             guard let desc = task.taskDescription else { return }
             let descView = DescriptionViewVC()
             descView.setDescription(desc)
             let nav = UINavigationController(rootViewController: descView)
             nav.navigationBar.prefersLargeTitles = false
             nav.modalPresentationStyle = .formSheet
+            if let sheet = nav.sheetPresentationController {
+                sheet.detents = [.custom(resolver: { _ in return 300 }), .large()]
+                sheet.prefersGrabberVisible = true
+            }
             present(nav, animated: true)
         }
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 && indexPath.row == 1 {
+        if indexPath.section == 0 {
             return 100
         }
         return 44

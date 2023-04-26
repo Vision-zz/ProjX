@@ -120,7 +120,7 @@ class CreateEditTeamVC: PROJXViewController {
     private lazy var endButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .systemBlue
+        button.backgroundColor = GlobalConstants.Colors.accentColor
         button.layer.cornerRadius = 10
         button.setTitle("Create", for: .normal)
         button.tintColor = .white
@@ -151,6 +151,9 @@ class CreateEditTeamVC: PROJXViewController {
 
     private func configureView() {
         title = isCreatingTeam ? "Create Team" : "Edit Team"
+        view.backgroundColor = GlobalConstants.Colors.secondaryBackground
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeButtonClick))
+
         view.addSubview(teamInfoStack)
         view.addSubview(endButton)
     }
@@ -185,6 +188,10 @@ class CreateEditTeamVC: PROJXViewController {
             endButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
             endButton.heightAnchor.constraint(equalToConstant: 40)
         ])
+    }
+
+    @objc private func closeButtonClick() {
+        self.dismiss(animated: true)
     }
 
     private func getMenu() -> UIMenu {
@@ -243,7 +250,7 @@ class CreateEditTeamVC: PROJXViewController {
             return
         }
         if isCreatingTeam {
-            let newTeam = DataManager.shared.createTeam(name: teamName, image: teamIcon)
+            let newTeam = DataManager.shared.createTeam(name: teamName, createdBy: SessionManager.shared.signedInUser!, image: teamIcon)
             delegate?.changesSaved(newTeam)
         } else {
             self.editingTeam?.teamName = teamName

@@ -138,9 +138,21 @@ public class User: NSManagedObject {
 
         if indexInAdminArr != nil {
             team.teamAdminsID?.remove(at: indexInAdminArr!)
-        }
-
-        if indexInMemberArr != nil {
+            for task in team.tasks {
+                if task.createdBy != nil && task.createdBy == userID {
+                    if roleIn(team: team) == .member {
+                        DataManager.shared.context.delete(task)
+                        continue
+                    } else {
+                        task.createdBy = team.teamOwnerID
+                        continue
+                    }
+                }
+                if task.assignedTo != nil && task.assignedTo == userID! {
+                    task.assignedTo = team.allTeamMembers.randomElement()!.userID
+                }
+            }
+        } else if indexInMemberArr != nil {
             team.teamMembersID?.remove(at: indexInMemberArr!)
         }
 

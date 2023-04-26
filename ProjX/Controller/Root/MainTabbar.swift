@@ -9,17 +9,26 @@ import UIKit
 
 class MainTabbar: UITabBarController {
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureNotifCenter()
         configureTabbar()
     }
 
+    private func configureNotifCenter() {
+        NotificationCenter.default.addObserver(self, selector: #selector(updateTheme), name: Notification.Name("ThemeChanged"), object: nil)
+    }
+    
+    let browse = UINavigationController(rootViewController: TasksVC())
+    let team = UINavigationController(rootViewController: TeamsVC())
+    let profile = UINavigationController(rootViewController: ProfileVC())
+
     private func configureTabbar() {
 
-        let browse = UINavigationController(rootViewController: TasksVC())
-        let team = UINavigationController(rootViewController: TeamsVC())
-//        let updates = UINavigationController(rootViewController: UpdatesVC())
-        let profile = UINavigationController(rootViewController: ProfileVC())
 
         browse.tabBarItem.image = UIImage(systemName: "rectangle.stack")
         browse.tabBarItem.selectedImage = UIImage(systemName: "rectangle.stack.fill")
@@ -31,18 +40,15 @@ class MainTabbar: UITabBarController {
         team.title = "Teams"
         team.navigationBar.prefersLargeTitles = true
 
-//        updates.tabBarItem.image = UIImage(systemName: "bell")
-//        updates.tabBarItem.selectedImage = UIImage(systemName: "bell.fill")
-//        updates.title = "Updates"
-//        updates.navigationBar.prefersLargeTitles = true
-
         profile.tabBarItem.image = UIImage(systemName: "person.crop.circle")
         profile.tabBarItem.selectedImage = UIImage(systemName: "person.crop.circle.fill")
         profile.title = "Profile"
         profile.navigationBar.prefersLargeTitles = true
 
-        self.tabBar.tintColor = .label
+        self.tabBar.tintColor = GlobalConstants.Colors.accentColor
+        self.tabBar.unselectedItemTintColor = .label
         self.tabBar.isTranslucent = true
+        updateAccentColor()
         self.viewControllers = [browse, team, profile]
 
     }
@@ -56,4 +62,18 @@ class MainTabbar: UITabBarController {
         propertyAnimator.startAnimation()
     }
 
+    @objc private func updateTheme() {
+        self.tabBar.tintColor = GlobalConstants.Colors.accentColor
+        updateAccentColor()
+        print("Done main tabbar")
+    }
+
+    private func updateAccentColor() {
+        browse.navigationBar.tintColor = GlobalConstants.Colors.accentColor
+        team.navigationBar.tintColor = GlobalConstants.Colors.accentColor
+        profile.navigationBar.tintColor = GlobalConstants.Colors.accentColor
+    }
+
+
 }
+

@@ -45,9 +45,9 @@ class TasksTableViewCell: UITableViewCell {
     lazy var completedIndicator: UIView = {
         let indicator = UIView()
         indicator.translatesAutoresizingMaskIntoConstraints = false
-        indicator.backgroundColor = UIColor(hex: 0x20920f)
+        indicator.backgroundColor = UIColor(named: "Clover Green")
         indicator.isUserInteractionEnabled = false
-        indicator.layer.cornerRadius = 10
+        indicator.layer.cornerRadius = 4
         indicator.isHidden = true
         return indicator
     }()
@@ -62,28 +62,29 @@ class TasksTableViewCell: UITableViewCell {
     }
 
     private func configureCellView() {
+        contentView.clipsToBounds = true
         contentView.addSubview(titleLabel)
         contentView.addSubview(infoLabel)
-        contentView.addSubview(createdAtLabel)
+//        contentView.addSubview(createdAtLabel)
         contentView.addSubview(completedIndicator)
 
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 7),
-            titleLabel.trailingAnchor.constraint(equalTo: createdAtLabel.leadingAnchor, constant: -2),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
 
-            infoLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            infoLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor, constant: 2),
             infoLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
             infoLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.6),
 
-            createdAtLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
-            createdAtLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            createdAtLabel.widthAnchor.constraint(equalTo: titleLabel.widthAnchor, multiplier: 0.55),
+//            createdAtLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
+//            createdAtLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+//            createdAtLabel.widthAnchor.constraint(equalTo: titleLabel.widthAnchor, multiplier: 0.58),
 
-            completedIndicator.centerXAnchor.constraint(equalTo: contentView.leadingAnchor),
+            completedIndicator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -3),
             completedIndicator.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            completedIndicator.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.85),
-            completedIndicator.widthAnchor.constraint(equalToConstant: 6)
+            completedIndicator.heightAnchor.constraint(equalToConstant: 8),
+            completedIndicator.widthAnchor.constraint(equalToConstant: 8)
         ])
     }
 

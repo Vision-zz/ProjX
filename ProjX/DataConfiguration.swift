@@ -5,28 +5,21 @@
 //  Created by Sathya on 21/03/23.
 //
 
-import UIKit
+import Foundation
 
-class DummyVC: UIViewController {
+class DataConfiguration {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        print("Running")
-        view.backgroundColor = .systemRed
-//                    fetchStuff()
-        deleteAllData()
-        configureStuff()
-    }
-
-    func fetchStuff() {
+    static func dataExists() -> Bool {
         let users = try? DataManager.shared.context.fetch(User.fetchRequest())
-        print(users?.count ?? -1)
         let teams = try? DataManager.shared.context.fetch(Team.fetchRequest())
-        print(teams?.count ?? -1)
+        let tasks = try? DataManager.shared.context.fetch(TaskItem.fetchRequest())
+
+        guard let users = users, let teams = teams, let tasks = tasks else { return false }
+        if users.isEmpty || teams.isEmpty || tasks.isEmpty { return false }
+        return true
     }
 
-    func deleteAllData() {
+    static func deleteAllData() {
         let teams = try? DataManager.shared.context.fetch(Team.fetchRequest())
         guard let teams = teams else {
             return
@@ -54,10 +47,146 @@ class DummyVC: UIViewController {
         DataManager.shared.saveContext()
     }
 
-    func configureStuff() {
+    static func configureStuff(force: Bool) {
+
+        if !force && dataExists() { return }
+        deleteAllData()
+
+        let names = [
+            "sathya_narayanan",
+            "shaheen",
+            "shivaneesh",
+            "sankar",
+            "naveen",
+            "raja_rajkumar",
+            "loganathan",
+            "muthu_prakash",
+            "vivek_rajendran",
+            "sivrish_thangamani",
+            "ajith_madhan",
+            "madhu_sudhanan",
+            "ajay",
+            "sasidharan",
+            "amalan",
+            "nabusan",
+            "raghul",
+            "arun_prasadh",
+            "nithish_kumar",
+            "dinesh",
+            "devi",
+            "durga_devi",
+            "yogeshwaran",
+            "avinash",
+            "venu_gopal",
+            "ranjith",
+            "subhiksha",
+            "jithin_murali",
+            "shakthi_sri",
+            "sriponbala",
+            "mohammed_arif",
+            "deebika",
+            "arun_ray",
+            "radhakrishnan",
+            "gunaseelan",
+            "surya_prakash"
+        ]
+
+        print("Creating Users")
+
+        var users = [User]()
+        for name in names {
+            let user = DataManager.shared.createUser(username: name, password: "Test@123", name: name.replacingOccurrences(of: "_", with: " ").capitalized, emailID: "\(name)@gmail.com")
+            switch user {
+                case .success(let usr):
+                    users.append(usr)
+                default:
+                    print("Cant create user \(name)")
+            }
+        }
+
+        let teamNames = [
+            "Zoho",
+            "Accenture",
+            "TCS",
+            "Cognizant",
+            "IBM",
+            "Microsoft",
+            "Google",
+            "Meta",
+            "Amazon",
+            "Apple",
+        ]
+
+        print("Creating teams")
+
+        var teams = [Team]()
+        for team in teamNames {
+            let user = users.randomElement()!
+            let newTeam = DataManager.shared.createTeam(name: team, createdBy: user, image: nil)
+            teams.append(newTeam)
+        }
+
+        print("Adding users to teams")
+
+        for team in teams {
+            var i = 0
+            while i < 3 {
+                let user = users.randomElement()!
+                guard user.roleIn(team: team) == .none else { continue }
+                team.teamAdmins.append(user)
+                user.teams.append(team)
+                if user.selectedTeam == nil {
+                    user.selectedTeam = team
+                }
+                i += 1
+            }
+
+            var j = 0
+            while j < 12 {
+                let user = users.randomElement()!
+                guard user.roleIn(team: team) == .none, !user.userTeams!.contains(team.teamID!) else { continue }
+                team.teamMembers.append(user)
+                user.teams.append(team)
+                if user.selectedTeam == nil {
+                    user.selectedTeam = team
+                }
+                j += 1
+            }
+
+            var tasks = [TaskItem]()
+            for k in  0...15 {
+
+                let createdBy = team.allTeamMembers.randomElement()!
+                let assignedTo = createdBy.roleIn(team: team) == .member ? createdBy : team.allTeamMembers.randomElement()!
+
+                let task = TaskItem(context: DataManager.shared.context)
+                task.taskID = UUID()
+                task.createdAt = Date()
+                task.title = "Task \(k)"
+                task.taskDescription = "This is a task that needs to be finished within a particular amount of time. This task is named task 1"
+                task.deadline = Date(timeIntervalSinceNow: 300000)
+                task.createdByUser = createdBy
+                task.assignedToUser = assignedTo
+                task.statusUpdates = []
+                task.taskStatus = arc4random_uniform(100) < 25 ? .complete : .incomplete
+                team.tasks.append(task)
+
+                tasks.append(task)
+            }
+
+        }
+
+
+
+        print("saving")
+        DataManager.shared.saveContext()
+    }
+
+    func dumm() {
+
 
         print("creating")
-        
+
         let team1 = Team(context: DataManager.shared.context)
         team1.teamID = UUID()
         team1.teamName = "Yoho"
@@ -79,6 +208,8 @@ class DummyVC: UIViewController {
         user1.emailID = "arun@gmail.com"
         user1.name = "Arunprasadh"
         user1.notificationUpdates = []
+        user1.selectedTeam = team1
+        user1.createdAt = Date()
 
         let user2 = User(context: DataManager.shared.context)
         user2.userID = UUID()
@@ -87,6 +218,8 @@ class DummyVC: UIViewController {
         user2.emailID = "devi.ks@gmail.com"
         user2.name = "Devi"
         user2.notificationUpdates = []
+        user2.selectedTeam = team1
+        user2.createdAt = Date()
 
         let user3 = User(context: DataManager.shared.context)
         user3.userID = UUID()
@@ -95,6 +228,8 @@ class DummyVC: UIViewController {
         user3.emailID = "sathya.jd@gmail.com"
         user3.name = "Sathya Narayanan"
         user3.notificationUpdates = []
+        user3.selectedTeam = team1
+        user3.createdAt = Date()
 
         let user4 = User(context: DataManager.shared.context)
         user4.userID = UUID()
@@ -103,6 +238,8 @@ class DummyVC: UIViewController {
         user4.emailID = "madhu.s@gmail.com"
         user4.name = "Madhu"
         user4.notificationUpdates = []
+        user4.selectedTeam = team2
+        user4.createdAt = Date()
 
         let user5 = User(context: DataManager.shared.context)
         user5.userID = UUID()
@@ -111,6 +248,8 @@ class DummyVC: UIViewController {
         user5.emailID = "sankar@gmail.com"
         user5.name = "Sankar"
         user5.notificationUpdates = []
+        user5.selectedTeam = team1
+        user5.createdAt = Date()
 
         let user6 = User(context: DataManager.shared.context)
         user6.userID = UUID()
@@ -119,6 +258,8 @@ class DummyVC: UIViewController {
         user6.emailID = "shivaneesh@gmail.com"
         user6.name = "Shivaneesh"
         user6.notificationUpdates = []
+        user6.selectedTeam = team1
+        user6.createdAt = Date()
 
         let user7 = User(context: DataManager.shared.context)
         user7.userID = UUID()
@@ -127,6 +268,8 @@ class DummyVC: UIViewController {
         user7.emailID = "durgadevi@gmail.com"
         user7.name = "Durga Devi"
         user7.notificationUpdates = []
+        user7.selectedTeam = team1
+        user7.createdAt = Date()
 
         let user8 = User(context: DataManager.shared.context)
         user8.userID = UUID()
@@ -135,6 +278,8 @@ class DummyVC: UIViewController {
         user8.emailID = "dinesh@gmail.com"
         user8.name = "Dinesh"
         user8.notificationUpdates = []
+        user8.selectedTeam = team2
+        user8.createdAt = Date()
 
         let user9 = User(context: DataManager.shared.context)
         user9.userID = UUID()
@@ -143,6 +288,8 @@ class DummyVC: UIViewController {
         user9.emailID = "ajay@gmail.com"
         user9.name = "Ajay"
         user9.notificationUpdates = []
+        user9.selectedTeam = team2
+        user9.createdAt = Date()
 
         let user10 = User(context: DataManager.shared.context)
         user10.userID = UUID()
@@ -151,6 +298,8 @@ class DummyVC: UIViewController {
         user10.emailID = "sasi.sd@gmail.com"
         user10.name = "Sasi"
         user10.notificationUpdates = []
+        user10.selectedTeam = team2
+        user10.createdAt = Date()
 
         let user11 = User(context: DataManager.shared.context)
         user11.userID = UUID()
@@ -159,6 +308,8 @@ class DummyVC: UIViewController {
         user11.emailID = "amalan@gmail.com"
         user11.name = "Amalan"
         user11.notificationUpdates = []
+        user11.selectedTeam = team1
+        user11.createdAt = Date()
 
         let user12 = User(context: DataManager.shared.context)
         user12.userID = UUID()
@@ -167,6 +318,8 @@ class DummyVC: UIViewController {
         user12.emailID = "nabusan@gmail.com"
         user12.name = "Nabusan"
         user12.notificationUpdates = []
+        user12.selectedTeam = team1
+        user12.createdAt = Date()
 
         team1.teamOwner = user1
         team1.teamAdmins = [user2, user3]
@@ -322,8 +475,6 @@ class DummyVC: UIViewController {
         task11.taskStatus = .complete
         team2.tasksID?.append(task10.taskID!)
 
-        print("saving")
-        DataManager.shared.saveContext()
     }
 }
 

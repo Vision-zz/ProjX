@@ -27,8 +27,8 @@ class BaseLoginViewTableView: PROJXTableViewController {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .white
-        button.backgroundColor = .systemBlue
-        button.layer.cornerRadius = 15
+        button.backgroundColor = UIColor(named: "Default Blurple")
+        button.layer.cornerRadius = 7
         return button
     }()
 
@@ -40,13 +40,14 @@ class BaseLoginViewTableView: PROJXTableViewController {
     private func configureBaseUI() {
         navigationController?.navigationBar.prefersLargeTitles = false
         tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(onTap)))
-        view.backgroundColor = GlobalConstants.Background.primary
-        tableView.backgroundColor = GlobalConstants.Background.primary
+        view.backgroundColor = GlobalConstants.Colors.primaryBackground
+        tableView.backgroundColor = GlobalConstants.Colors.primaryBackground
         tableView.separatorStyle = .none
         tableView.allowsSelection = false
         tableView.keyboardDismissMode = .onDrag
         tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 20))
         let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelButtonPressed))
+        cancelButton.tintColor = UIColor(named: "Default Blurple")
         self.navigationItem.leftBarButtonItem = cancelButton
     }
 
@@ -76,7 +77,7 @@ class BaseLoginViewTableView: PROJXTableViewController {
         textField.placeholder = placeholder
         textField.borderStyle = .roundedRect
         textField.clearButtonMode = .whileEditing
-        textField.backgroundColor = GlobalConstants.Background.secondary
+        textField.backgroundColor = GlobalConstants.Colors.secondaryBackground
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.returnKeyType = .next
@@ -88,7 +89,8 @@ class BaseLoginViewTableView: PROJXTableViewController {
         loginButton.setTitle(title, for: .normal)
         cell.contentView.addSubview(loginButton)
         NSLayoutConstraint.activate([
-            loginButton.widthAnchor.constraint(equalToConstant: 90),
+            loginButton.widthAnchor.constraint(equalToConstant: 100),
+            loginButton.heightAnchor.constraint(equalToConstant: 30),
             loginButton.centerXAnchor.constraint(equalTo: cell.centerXAnchor),
             loginButton.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
         ])
@@ -106,7 +108,7 @@ class BaseLoginViewTableView: PROJXTableViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(buttonTitle, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 14)
-        button.tintColor = .link
+        button.tintColor = UIColor(named: "Default Blurple")
         button.addTarget(self, action: buttonSelector, for: .touchUpInside)
 
         let customView = UIView()

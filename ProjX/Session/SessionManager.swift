@@ -40,10 +40,10 @@ class SessionManager {
     func logout() {
         signedInUser = nil
         UserDefaults.standard.set(nil, forKey: GlobalConstants.UserDefaultsKey.currentLoggedInUserID)
-        SceneDelegate.shared?.switchToWelcomePageVC()
+        GlobalConstants.StructureDelegates.sceneDelegate?.switchToWelcomePageVC()
     }
 
-    func changeSelectedTeam(to team: Team) {
+    func changeSelectedTeam(of user: User, to team: Team) {
         guard let teamID = team.teamID, teamID != signedInUser?.selectedTeamID else {
             return
         }

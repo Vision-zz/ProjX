@@ -45,74 +45,55 @@ class TasksVC: PROJXTableViewController {
         return noDataTitleLabel
     }()
 
-    lazy var allButton: UIButton = {
-        let button = UIButton()
-        button.tag = AvailableDisplayOptions.all.rawValue
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .systemGray5
-        button.layer.borderColor = UIColor.label.cgColor
-        button.layer.borderWidth = selectedOption == .all ? 1.5 : 0
-        button.layer.cornerRadius = 15
-        button.titleLabel?.font = .systemFont(ofSize: 13)
-        button.setTitle("All", for: .normal)
-        button.setTitleColor(.label, for: .normal)
-        button.addTarget(self, action: #selector(categoryButtonClicked), for: .touchUpInside)
-        return button
+    lazy var segmentControl: UISegmentedControl = {
+        let segmentControl = UISegmentedControl(items: ["All", "Completed", "Incomplete"])
+        segmentControl.selectedSegmentIndex = 2
+        segmentControl.addTarget(self, action: #selector(segmentControlValueChange), for: .valueChanged)
+        segmentControl.selectedSegmentTintColor = GlobalConstants.Colors.accentColor
+        segmentControl.translatesAutoresizingMaskIntoConstraints = false
+        segmentControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
+        return segmentControl
     }()
 
-    lazy var completeButton: UIButton = {
-        let button = UIButton()
-        button.tag = AvailableDisplayOptions.complete.rawValue
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .systemGray5
-        button.layer.borderColor = UIColor.label.cgColor
-        button.layer.borderWidth = selectedOption == .complete ? 1.5 : 0
-        button.layer.cornerRadius = 15
-        button.titleLabel?.font = .systemFont(ofSize: 13)
-        button.setTitle("Completed", for: .normal)
-        button.setTitleColor(.label, for: .normal)
-        button.addTarget(self, action: #selector(categoryButtonClicked), for: .touchUpInside)
-        return button
-    }()
-
-    lazy var incompleteButton: UIButton = {
-        let button = UIButton()
-        button.tag = AvailableDisplayOptions.incomplete.rawValue
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .systemGray5
-        button.layer.borderColor = UIColor.label.cgColor
-        button.layer.borderWidth = selectedOption == .incomplete ? 1.5 : 0
-        button.layer.cornerRadius = 15
-        button.titleLabel?.font = .systemFont(ofSize: 13)
-        button.setTitle("Incomplete", for: .normal)
-        button.setTitleColor(.label, for: .normal)
-        button.addTarget(self, action: #selector(categoryButtonClicked), for: .touchUpInside)
-        return button
-    }()
-
-    lazy var categoryView: UIView = {
-        let cv = UIView()
-        cv.addSubview(allButton)
-        cv.addSubview(completeButton)
-        cv.addSubview(incompleteButton)
+    lazy var segmentControlView: UIView = {
+        let segmentView = UIView()
+        segmentView.backgroundColor = .clear
+        segmentView.addSubview(segmentControl)
         NSLayoutConstraint.activate([
-            allButton.heightAnchor.constraint(equalToConstant: 30),
-            allButton.widthAnchor.constraint(equalToConstant: allButton.intrinsicContentSize.width + 20),
-            completeButton.heightAnchor.constraint(equalToConstant: 30),
-            completeButton.widthAnchor.constraint(equalToConstant: completeButton.intrinsicContentSize.width + 25),
-            incompleteButton.heightAnchor.constraint(equalToConstant: 30),
-            incompleteButton.widthAnchor.constraint(equalToConstant: incompleteButton.intrinsicContentSize.width + 25),
-
-            allButton.leadingAnchor.constraint(equalTo: cv.leadingAnchor, constant: 20),
-            completeButton.leadingAnchor.constraint(equalTo: allButton.trailingAnchor, constant: 10),
-            incompleteButton.leadingAnchor.constraint(equalTo: completeButton.trailingAnchor, constant: 10)
+            segmentControl.leadingAnchor.constraint(equalTo: segmentView.leadingAnchor, constant: 15),
+            segmentControl.trailingAnchor.constraint(equalTo: segmentView.trailingAnchor, constant: -15),
         ])
-        return cv
+        return segmentView
     }()
+
+    convenience init() {
+        self.init(style: .insetGrouped)
+    }
+
+    override init(style: UITableView.Style) {
+        super.init(style: style)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    private func configureNotifCenter() {
+        NotificationCenter.default.addObserver(self, selector: #selector(updateTheme), name: Notification.Name("ThemeChanged"), object: nil)
+    }
+
+    @objc private func updateTheme() {
+        segmentControl.selectedSegmentTintColor = GlobalConstants.Colors.accentColor
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureNotifCenter()
         configureDataSource()
     }
 
@@ -127,25 +108,16 @@ class TasksVC: PROJXTableViewController {
         dataSource = []
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        if (traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection)) {
-            allButton.layer.borderColor = UIColor.label.cgColor
-            completeButton.layer.borderColor = UIColor.label.cgColor
-            incompleteButton.layer.borderColor = UIColor.label.cgColor
-        }
-    }
-
     private func configureView() {
         title = "Tasks"
         tableView.backgroundView = noDataTableBackgroundView
         tableView.register(TasksTableViewCell.self, forCellReuseIdentifier: TasksTableViewCell.identifier)
-        tableView.tableHeaderView = categoryView
+        tableView.tableHeaderView = segmentControlView
         let newSize = tableView.tableHeaderView!.systemLayoutSizeFitting(CGSize(width: tableView.bounds.width, height: 0))
-        tableView.tableHeaderView!.frame.size.height = newSize.height + 20
+        tableView.tableHeaderView!.frame.size.height = newSize.height + 25
         let addBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addBarButtonClicked))
         navigationItem.rightBarButtonItems = [addBarButtonItem]
     }
-
 
     private func configureDataSource() {
         dataSource = []
@@ -189,15 +161,11 @@ class TasksVC: PROJXTableViewController {
                 noDataTableBackgroundView.attributedText = generateNoDataLabelString(with: "Good job! There are no incomplete tasks")
             }
         }
-
     }
 
-    @objc private func categoryButtonClicked(_ sender: UIButton) {
-        let option = AvailableDisplayOptions.init(rawValue: sender.tag)
+    @objc private func segmentControlValueChange(_ sender: UISegmentedControl) {
+        let option = AvailableDisplayOptions.init(rawValue: sender.selectedSegmentIndex)
         guard let option = option, selectedOption != option else { return }
-        completeButton.layer.borderWidth = option == .complete ? 1.5 : 0
-        incompleteButton.layer.borderWidth = option == .incomplete ? 1.5 : 0
-        allButton.layer.borderWidth = option == .all ? 1.5 : 0
         selectedOption = option
         configureDataSource()
         tableView.reloadData()
@@ -235,7 +203,6 @@ class TasksVC: PROJXTableViewController {
         let task = dataSource[indexPath.section].rows[indexPath.row]
         cell.configureCell(for: task, showsCompleted: selectedOption == .all)
         cell.accessoryType = .disclosureIndicator
-        cell.backgroundColor = GlobalConstants.Background.primary
         return cell
     }
 
@@ -244,7 +211,7 @@ class TasksVC: PROJXTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        50
+        55
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

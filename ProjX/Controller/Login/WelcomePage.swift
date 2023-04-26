@@ -166,7 +166,7 @@ extension WelcomePage: SignUpDelegate, SignInDelegate {
     func successfulLogin() {
         showActivityIndicatorOnLoginButton()
         dismiss(animated: true) {
-            SceneDelegate.shared?.switchToHomePageVC()
+            GlobalConstants.StructureDelegates.sceneDelegate?.switchToHomePageVC()
         }
     }
 
@@ -193,7 +193,7 @@ extension WelcomePage: SignUpDelegate, SignInDelegate {
                     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
                     self?.present(alert, animated: true)
                 case .success:
-                    SceneDelegate.shared?.switchToHomePageVC()
+                    GlobalConstants.StructureDelegates.sceneDelegate?.switchToHomePageVC()
             }
         }
     }

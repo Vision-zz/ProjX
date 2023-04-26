@@ -24,10 +24,13 @@ class PROJXTableViewController: UITableViewController {
     }
 
     private func configureBaseUI() {
-        self.view.backgroundColor = GlobalConstants.Background.primary
-        self.tableView.backgroundColor = GlobalConstants.Background.primary
-        self.navigationController?.navigationBar.prefersLargeTitles = true
+        if tableView.style == .insetGrouped {
+            self.tableView.backgroundColor = .systemGroupedBackground
+        } else {
+            self.view.backgroundColor = GlobalConstants.Colors.primaryBackground
+            self.tableView.backgroundColor = GlobalConstants.Colors.primaryBackground
+            self.navigationController?.navigationBar.prefersLargeTitles = true
+        }
     }
-
 
 }

@@ -24,7 +24,7 @@ class PROJXViewController: UIViewController {
     }
 
     private func configureBaseUI() {
-        self.view.backgroundColor = GlobalConstants.Background.primary
+        self.view.backgroundColor = GlobalConstants.Colors.primaryBackground
         self.navigationController?.navigationBar.prefersLargeTitles = true
     }
 

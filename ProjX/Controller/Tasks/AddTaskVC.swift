@@ -37,13 +37,15 @@ class AddTaskVC: PROJXTableViewController {
         textField.returnKeyType = .next
         textField.allowsEditingTextAttributes = true
         textField.isUserInteractionEnabled = true
+        textField.tintColor = GlobalConstants.Colors.accentColor
         return textField
     }()
 
     lazy var descriptionTextView: UITextView = {
         let textView = UITextView()
         textView.translatesAutoresizingMaskIntoConstraints = false
-        textView.backgroundColor = GlobalConstants.Background.secondary
+        textView.backgroundColor = .clear
+        textView.tintColor = GlobalConstants.Colors.accentColor
         return textView
     }()
 
@@ -102,6 +104,7 @@ class AddTaskVC: PROJXTableViewController {
 
     private func configureView() {
         title = "Add Task"
+        tableView.backgroundColor = GlobalConstants.Colors.primaryBackground
         tableView.register(AddTaskTableViewCell.self, forCellReuseIdentifier: AddTaskTableViewCell.identifier)
         tableView.keyboardDismissMode = .onDrag
         tableView.separatorStyle = .none

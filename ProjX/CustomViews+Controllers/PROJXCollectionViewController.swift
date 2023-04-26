@@ -11,6 +11,10 @@ private let reuseIdentifier = "Cell"
 
 class PROJXCollectionViewController: UICollectionViewController {
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
     override var hidesBottomBarWhenPushed: Bool {
         get {
             return true
@@ -38,8 +42,8 @@ class PROJXCollectionViewController: UICollectionViewController {
     }
 
     private func configureBaseUI() {
-        self.view.backgroundColor = GlobalConstants.Background.primary
-        self.collectionView.backgroundColor = GlobalConstants.Background.primary
+        self.view.backgroundColor = GlobalConstants.Colors.primaryBackground
+        self.collectionView.backgroundColor = GlobalConstants.Colors.primaryBackground
         self.navigationController?.navigationBar.prefersLargeTitles = true
     }
 

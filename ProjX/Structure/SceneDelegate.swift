@@ -9,16 +9,14 @@ import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
-    static var shared: SceneDelegate?
-    
+
     var window: UIWindow?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-      SceneDelegate.shared = self
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
 
-//        window?.rootViewController = UINavigationController(rootViewController: DummyVC())
+        DataConfiguration.configureStuff(force: false)
 
         let userID = UserDefaults.standard.string(forKey: GlobalConstants.UserDefaultsKey.currentLoggedInUserID)
         let users = DataManager.shared.getAllUsers()
@@ -30,6 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             window?.rootViewController = UINavigationController(rootViewController: WelcomePage())
         }
 
+        changeUserInterfaceStyle()
         window?.makeKeyAndVisible()
     }
 
@@ -37,7 +36,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let window = window else { return }
         window.rootViewController = UINavigationController(rootViewController: WelcomePage())
         window.makeKeyAndVisible()
-        UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
+        UIView.transition(with: window, duration: 0.3, options: [.transitionCrossDissolve, .preferredFramesPerSecond60], animations: nil, completion: nil)
     }
 
     func switchToHomePageVC() {
@@ -45,6 +44,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = MainTabbar()
         window.makeKeyAndVisible()
         UIView.transition(with: window, duration: 0.3, options: [.transitionCrossDissolve, .preferredFramesPerSecond60], animations: nil, completion: nil)
+    }
+
+    func changeUserInterfaceStyle() {
+        let theme = GlobalConstants.Device.selectedTheme
+        window?.overrideUserInterfaceStyle = theme == .light ? .light : theme == .dark ? .dark : .unspecified
+    }
+
+    func switchAccentColor() {
+        guard let window = window else { return }
+        if let _ = SessionManager.shared.signedInUser {
+            window.rootViewController = MainTabbar()
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -14,7 +14,7 @@ class AddTaskTableViewCell: UITableViewCell {
     lazy var keyLabel: PROJXLabel = {
         let label = PROJXLabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.backgroundColor = GlobalConstants.Background.primary
+        label.backgroundColor = GlobalConstants.Colors.tertiaryBackground
         label.textColor = .secondaryLabel
         label.insets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 8)
         label.contentMode = .top
@@ -29,7 +29,7 @@ class AddTaskTableViewCell: UITableViewCell {
     lazy var valueView: UIView = {
         let valueView = UIView()
         valueView.translatesAutoresizingMaskIntoConstraints = false
-        valueView.backgroundColor = GlobalConstants.Background.secondary
+        valueView.backgroundColor = GlobalConstants.Colors.secondaryBackground
         return valueView
     }()
 
@@ -59,7 +59,7 @@ class AddTaskTableViewCell: UITableViewCell {
     }
 
     private func configureCellView() {
-        backgroundColor = GlobalConstants.Background.primary
+        backgroundColor = GlobalConstants.Colors.secondaryBackground
         selectionStyle = .none
         contentView.addSubview(keyLabel)
         contentView.addSubview(valueView)

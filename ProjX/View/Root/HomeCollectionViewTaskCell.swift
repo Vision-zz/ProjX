@@ -66,7 +66,7 @@ class HomeCollectionViewTaskCell: UICollectionViewCell {
     }
 
     private func configureCellUI() {
-        self.backgroundColor = GlobalConstants.Background.secondary
+        self.backgroundColor = GlobalConstants.Colors.secondaryBackground
         self.layer.cornerRadius = 15
         self.layer.borderWidth = 2
         self.layer.borderColor = UIColor.clear.cgColor

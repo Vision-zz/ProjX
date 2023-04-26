@@ -25,6 +25,7 @@ class JoinTeamVC: PROJXViewController {
         searchController.searchBar.searchTextField.leftView = nil
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.searchTextField.autocorrectionType = .no
+        searchController.searchBar.tintColor = GlobalConstants.Colors.accentColor
         return searchController
     }()
 
@@ -44,7 +45,7 @@ class JoinTeamVC: PROJXViewController {
         button.tintColor = .white
         button.setTitle("Join", for: .normal)
         button.addTarget(self, action: #selector(joinButtonClickced), for: .touchUpInside)
-        button.backgroundColor = .systemBlue
+        button.backgroundColor = GlobalConstants.Colors.accentColor
         button.layer.cornerRadius = 10
         return button
     }()
@@ -58,8 +59,10 @@ class JoinTeamVC: PROJXViewController {
 
     private func configureUI() {
         title = "Join Team"
+        view.backgroundColor = GlobalConstants.Colors.secondaryBackground
         navigationItem.searchController = passcodeSearchController
         navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeButtonClick))
 
         view.addSubview(invalidResultLabel)
         view.addSubview(joinButton)
@@ -75,6 +78,10 @@ class JoinTeamVC: PROJXViewController {
             invalidResultLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             invalidResultLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -10),
         ])
+    }
+
+    @objc private func closeButtonClick() {
+        self.dismiss(animated: true)
     }
 
     @objc private func joinButtonClickced() {

@@ -41,7 +41,7 @@ class TeamProfileCell: UITableViewCell {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "ellipsis"), for: .normal)
-        button.tintColor = .link
+        button.tintColor = GlobalConstants.Colors.accentColor
         button.showsMenuAsPrimaryAction = true
         return button
     }()

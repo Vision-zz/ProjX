@@ -35,7 +35,7 @@
 		AF94034129C86590001FAA7A /* PROJXTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94034029C86590001FAA7A /* PROJXTableViewController.swift */; };
 		AF94036D29C877E1001FAA7A /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94036C29C877E1001FAA7A /* DataManager.swift */; };
 		AF94037D29C8B606001FAA7A /* BaseLoginViewTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94037C29C8B606001FAA7A /* BaseLoginViewTableView.swift */; };
-		AF94037F29C9711B001FAA7A /* DummyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94037E29C9711B001FAA7A /* DummyVC.swift */; };
+		AF94037F29C9711B001FAA7A /* DataConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94037E29C9711B001FAA7A /* DataConfiguration.swift */; };
 		AF94038629C98F43001FAA7A /* User+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94038429C98F43001FAA7A /* User+CoreDataClass.swift */; };
 		AF94038729C98F43001FAA7A /* User+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94038529C98F43001FAA7A /* User+CoreDataProperties.swift */; };
 		AF94039229C995A9001FAA7A /* Team+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF94039029C995A9001FAA7A /* Team+CoreDataClass.swift */; };
@@ -50,6 +50,9 @@
 		AF9403DE29CC1041001FAA7A /* TeamInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403DD29CC1041001FAA7A /* TeamInfoVC.swift */; };
 		AF9403E029CC124F001FAA7A /* TaskStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9403DF29CC124F001FAA7A /* TaskStatus.swift */; };
 		AF9AB1C029C82C0500246A39 /* StatusUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9AB1BF29C82C0500246A39 /* StatusUpdate.swift */; };
+		AFC9998729F68DAA004EAD7F /* AccentColorSelectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC9998629F68DAA004EAD7F /* AccentColorSelectionCell.swift */; };
+		AFDAB29729F15A4400CE9BD9 /* ProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDAB29629F15A4400CE9BD9 /* ProfileCell.swift */; };
+		AFDAB29929F2365D00CE9BD9 /* ProfileButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDAB29829F2365D00CE9BD9 /* ProfileButtonCell.swift */; };
 		AFE258D329C496580017ADFB /* SignupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE258D229C496580017ADFB /* SignupVC.swift */; };
 		AFE258D529C49CF00017ADFB /* SigninVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE258D429C49CF00017ADFB /* SigninVC.swift */; };
 		AFE258D729C49DA30017ADFB /* LoginDelegates.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE258D629C49DA30017ADFB /* LoginDelegates.swift */; };
@@ -69,7 +72,6 @@
 		AFFC942329E529E900D32AC4 /* ViewTaskVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFC942229E529E900D32AC4 /* ViewTaskVC.swift */; };
 		AFFC942529E52F2000D32AC4 /* MarqueeLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFC942429E52F2000D32AC4 /* MarqueeLabel.swift */; };
 		AFFE538529D6DB3F004668E8 /* PROJXImageTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFE538429D6DB3F004668E8 /* PROJXImageTextCell.swift */; };
-		AFFE538929DBF4A6004668E8 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFE538829DBF4A6004668E8 /* Logger.swift */; };
 		AFFE538C29DE94E1004668E8 /* NotificationUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFE538B29DE94E1004668E8 /* NotificationUpdate.swift */; };
 /* End PBXBuildFile section */
 
@@ -103,7 +105,7 @@
 		AF94034029C86590001FAA7A /* PROJXTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PROJXTableViewController.swift; sourceTree = "<group>"; };
 		AF94036C29C877E1001FAA7A /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		AF94037C29C8B606001FAA7A /* BaseLoginViewTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseLoginViewTableView.swift; sourceTree = "<group>"; };
-		AF94037E29C9711B001FAA7A /* DummyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyVC.swift; sourceTree = "<group>"; };
+		AF94037E29C9711B001FAA7A /* DataConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConfiguration.swift; sourceTree = "<group>"; };
 		AF94038429C98F43001FAA7A /* User+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataClass.swift"; sourceTree = "<group>"; };
 		AF94038529C98F43001FAA7A /* User+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		AF94039029C995A9001FAA7A /* Team+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Team+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -118,6 +120,9 @@
 		AF9403DD29CC1041001FAA7A /* TeamInfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamInfoVC.swift; sourceTree = "<group>"; };
 		AF9403DF29CC124F001FAA7A /* TaskStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStatus.swift; sourceTree = "<group>"; };
 		AF9AB1BF29C82C0500246A39 /* StatusUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusUpdate.swift; sourceTree = "<group>"; };
+		AFC9998629F68DAA004EAD7F /* AccentColorSelectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColorSelectionCell.swift; sourceTree = "<group>"; };
+		AFDAB29629F15A4400CE9BD9 /* ProfileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCell.swift; sourceTree = "<group>"; };
+		AFDAB29829F2365D00CE9BD9 /* ProfileButtonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileButtonCell.swift; sourceTree = "<group>"; };
 		AFE258D229C496580017ADFB /* SignupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupVC.swift; sourceTree = "<group>"; };
 		AFE258D429C49CF00017ADFB /* SigninVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigninVC.swift; sourceTree = "<group>"; };
 		AFE258D629C49DA30017ADFB /* LoginDelegates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDelegates.swift; sourceTree = "<group>"; };
@@ -138,7 +143,6 @@
 		AFFC942229E529E900D32AC4 /* ViewTaskVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTaskVC.swift; sourceTree = "<group>"; };
 		AFFC942429E52F2000D32AC4 /* MarqueeLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarqueeLabel.swift; sourceTree = "<group>"; };
 		AFFE538429D6DB3F004668E8 /* PROJXImageTextCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PROJXImageTextCell.swift; sourceTree = "<group>"; };
-		AFFE538829DBF4A6004668E8 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		AFFE538B29DE94E1004668E8 /* NotificationUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationUpdate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -156,6 +160,7 @@
 		AF3DB85A29C317D500097A71 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				AFDAB29529F15A1800CE9BD9 /* Profile */,
 				AFFC941A29DFD48800D32AC4 /* Tasks */,
 				AF9403E529CC1830001FAA7A /* TeamInfo */,
 				AF94039729C9AFEF001FAA7A /* Root */,
@@ -233,7 +238,7 @@
 				AF60B0F029C2ED730070B4E0 /* CustomViews+Controllers */,
 				AF60B0ED29C2D8470070B4E0 /* Helper+Config */,
 				AF60B0EC29C2D7CB0070B4E0 /* Structure */,
-				AF94037E29C9711B001FAA7A /* DummyVC.swift */,
+				AF94037E29C9711B001FAA7A /* DataConfiguration.swift */,
 			);
 			path = ProjX;
 			sourceTree = "<group>";
@@ -258,7 +263,6 @@
 				AF60B0EE29C2D8F50070B4E0 /* GlobalConstants.swift */,
 				AF59E0BE29D448EC00B4AF7C /* MenuProvider.swift */,
 				AF59E0C229D5706300B4AF7C /* PROJXImagePicker.swift */,
-				AFFE538829DBF4A6004668E8 /* Logger.swift */,
 			);
 			path = "Helper+Config";
 			sourceTree = "<group>";
@@ -344,6 +348,16 @@
 				AF59E0B529D1A0FD00B4AF7C /* TeamOwnerCell.swift */,
 			);
 			path = TeamInfo;
+			sourceTree = "<group>";
+		};
+		AFDAB29529F15A1800CE9BD9 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				AFDAB29629F15A4400CE9BD9 /* ProfileCell.swift */,
+				AFDAB29829F2365D00CE9BD9 /* ProfileButtonCell.swift */,
+				AFC9998629F68DAA004EAD7F /* AccentColorSelectionCell.swift */,
+			);
+			path = Profile;
 			sourceTree = "<group>";
 		};
 		AFFC941A29DFD48800D32AC4 /* Tasks */ = {
@@ -445,6 +459,7 @@
 				AF94037D29C8B606001FAA7A /* BaseLoginViewTableView.swift in Sources */,
 				AF3DB87329C433FD00097A71 /* UIColor+Extension.swift in Sources */,
 				AF59E0B429D1A0F000B4AF7C /* TeamProfileCell.swift in Sources */,
+				AFDAB29729F15A4400CE9BD9 /* ProfileCell.swift in Sources */,
 				AF9403D429CAE5CA001FAA7A /* HomeCollectionViewEmptyPlaceholderCell.swift in Sources */,
 				AF9AB1C029C82C0500246A39 /* StatusUpdate.swift in Sources */,
 				AF60B0F929C2F1F30070B4E0 /* MainTabbar.swift in Sources */,
@@ -472,13 +487,12 @@
 				AFFE538C29DE94E1004668E8 /* NotificationUpdate.swift in Sources */,
 				AF94039229C995A9001FAA7A /* Team+CoreDataClass.swift in Sources */,
 				AF9403E029CC124F001FAA7A /* TaskStatus.swift in Sources */,
-				AFFE538929DBF4A6004668E8 /* Logger.swift in Sources */,
 				AF60B0FE29C2F3E70070B4E0 /* TasksVC.swift in Sources */,
 				AFFC942129E029CB00D32AC4 /* TasksTableViewCell.swift in Sources */,
 				AFE258D729C49DA30017ADFB /* LoginDelegates.swift in Sources */,
 				AFFC941929DEE85200D32AC4 /* TaskItem+CoreDataProperties.swift in Sources */,
 				AFE258E429C81B1D0017ADFB /* InputValidator.swift in Sources */,
-				AF94037F29C9711B001FAA7A /* DummyVC.swift in Sources */,
+				AF94037F29C9711B001FAA7A /* DataConfiguration.swift in Sources */,
 				AF94036D29C877E1001FAA7A /* DataManager.swift in Sources */,
 				AF9403DE29CC1041001FAA7A /* TeamInfoVC.swift in Sources */,
 				AFFA872D29ED4A92007E1179 /* TaskPriority.swift in Sources */,
@@ -496,11 +510,13 @@
 				AFE258E129C818860017ADFB /* PROJXLabel.swift in Sources */,
 				AFE258D529C49CF00017ADFB /* SigninVC.swift in Sources */,
 				AF94034129C86590001FAA7A /* PROJXTableViewController.swift in Sources */,
+				AFC9998729F68DAA004EAD7F /* AccentColorSelectionCell.swift in Sources */,
 				AF60B0DB29C2D70B0070B4E0 /* SceneDelegate.swift in Sources */,
 				AFFC942529E52F2000D32AC4 /* MarqueeLabel.swift in Sources */,
 				AF869CE829CDA7BE00E0A2AE /* CreateEditTeamVC.swift in Sources */,
 				AF60B0EF29C2D8F50070B4E0 /* GlobalConstants.swift in Sources */,
 				AF0374CD29E5358600CFDC85 /* TaskDescriptionCell.swift in Sources */,
+				AFDAB29929F2365D00CE9BD9 /* ProfileButtonCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -638,11 +654,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = R4F89R73A4;
+				DEVELOPMENT_TEAM = 8X9W3GL2K8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ProjX/Structure/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ProjX;
@@ -651,6 +665,7 @@
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -659,7 +674,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.vtouch.zcrm.demo.ProjX;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Zoho CRM New joinees Demo";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -672,11 +686,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = R4F89R73A4;
+				DEVELOPMENT_TEAM = 8X9W3GL2K8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ProjX/Structure/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ProjX;
@@ -685,6 +697,7 @@
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -693,7 +706,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.vtouch.zcrm.demo.ProjX;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Zoho CRM New joinees Demo";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

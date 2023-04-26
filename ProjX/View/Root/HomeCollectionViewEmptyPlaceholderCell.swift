@@ -47,7 +47,7 @@ class HomeCollectionViewEmptyPlaceholderCell: UICollectionViewCell {
     }
 
     private func configureCellUI() {
-        self.backgroundColor = GlobalConstants.Background.primary
+        self.backgroundColor = GlobalConstants.Colors.primaryBackground
         self.contentView.addSubview(largeLabel)
         self.contentView.addSubview(secondaryLabel)
     }

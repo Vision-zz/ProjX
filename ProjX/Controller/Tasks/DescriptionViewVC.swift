@@ -29,7 +29,9 @@ class DescriptionViewVC: PROJXViewController {
 
     private func configureView() {
         title = "Task Description"
+        view.backgroundColor = GlobalConstants.Colors.secondaryBackground
         view.addSubview(descriptionTextView)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeButtonClick))
     }
 
     private func configureConstraints() {
@@ -44,5 +46,10 @@ class DescriptionViewVC: PROJXViewController {
     func setDescription(_ description: String) {
         descriptionTextView.text = description
     }
+
+    @objc private func closeButtonClick() {
+        self.dismiss(animated: true)
+    }
+
 
 }
