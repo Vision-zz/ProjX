@@ -23,7 +23,7 @@ class TeamProfileCell: UITableViewCell {
         teamIcon.clipsToBounds = true
         teamIcon.contentMode = .scaleAspectFill
         teamIcon.tintColor = .label
-        teamIcon.layer.cornerRadius = 30
+        teamIcon.layer.cornerRadius = 40
         return teamIcon
     }()
 
@@ -52,10 +52,6 @@ class TeamProfileCell: UITableViewCell {
         configureConstraints()
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-    }
-
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -69,8 +65,8 @@ class TeamProfileCell: UITableViewCell {
     private func configureConstraints() {
         NSLayoutConstraint.activate([
             teamIcon.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
-            teamIcon.heightAnchor.constraint(equalTo: self.contentView.heightAnchor, multiplier: 0.6),
-            teamIcon.widthAnchor.constraint(equalTo: self.contentView.heightAnchor, multiplier: 0.6),
+            teamIcon.heightAnchor.constraint(equalTo: self.contentView.heightAnchor, multiplier: 0.8),
+            teamIcon.widthAnchor.constraint(equalTo: self.contentView.heightAnchor, multiplier: 0.8),
             teamIcon.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor),
 
             teamNameLabel.leadingAnchor.constraint(equalTo: teamIcon.trailingAnchor, constant: 15),

@@ -9,11 +9,11 @@ import UIKit
 
 class TasksVC: PROJXTableViewController {
 
-    private enum AvailableDisplayOptions: Int {
+    enum AvailableSegmentControlDisplayOptions: Int {
         case all, complete, incomplete
     }
 
-    private var selectedOption: AvailableDisplayOptions = .incomplete
+    private var selectedOption: AvailableSegmentControlDisplayOptions = .incomplete
 
     override var hidesBottomBarWhenPushed: Bool {
         get {
@@ -66,6 +66,20 @@ class TasksVC: PROJXTableViewController {
         return segmentView
     }()
 
+    lazy var rightSwipeGesture: UISwipeGestureRecognizer = {
+        let rightSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleRightSwipe))
+        rightSwipeGesture.direction = .right
+        rightSwipeGesture.cancelsTouchesInView = true
+        return rightSwipeGesture
+    }()
+
+    lazy var leftSwipeGesture: UISwipeGestureRecognizer = {
+        let leftSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleLeftSwipe))
+        leftSwipeGesture.direction = .left
+        leftSwipeGesture.cancelsTouchesInView = true
+        return leftSwipeGesture
+    }()
+
     convenience init() {
         self.init(style: .insetGrouped)
     }
@@ -95,6 +109,7 @@ class TasksVC: PROJXTableViewController {
         configureView()
         configureNotifCenter()
         configureDataSource()
+        configureSwipeGestures()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -117,6 +132,11 @@ class TasksVC: PROJXTableViewController {
         tableView.tableHeaderView!.frame.size.height = newSize.height + 25
         let addBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addBarButtonClicked))
         navigationItem.rightBarButtonItems = [addBarButtonItem]
+    }
+
+    private func configureSwipeGestures() {
+        tableView.addGestureRecognizer(rightSwipeGesture)
+        tableView.addGestureRecognizer(leftSwipeGesture)
     }
 
     private func configureDataSource() {
@@ -163,16 +183,41 @@ class TasksVC: PROJXTableViewController {
         }
     }
 
+    func switchSegmentControl(to option: AvailableSegmentControlDisplayOptions) {
+        segmentControl.selectedSegmentIndex = option.rawValue
+        segmentControlValueChange(segmentControl)
+    }
+
+    @objc func handleRightSwipe(_ gestureRecognizer: UISwipeGestureRecognizer) {
+        guard selectedOption.rawValue != 0 else { return }
+        let oldOption = selectedOption
+        let newOption = AvailableSegmentControlDisplayOptions.init(rawValue: selectedOption.rawValue - 1) ?? selectedOption
+        guard oldOption != newOption else { return }
+        segmentControl.selectedSegmentIndex = newOption.rawValue
+        segmentControlValueChange(segmentControl)
+    }
+
+    @objc func handleLeftSwipe(_ gestureRecognizer: UISwipeGestureRecognizer) {
+        guard selectedOption.rawValue != 2 else { return }
+        let oldOption = selectedOption
+        let newOption = AvailableSegmentControlDisplayOptions.init(rawValue: selectedOption.rawValue + 1) ?? selectedOption
+        guard oldOption != newOption else { return }
+        segmentControl.selectedSegmentIndex = newOption.rawValue
+        segmentControlValueChange(segmentControl)
+    }
+
     @objc private func segmentControlValueChange(_ sender: UISegmentedControl) {
-        let option = AvailableDisplayOptions.init(rawValue: sender.selectedSegmentIndex)
+        let option = AvailableSegmentControlDisplayOptions.init(rawValue: sender.selectedSegmentIndex)
         guard let option = option, selectedOption != option else { return }
+        let oldOption = selectedOption
         selectedOption = option
         configureDataSource()
         tableView.reloadData()
+        tableView.reloadSections(IndexSet(integersIn: 0..<tableView.numberOfSections), with: sender.selectedSegmentIndex > oldOption.rawValue ? .left : .right)
     }
 
     @objc func addBarButtonClicked() {
-        let vc = AddTaskVC()
+        let vc = AddOrEditTaskVC()
         vc.createTaskDelegate = self
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -203,6 +248,7 @@ class TasksVC: PROJXTableViewController {
         let task = dataSource[indexPath.section].rows[indexPath.row]
         cell.configureCell(for: task, showsCompleted: selectedOption == .all)
         cell.accessoryType = .disclosureIndicator
+        Util.configureCustomSelectionStyle(for: cell)
         return cell
     }
 
@@ -224,7 +270,9 @@ class TasksVC: PROJXTableViewController {
 }
 
 extension TasksVC: CreateTaskDelegate {
-    func taskCreated(_ task: TaskItem) {
+    func taskCreatedOrUpdated(_ task: TaskItem) {
         navigationController?.popViewController(animated: true)
+        let vc = ViewTaskVC(task: task)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }

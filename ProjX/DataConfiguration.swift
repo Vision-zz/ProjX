@@ -161,14 +161,20 @@ class DataConfiguration {
 
                 let task = TaskItem(context: DataManager.shared.context)
                 task.taskID = UUID()
-                task.createdAt = Date()
+                let randomDateInPreviousWeek = Date(timeInterval: TimeInterval.random(in: 0...604800), since: Calendar.current.date(byAdding: .day, value: -7, to: Date())!)
+                task.createdAt = randomDateInPreviousWeek
                 task.title = "Task \(k)"
                 task.taskDescription = "This is a task that needs to be finished within a particular amount of time. This task is named task 1"
-                task.deadline = Date(timeIntervalSinceNow: 300000)
+                task.deadline = Date(timeInterval: TimeInterval.random(in: 0...604800), since: Calendar.current.date(byAdding: .day, value: 7, to: Date())!)
                 task.createdByUser = createdBy
                 task.assignedToUser = assignedTo
                 task.statusUpdates = []
-                task.taskStatus = arc4random_uniform(100) < 25 ? .complete : .incomplete
+                if arc4random_uniform(100) < 25 {
+                    task.taskStatus = .complete
+                    task.completedAt = Date()
+                } else {
+                    task.taskStatus = .incomplete
+                }
                 team.tasks.append(task)
 
                 tasks.append(task)

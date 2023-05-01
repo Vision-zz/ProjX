@@ -50,6 +50,7 @@ class CreateEditTeamVC: PROJXViewController {
 
     private lazy var icon: UIButton = {
         let icon = UIButton()
+        icon.translatesAutoresizingMaskIntoConstraints = false
         icon.addSubview(teamIconImageView)
         icon.menu = getMenu()
         icon.setContentHuggingPriority(.defaultHigh, for: .horizontal)
@@ -131,18 +132,6 @@ class CreateEditTeamVC: PROJXViewController {
 
     weak var delegate: CreateEditTeamDelegate? = nil
 
-
-    init(editingTeam: Team? = nil) {
-        super.init(nibName: nil, bundle: nil)
-        if editingTeam != nil {
-            configureViewForEditing(team: editingTeam!)
-        }
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -158,7 +147,7 @@ class CreateEditTeamVC: PROJXViewController {
         view.addSubview(endButton)
     }
 
-    private func configureViewForEditing(team: Team) {
+    func configureViewForEditing(team: Team) {
         self.isCreatingTeam = false
         self.editingTeam = team
         self.teamName = team.teamName ?? nil

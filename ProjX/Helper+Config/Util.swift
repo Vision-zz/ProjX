@@ -61,10 +61,17 @@ class Util {
             kCGImageSourceShouldCacheImmediately: true,
             kCGImageSourceCreateThumbnailWithTransform: true,
             kCGImageSourceThumbnailMaxPixelSize: maxDimentionInPixels
-        ] as CFDictionary
+        ] as [CFString : Any] as CFDictionary
         let downsampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampledOptions)
         guard let downsampledImage = downsampledImage else { return nil }
         return UIImage(cgImage: downsampledImage)
+    }
+
+    public static func configureCustomSelectionStyle(for cell: UITableViewCell, with color: UIColor = GlobalConstants.Colors.accentColor) {
+        let selectedView = UIView()
+        selectedView.backgroundColor = color.withAlphaComponent(0.15)
+        cell.selectedBackgroundView = selectedView
+        cell.multipleSelectionBackgroundView = selectedView
     }
 
 }

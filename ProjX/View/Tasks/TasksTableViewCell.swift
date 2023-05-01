@@ -32,16 +32,6 @@ class TasksTableViewCell: UITableViewCell {
         return label
     }()
 
-    lazy var createdAtLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .secondaryLabel
-        label.textAlignment = .right
-        label.numberOfLines = 1
-        label.font = .systemFont(ofSize: 11)
-        return label
-    }()
-
     lazy var completedIndicator: UIView = {
         let indicator = UIView()
         indicator.translatesAutoresizingMaskIntoConstraints = false
@@ -65,7 +55,6 @@ class TasksTableViewCell: UITableViewCell {
         contentView.clipsToBounds = true
         contentView.addSubview(titleLabel)
         contentView.addSubview(infoLabel)
-//        contentView.addSubview(createdAtLabel)
         contentView.addSubview(completedIndicator)
 
         NSLayoutConstraint.activate([
@@ -77,10 +66,6 @@ class TasksTableViewCell: UITableViewCell {
             infoLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
             infoLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.6),
 
-//            createdAtLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
-//            createdAtLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-//            createdAtLabel.widthAnchor.constraint(equalTo: titleLabel.widthAnchor, multiplier: 0.58),
-
             completedIndicator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -3),
             completedIndicator.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             completedIndicator.heightAnchor.constraint(equalToConstant: 8),
@@ -91,7 +76,6 @@ class TasksTableViewCell: UITableViewCell {
     func configureCell(for taskItem: TaskItem, showsCompleted: Bool = false) {
         titleLabel.text = taskItem.title
         infoLabel.text = "created by \(taskItem.createdByUser.name!)"
-        createdAtLabel.text = taskItem.createdAt?.convertToString()
         completedIndicator.isHidden = !(showsCompleted && taskItem.taskStatus == .complete)
     }
 

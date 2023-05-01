@@ -56,20 +56,31 @@ class AccentColorSelectionCell: UITableViewCell {
     }
 
     private func configureMenu() -> UIMenu {
-        var children = [UIMenuElement]()
+
+        var defaultColorElements = [UIMenuElement]()
+        var customColorElements = [UIMenuElement]()
+
         for color in GlobalConstants.Colors.AccentColor.allCases {
             let image = UIImage(systemName: "circle.fill")!.withTintColor(GlobalConstants.Colors.getAccentColor(named: color), renderingMode: .alwaysOriginal)
             let isSelected = GlobalConstants.Colors.accentColorString == color.rawValue
-            children.append(UIAction(title: color.rawValue, image: image, state: isSelected ? .on : .off, handler: { [weak self] _ in
+
+            let action = UIAction(title: color.rawValue, image: image, state: isSelected ? .on : .off, handler: { [weak self] _ in
                 DataManager.shared.setSelectedAccentColor(color)
                 self?.accentColorButton.layer.borderColor = GlobalConstants.Colors.accentColor.cgColor
                 self?.accentColorButton.tintColor = GlobalConstants.Colors.accentColor
                 self?.accentColorButton.setTitle(GlobalConstants.Colors.accentColorString, for: .normal)
-            }))
+            })
+
+            if color == .defaultAccent {
+                defaultColorElements.append(action)
+            } else {
+                customColorElements.append(action)
+            }
         }
 
-        let menu = UIMenu(options: [.singleSelection], children: children)
-        return menu
+        let defaultColor = UIMenu(options: [.displayInline, .singleSelection], children: defaultColorElements)
+        let customColors = UIMenu(options: [.displayInline, .singleSelection], children: customColorElements)
+        return UIMenu(options: [.displayInline, .singleSelection], children: [customColors, defaultColor])
     }
 
 }

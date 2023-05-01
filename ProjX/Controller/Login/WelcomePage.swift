@@ -161,6 +161,15 @@ extension WelcomePage: SignUpDelegate, SignInDelegate {
         loginButton.backgroundColor = .systemGray2.withAlphaComponent(0.3)
         loginButton.layer.borderColor = UIColor.systemGray2.cgColor
         loginButton.configuration?.showsActivityIndicator = true
+        loginButton.isUserInteractionEnabled = false
+    }
+
+    private func dismissActivityIndicatorOnLoginButton() {
+        loginButton.setTitle("Login", for: .normal)
+        loginButton.backgroundColor = UIColor(hex: 0x7289da, alpha: 0.3)
+        loginButton.layer.borderColor = UIColor(hex: 0x7289da).cgColor
+        loginButton.configuration?.showsActivityIndicator = false
+        loginButton.isUserInteractionEnabled = true
     }
 
     func successfulLogin() {
@@ -184,16 +193,15 @@ extension WelcomePage: SignUpDelegate, SignInDelegate {
                 case .failure:
                     let alert = UIAlertController(title: "Error", message: "An error occured while authenticating. Please Sign in using your new account to continue", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Sign In", style: .default, handler: { [weak self] _ in
-                        self?.loginButton.setTitle("Login", for: .normal)
-                        self?.loginButton.backgroundColor = UIColor(hex: 0x7289da, alpha: 0.3)
-                        self?.loginButton.layer.borderColor = UIColor(hex: 0x7289da).cgColor
-                        self?.loginButton.configuration?.showsActivityIndicator = false
+                        self?.dismissActivityIndicatorOnLoginButton()
                         self?.presentSignIn()
                     }))
-                    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { [weak self] _ in
+                        self?.dismissActivityIndicatorOnLoginButton()
+                    }))
                     self?.present(alert, animated: true)
                 case .success:
-                    GlobalConstants.StructureDelegates.sceneDelegate?.switchToHomePageVC()
+                    MainRouter.shared.routeToHomePage()
             }
         }
     }

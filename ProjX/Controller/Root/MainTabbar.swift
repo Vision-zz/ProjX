@@ -22,18 +22,20 @@ class MainTabbar: UITabBarController {
     private func configureNotifCenter() {
         NotificationCenter.default.addObserver(self, selector: #selector(updateTheme), name: Notification.Name("ThemeChanged"), object: nil)
     }
-    
-    let browse = UINavigationController(rootViewController: TasksVC())
-    let team = UINavigationController(rootViewController: TeamsVC())
-    let profile = UINavigationController(rootViewController: ProfileVC())
+
+    lazy var tasksVC = TasksVC()
+    lazy var teamVC = TeamsVC()
+    lazy var profileVC = ProfileVC()
+
+    lazy var tasks = UINavigationController(rootViewController: tasksVC)
+    lazy var team = UINavigationController(rootViewController: teamVC)
+    lazy var profile = UINavigationController(rootViewController: profileVC)
 
     private func configureTabbar() {
-
-
-        browse.tabBarItem.image = UIImage(systemName: "rectangle.stack")
-        browse.tabBarItem.selectedImage = UIImage(systemName: "rectangle.stack.fill")
-        browse.title = "Tasks"
-        browse.navigationBar.prefersLargeTitles = true
+        tasks.tabBarItem.image = UIImage(systemName: "rectangle.stack")
+        tasks.tabBarItem.selectedImage = UIImage(systemName: "rectangle.stack.fill")
+        tasks.title = "Tasks"
+        tasks.navigationBar.prefersLargeTitles = true
 
         team.tabBarItem.image = UIImage(systemName: "person.2")
         team.tabBarItem.selectedImage = UIImage(systemName: "person.2.fill")
@@ -49,7 +51,12 @@ class MainTabbar: UITabBarController {
         self.tabBar.unselectedItemTintColor = .label
         self.tabBar.isTranslucent = true
         updateAccentColor()
-        self.viewControllers = [browse, team, profile]
+        self.viewControllers = [tasks, team, profile]
+
+        MainRouter.shared.tabbarController = self
+        MainRouter.shared.tasksVC = tasksVC
+        MainRouter.shared.teamsVC = teamVC
+        MainRouter.shared.profileVC = profileVC
 
     }
 
@@ -69,7 +76,7 @@ class MainTabbar: UITabBarController {
     }
 
     private func updateAccentColor() {
-        browse.navigationBar.tintColor = GlobalConstants.Colors.accentColor
+        tasks.navigationBar.tintColor = GlobalConstants.Colors.accentColor
         team.navigationBar.tintColor = GlobalConstants.Colors.accentColor
         profile.navigationBar.tintColor = GlobalConstants.Colors.accentColor
     }

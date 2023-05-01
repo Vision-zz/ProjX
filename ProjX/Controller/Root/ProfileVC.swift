@@ -41,7 +41,6 @@ class ProfileVC: PROJXTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         configureView()
         configureNotifCenter()
     }
@@ -55,7 +54,7 @@ class ProfileVC: PROJXTableViewController {
     }
 
     @objc private func updateTheme() {
-        tableView.reloadSections(IndexSet(integer: 0), with: .none)
+        tableView.reloadSections(IndexSet(arrayLiteral: 0, 1, 3), with: .none)
         segmentControl.selectedSegmentTintColor = GlobalConstants.Colors.accentColor
     }
 
@@ -82,7 +81,7 @@ class ProfileVC: PROJXTableViewController {
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
-            return 100
+            return 90
         }
         return 44
     }
@@ -102,24 +101,14 @@ class ProfileVC: PROJXTableViewController {
         }
     }
 
-    func configureAccountOverviewCell(_ cell: UITableViewCell, indexPath: IndexPath) {
-        let keyValue: [(key:String, value:String)] = [
-            ("Created At", SessionManager.shared.signedInUser!.createdAt!.convertToString()),
-            ("Last Password update", SessionManager.shared.signedInUser!.passLastUpdate!.convertToString()),
-        ]
+    func configureAccountSettingsCell(_ cell: UITableViewCell, indexPath: IndexPath) {
+        let cellString = ["Name, Profile Image, Email", "Account & Password"]
 
         var config = cell.defaultContentConfiguration()
-        config.text = keyValue[indexPath.row].key
-        config.secondaryText = keyValue[indexPath.row].value
-        config.prefersSideBySideTextAndSecondaryText = true
-
-        config.imageProperties.tintColor = .label
-        config.textProperties.font = .systemFont(ofSize: 14, weight: .semibold)
-        config.textProperties.color = .secondaryLabel
-        config.secondaryTextProperties.font = .systemFont(ofSize: 16)
-        config.secondaryTextProperties.color = .label
-
+        config.text = cellString[indexPath.row]
+        config.textProperties.color = .label
         cell.contentConfiguration = config
+        cell.accessoryType = .disclosureIndicator
     }
 
     private func configureThemeSelectionCell(_ cell: UITableViewCell) {
@@ -152,23 +141,28 @@ class ProfileVC: PROJXTableViewController {
         switch indexPath.section {
             case 0:
                 let cell = tableView.dequeueReusableCell(withIdentifier: ProfileCell.identifier, for: indexPath) as! ProfileCell
+                cell.selectionStyle = .none
                 cell.configure(with: SessionManager.shared.signedInUser!)
                 return cell
             case 1:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileKeyValueCell", for: indexPath)
-                configureAccountOverviewCell(cell, indexPath: indexPath)
+                Util.configureCustomSelectionStyle(for: cell)
+                configureAccountSettingsCell(cell, indexPath: indexPath)
                 return cell
             case 2:
                 if indexPath.row == 0 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileKeyValueCell", for: indexPath)
+                    cell.selectionStyle = .none
                     configureThemeSelectionCell(cell)
                     return cell
                 } else {
                     let cell = tableView.dequeueReusableCell(withIdentifier: AccentColorSelectionCell.identifier, for: indexPath) as! AccentColorSelectionCell
+                    cell.selectionStyle = .none
                     return cell
                 }
             case 3:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileKeyValueCell", for: indexPath)
+                Util.configureCustomSelectionStyle(for: cell, with: .systemRed)
                 configureLogoutCell(cell, indexPath: indexPath)
                 return cell
             default:
@@ -177,7 +171,9 @@ class ProfileVC: PROJXTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 2 {
+        if section == 1 {
+            return "Edit Account"
+        } else if section == 2 {
             return "Appearance"
         }
         return nil
@@ -185,26 +181,51 @@ class ProfileVC: PROJXTableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard indexPath.section == 3 else { return }
-        if indexPath.row == 0 {
-            let alert = UIAlertController(title: "Logout", message: "Do you want to log out?", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Logout", style: .destructive) { _ in SessionManager.shared.logout() })
-            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-            present(alert, animated: true)
-        } else {
-            let alert = UIAlertController(title: "Are you sure?", message: "This action is not reversible and your account will be deleted permanently. Do you want to proceed?", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Proceed", style: .destructive) { _ in
-                DataManager.shared.deleteUser(username: SessionManager.shared.signedInUser!.username!)
-            })
-            alert.addAction(UIAlertAction(title: "Go Back", style: .cancel))
-            present(alert, animated: true)
+        guard [1, 3].contains(indexPath.section) else { return }
+        if indexPath.section == 3 {
+            if indexPath.row == 0 {
+                let alert = UIAlertController(title: "Logout", message: "Do you want to log out?", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Logout", style: .destructive) { _ in SessionManager.shared.logout() })
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                present(alert, animated: true)
+            } else {
+                let alert = UIAlertController(title: "Are you sure?", message: "This action is not reversible and your account will be deleted permanently. Do you want to proceed?", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Proceed", style: .destructive) { _ in
+                    DataManager.shared.deleteUser(username: SessionManager.shared.signedInUser!.username!)
+                })
+                alert.addAction(UIAlertAction(title: "Go Back", style: .cancel))
+                present(alert, animated: true)
+            }
+        }
+
+        if indexPath.section == 1 {
+            if indexPath.row == 0 {
+                let vc = NameEmailVC(user: SessionManager.shared.signedInUser!)
+                vc.profileUpdateDelegate = self
+                let nav = UINavigationController(rootViewController: vc)
+                nav.modalPresentationStyle = .formSheet
+                nav.navigationBar.tintColor = GlobalConstants.Colors.accentColor
+                present(nav, animated: true)
+            } else {
+                let vc = PasswordUsernameVC(user: SessionManager.shared.signedInUser!)
+                let nav = UINavigationController(rootViewController: vc)
+                nav.modalPresentationStyle = .formSheet
+                nav.navigationBar.tintColor = GlobalConstants.Colors.accentColor
+                present(nav, animated: true)
+            }
         }
     }
 
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        if indexPath.section == 3 {
+        if [1, 3].contains(indexPath.section) {
             return indexPath
         }
         return nil
+    }
+}
+
+extension ProfileVC: ProfileUpdateDelegate {
+    func profileUpdated() {
+        tableView.reloadSections(IndexSet(integer: 0), with: .none)
     }
 }

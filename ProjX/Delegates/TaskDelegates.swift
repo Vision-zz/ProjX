@@ -12,9 +12,9 @@ protocol AssignedToSelectionDelegate: AnyObject {
 }
 
 protocol PriorityPickerDelegate: AnyObject {
-    func selectedPriority(_ priority: TaskPriority)
+    func selectedPriority(_ priority: TaskPriority, dismiss: Bool)
 }
 
 protocol CreateTaskDelegate: AnyObject {
-    func taskCreated(_ task: TaskItem)
+    func taskCreatedOrUpdated(_ task: TaskItem)
 }

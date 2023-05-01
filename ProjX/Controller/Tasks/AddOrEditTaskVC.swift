@@ -7,8 +7,10 @@
 
 import UIKit
 
-class AddTaskVC: PROJXTableViewController {
+class AddOrEditTaskVC: PROJXTableViewController {
 
+    lazy var isEditingTask: Bool = false
+    lazy var editingTask: TaskItem? = nil
     lazy var assignedToUser: User? = SessionManager.shared.signedInUser
     lazy var priority: TaskPriority = .low
     weak var createTaskDelegate: CreateTaskDelegate?
@@ -46,6 +48,7 @@ class AddTaskVC: PROJXTableViewController {
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.backgroundColor = .clear
         textView.tintColor = GlobalConstants.Colors.accentColor
+        textView.font = .systemFont(ofSize: 16)
         return textView
     }()
 
@@ -59,42 +62,33 @@ class AddTaskVC: PROJXTableViewController {
         return picker
     }()
 
-    lazy var assignedToButton: UIButton = {
-        let button = UIButton()
-        var config = UIButton.Configuration.plain()
-        config.buttonSize = .mini
-        config.imagePlacement = .trailing
-        config.imagePadding = 5
-        button.configuration = config
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.contentHorizontalAlignment = .right
-        button.setTitle(assignedToUser?.name, for: .normal)
+    var assignedToIsChangeable: Bool { return SessionManager.shared.signedInUser!.roleInCurrentTeam != .member }
+    lazy var assignedToLabel: UILabel = {
+        let label = UILabel()
+        label.text = assignedToUser?.name
+        label.backgroundColor = .clear
         if SessionManager.shared.signedInUser?.roleInCurrentTeam != .member {
-            button.tintColor = .label
-            button.setImage(UIImage(systemName: "chevron.right"), for: .normal)
-            button.addTarget(self, action: #selector(assignedToButtonOnClick), for: .touchUpInside)
+            label.textColor = .label
         } else {
-            button.tintColor = .secondaryLabel
-            button.isUserInteractionEnabled = false
+            label.textColor = .secondaryLabel
         }
-        return button
+        label.textAlignment = .left
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
+        label.lineBreakMode = .byTruncatingTail
+        return label
     }()
 
-    lazy var priorityButton: UIButton = {
-        let button = UIButton()
-        var config = UIButton.Configuration.plain()
-        config.buttonSize = .mini
-        config.imagePlacement = .trailing
-        config.imagePadding = 5
-        button.configuration = config
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.contentHorizontalAlignment = .right
-        button.setTitleColor(.label, for: .normal)
-        button.setImage(UIImage(systemName: "chevron.right"), for: .normal)
-        button.setTitle(priorityString, for: .normal)
-        button.tintColor = .label
-        button.addTarget(self, action: #selector(priorityButtonClicked), for: .touchUpInside)
-        return button
+    lazy var priorityLabel: UILabel = {
+        let label = UILabel()
+        label.text = priorityString
+        label.backgroundColor = .clear
+        label.textAlignment = .left
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
+        label.lineBreakMode = .byTruncatingTail
+        label.textColor = .label
+        return label
     }()
 
     override func viewDidLoad() {
@@ -103,30 +97,13 @@ class AddTaskVC: PROJXTableViewController {
     }
 
     private func configureView() {
-        title = "Add Task"
+        title = isEditingTask ? "Edit task" : "Add Task"
+        navigationItem.largeTitleDisplayMode = .always
         tableView.backgroundColor = GlobalConstants.Colors.primaryBackground
         tableView.register(AddTaskTableViewCell.self, forCellReuseIdentifier: AddTaskTableViewCell.identifier)
         tableView.keyboardDismissMode = .onDrag
         tableView.separatorStyle = .none
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneButtonOnClick))
-    }
-
-    @objc private func assignedToButtonOnClick() {
-        let vc = TeamMemberSelector(team: SessionManager.shared.signedInUser!.selectedTeam!, selectedUser: assignedToUser)
-        vc.selectionDelegate = self
-        navigationController?.pushViewController(vc, animated: true)
-    }
-
-    @objc private func priorityButtonClicked() {
-        let vc = PriorityPickerVC()
-        vc.priorityPickerDelegate = self
-        vc.setSelectedPriority(priority)
-        vc.modalPresentationStyle = .formSheet
-        if let sheet = vc.sheetPresentationController {
-            sheet.detents = [.custom(resolver: { _ in return 200 })]
-            sheet.preferredCornerRadius = 20
-        }
-        present(vc, animated: true)
     }
 
     @objc private func doneButtonOnClick() {
@@ -145,9 +122,30 @@ class AddTaskVC: PROJXTableViewController {
             return
         }
 
-        let createdTask = DataManager.shared.createTask(title: titleText, description: descText, deadLine: deadlineDatePicker.date, assignedTo: assignedToUser!, priority: priority)
-        createTaskDelegate?.taskCreated(createdTask)
+        if let editingTask = editingTask, isEditingTask {
+            editingTask.title = titleText
+            editingTask.taskDescription = descText
+            editingTask.deadline = deadlineDatePicker.date
+            editingTask.assignedToUser = assignedToUser
+            editingTask.taskPriority = priority
+            DataManager.shared.saveContext()
+            createTaskDelegate?.taskCreatedOrUpdated(editingTask)
+        } else {
+            let createdTask = DataManager.shared.createTask(title: titleText, description: descText, deadLine: deadlineDatePicker.date, assignedTo: assignedToUser!, priority: priority)
+            createTaskDelegate?.taskCreatedOrUpdated(createdTask)
+        }
+    }
 
+    func configureViewForEditing(task: TaskItem) {
+        self.isEditingTask = true
+        self.editingTask = task
+        self.titleTextField.text = task.title
+        self.descriptionTextView.text = task.taskDescription
+        self.assignedToUser = task.assignedToUser
+        self.priority = task.taskPriority
+        if task.deadline != nil {
+            self.deadlineDatePicker.date = task.deadline!
+        }
     }
 
     // MARK: - Table view data source
@@ -189,26 +187,30 @@ class AddTaskVC: PROJXTableViewController {
                     cellView.addSubview(self.deadlineDatePicker)
                     NSLayoutConstraint.activate([
                         self.deadlineDatePicker.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
-                        self.deadlineDatePicker.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -15)
+                        self.deadlineDatePicker.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 10)
 
                     ])
                 }
             case 3:
+                cell.accessoryType = assignedToIsChangeable ? .disclosureIndicator : .none
                 cell.configureCellView(key: "Assign To") { [unowned self] cellView in
-                    cellView.addSubview(self.assignedToButton)
+                    cellView.addSubview(self.assignedToLabel)
                     NSLayoutConstraint.activate([
-                        self.assignedToButton.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
-                        self.assignedToButton.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 10),
-                        self.assignedToButton.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -15),
+                        self.assignedToLabel.topAnchor.constraint(equalTo: cellView.topAnchor),
+                        self.assignedToLabel.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 10),
+                        self.assignedToLabel.bottomAnchor.constraint(equalTo: cellView.bottomAnchor),
+                        self.assignedToLabel.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -15),
                     ])
                 }
             case 4:
+                cell.accessoryType = .disclosureIndicator
                 cell.configureCellView(key: "Priority") { [unowned self] cellView in
-                    cellView.addSubview(priorityButton)
+                    cellView.addSubview(priorityLabel)
                     NSLayoutConstraint.activate([
-                        self.priorityButton.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
-                        self.priorityButton.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 10),
-                        self.priorityButton.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -15),
+                        self.priorityLabel.topAnchor.constraint(equalTo: cell.topAnchor),
+                        self.priorityLabel.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 10),
+                        self.priorityLabel.bottomAnchor.constraint(equalTo: cellView.bottomAnchor),
+                        self.priorityLabel.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -15),
                     ])
                 }
             default:
@@ -224,20 +226,58 @@ class AddTaskVC: PROJXTableViewController {
         }
         return 44
     }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch indexPath.row {
+            case 3:
+                let vc = TeamMemberSelector(team: SessionManager.shared.signedInUser!.selectedTeam!, selectedUser: assignedToUser)
+                vc.selectionDelegate = self
+                navigationController?.pushViewController(vc, animated: true)
+            case 4:
+                let vc = PriorityPickerVC()
+                vc.priorityPickerDelegate = self
+                vc.setSelectedPriority(priority)
+                let nav = UINavigationController(rootViewController: vc)
+                nav.modalPresentationStyle = .formSheet
+                if let sheet = nav.sheetPresentationController {
+                    sheet.detents = [.custom(resolver: { _ in return 250 })]
+                    sheet.preferredCornerRadius = 20
+                }
+                present(nav, animated: true)
+            default:
+                return
+        }
+    }
+
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        switch indexPath.row {
+            case 3:
+                if SessionManager.shared.signedInUser?.roleInCurrentTeam != .member {
+                    return indexPath
+                }
+            case 4:
+                return indexPath
+            default:
+                return nil
+        }
+        return nil
+    }
 }
 
-extension AddTaskVC: AssignedToSelectionDelegate {
+extension AddOrEditTaskVC: AssignedToSelectionDelegate {
     func taskAssigned(to user: User) {
         assignedToUser = user
-        assignedToButton.setTitle(user.name, for: .normal)
+        assignedToLabel.text = user.name
         navigationController?.popViewController(animated: true)
     }
 }
 
-extension AddTaskVC: PriorityPickerDelegate {
-    func selectedPriority(_ priority: TaskPriority) {
+extension AddOrEditTaskVC: PriorityPickerDelegate {
+    func selectedPriority(_ priority: TaskPriority, dismiss: Bool) {
         self.priority = priority
-        priorityButton.setTitle(priorityString, for: .normal)
-        dismiss(animated: true)
+        priorityLabel.text = priorityString
+        if dismiss {
+            self.dismiss(animated: true)
+        }
     }
 }

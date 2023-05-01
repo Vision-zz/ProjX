@@ -25,7 +25,7 @@ class SignupVC: BaseLoginViewTableView {
     }()
 
     lazy var displayNameTextField = createTextField(placeholder: "Display name")
-    lazy var emailTextField = createTextField(placeholder: "Email*")
+    lazy var emailTextField = createTextField(placeholder: "Email*", with: .emailAddress)
 
     lazy var passwordStrengthBar: UIProgressView = {
         let bar = UIProgressView(progressViewStyle: .bar)
@@ -240,6 +240,7 @@ class SignupVC: BaseLoginViewTableView {
 }
 
 extension SignupVC: UITextFieldDelegate {
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         switch textField {
             case usernameTextField:

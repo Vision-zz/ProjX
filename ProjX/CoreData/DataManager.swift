@@ -10,13 +10,13 @@ import UIKit
 
 class DataManager {
 
-    static let shared: DataManager = DataManager()
 
     let context: NSManagedObjectContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     let saveContext: () -> Void = (UIApplication.shared.delegate as! AppDelegate).saveContext
 
     private init() {}
+    static let shared: DataManager = DataManager()
 
     func getAllUsers() -> [User] {
         return (try? context.fetch(User.fetchRequest())) ?? []
@@ -120,6 +120,17 @@ class DataManager {
         SessionManager.shared.logout()
     }
 
+    func deleteTask(_ task: TaskItem) {
+        context.delete(task)
+        saveContext()
+    }
+
+    func deleteTeam(_ team: Team) {
+        team.allTeamMembers.forEach { $0.userTeams?.removeAll { $0 == team.teamID } }
+        context.delete(team)
+        saveContext()
+    }
+
     @discardableResult
     func createTeam(name: String, createdBy: User, image: UIImage?) -> Team {
         let newTeam = Team(context: context)
@@ -137,7 +148,7 @@ class DataManager {
 
         createdBy.teams.append(newTeam)
         if createdBy.selectedTeam == nil {
-            SessionManager.shared.changeSelectedTeam(of: createdBy, to: newTeam)
+            DataManager.shared.changeSelectedTeam(of: createdBy, to: newTeam)
         }
         saveContext()
         return newTeam
@@ -231,6 +242,14 @@ class DataManager {
         print("Set to user defaults")
         GlobalConstants.StructureDelegates.appDelegate?.updateTheme()
         print("Finish update theme")
+    }
+
+    func changeSelectedTeam(of user: User, to team: Team) {
+        guard let teamID = team.teamID, teamID != user.selectedTeamID else {
+            return
+        }
+        user.selectedTeam = team
+        saveContext()
     }
 
 }

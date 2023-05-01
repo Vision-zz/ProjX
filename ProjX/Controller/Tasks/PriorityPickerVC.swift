@@ -11,6 +11,7 @@ class PriorityPickerVC: PROJXViewController, UIPickerViewDataSource, UIPickerVie
 
     let priorityOptions = ["High", "Medium", "Low"]
 
+    lazy var selectedPriority: TaskPriority = .low
     weak var priorityPickerDelegate: PriorityPickerDelegate!
     lazy var pickerView: UIPickerView = {
         let pickerView = UIPickerView()
@@ -28,16 +29,25 @@ class PriorityPickerVC: PROJXViewController, UIPickerViewDataSource, UIPickerVie
 
     private func configureView() {
         view.addSubview(pickerView)
+        navigationItem.largeTitleDisplayMode = .never
+        view.backgroundColor = GlobalConstants.Colors.secondaryBackground
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(closeButtonClick))
+        navigationController?.navigationBar.tintColor = GlobalConstants.Colors.accentColor
     }
 
     private func configureConstraints() {
         NSLayoutConstraint.activate([
             pickerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            pickerView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            pickerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
     }
 
+    @objc private func closeButtonClick() {
+        priorityPickerDelegate.selectedPriority(selectedPriority, dismiss: true)
+    }
+
     func setSelectedPriority(_ priority: TaskPriority) {
+        selectedPriority = priority
         let row = priority == .high ? 0 : priority == .medium ? 1 : 2
         pickerView.selectRow(row, inComponent: 0, animated: true)
     }
@@ -60,6 +70,7 @@ class PriorityPickerVC: PROJXViewController, UIPickerViewDataSource, UIPickerVie
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         let priority = row == 0 ? TaskPriority.high : row == 1 ? TaskPriority.medium : TaskPriority.low
-        priorityPickerDelegate.selectedPriority(priority)
+        selectedPriority = priority
+        priorityPickerDelegate.selectedPriority(priority, dismiss: false)
     }
 }

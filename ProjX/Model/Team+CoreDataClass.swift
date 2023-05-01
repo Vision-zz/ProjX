@@ -169,12 +169,4 @@ public class Team: NSManagedObject {
         DataManager.shared.saveContext()
     }
 
-    func delete() {
-        teamOwner?.userTeams?.removeAll(where: { $0 == teamID })
-        teamMembers.forEach({ $0.userTeams?.removeAll(where: { $0 == teamID }) })
-        teamAdmins.forEach({ $0.userTeams?.removeAll(where: { $0 == teamID }) })
-        DataManager.shared.context.delete(self)
-        DataManager.shared.saveContext()
-    }
-
 }

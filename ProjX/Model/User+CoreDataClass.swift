@@ -100,6 +100,11 @@ public class User: NSManagedObject {
         DataManager.shared.saveImage(image, with: name)
     }
 
+    func deleteUserProfileIcon() {
+        guard let name = userID?.uuidString else { return }
+        DataManager.shared.removeImage(with: name)
+    }
+
     func isOwner(_ team: Team) -> Bool {
         guard let _ = team.teamOwnerID else { return false }
         return roleIn(team: team) == .owner

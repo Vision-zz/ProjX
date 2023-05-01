@@ -9,6 +9,10 @@ import UIKit
 
 class DescriptionViewVC: PROJXViewController {
 
+    deinit {
+        print("Deinit DescriptionView")
+    }
+
     lazy var descriptionTextView: UITextView = {
         let tv = UITextView()
         tv.translatesAutoresizingMaskIntoConstraints = false
@@ -27,8 +31,16 @@ class DescriptionViewVC: PROJXViewController {
         configureConstraints()
     }
 
+    
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        descriptionTextView.contentOffset.y = 0
+    }
+
     private func configureView() {
         title = "Task Description"
+        navigationItem.largeTitleDisplayMode = .never
         view.backgroundColor = GlobalConstants.Colors.secondaryBackground
         view.addSubview(descriptionTextView)
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeButtonClick))

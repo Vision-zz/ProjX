@@ -68,19 +68,19 @@ class AddTaskTableViewCell: UITableViewCell {
 
     private func configureConstraints() {
         NSLayoutConstraint.activate([
-            keyLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
-            keyLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            keyLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.25),
-            keyLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            keyLabel.topAnchor.constraint(equalTo: self.topAnchor),
+            keyLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            keyLabel.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.25),
+            keyLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor),
 
-            valueView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            valueView.topAnchor.constraint(equalTo: self.topAnchor),
             valueView.leadingAnchor.constraint(equalTo: keyLabel.trailingAnchor),
-            valueView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            valueView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
             valueView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
 
-            separatorLine.leadingAnchor.constraint(equalTo: valueView.leadingAnchor),
-            separatorLine.trailingAnchor.constraint(equalTo: valueView.trailingAnchor),
-            separatorLine.topAnchor.constraint(equalTo: valueView.bottomAnchor),
+            separatorLine.leadingAnchor.constraint(equalTo: keyLabel.trailingAnchor),
+            separatorLine.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            separatorLine.topAnchor.constraint(equalTo: valueView.bottomAnchor, constant: -0.3),
             separatorLine.heightAnchor.constraint(equalToConstant: 0.3)
         ])
     }

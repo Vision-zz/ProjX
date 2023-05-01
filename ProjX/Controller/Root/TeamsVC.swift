@@ -8,7 +8,8 @@
 import UIKit
 
 class TeamsVC: PROJXTableViewController {
-
+ 
+    
     override var hidesBottomBarWhenPushed: Bool {
         get {
             return false
@@ -39,6 +40,18 @@ class TeamsVC: PROJXTableViewController {
         noDataTitleLabel.numberOfLines = 0
         noDataTitleLabel.textAlignment = .center
         return noDataTitleLabel
+    }()
+    
+    lazy var searchController: UISearchController = {
+        let search = UISearchController()
+        search.searchBar.placeholder = "Search Teams"
+        search.searchBar.searchBarStyle = .prominent
+        search.searchBar.delegate = self
+        search.delegate = self
+        search.searchBar.autocapitalizationType = .none
+        search.hidesNavigationBarDuringPresentation = true
+        search.searchBar.returnKeyType = .search
+        return search
     }()
 
     struct SectionData {
@@ -78,6 +91,7 @@ class TeamsVC: PROJXTableViewController {
         super.viewDidLoad()
 
         configureUI()
+        configureRightBarButtonItems()
         configureDatasource()
         configureTableView()
         configureNotifCenter()
@@ -93,9 +107,13 @@ class TeamsVC: PROJXTableViewController {
         super.viewDidDisappear(animated)
         dataSource = []
     }
-
+    
     private func configureUI() {
         title = "Teams"
+        navigationItem.searchController = searchController
+    }
+    
+    private func configureRightBarButtonItems() {
         let newAction = UIAction(title: "Create Team") { [weak self] _ in
             let createTeamVc = CreateEditTeamVC()
             createTeamVc.delegate = self
@@ -108,7 +126,7 @@ class TeamsVC: PROJXTableViewController {
             }
             self?.present(nav, animated: true)
         }
-
+        
         let joinAction = UIAction(title: "Join Team") { [weak self] _ in
             let joinVC = JoinTeamVC()
             joinVC.delegate = self
@@ -121,8 +139,14 @@ class TeamsVC: PROJXTableViewController {
             }
             self?.present(nav, animated: true)
         }
+        
         let menu = UIMenu(children: [newAction, joinAction])
-        navigationItem.rightBarButtonItem = UIBarButtonItem(systemItem: .add, menu: menu)
+
+        var items = [ UIBarButtonItem(systemItem: .add, menu: menu) ]
+        if !GlobalConstants.Device.isIpad {
+            items.append(UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchButtonOnClick)))
+        }
+        navigationItem.rightBarButtonItems = items
     }
 
     private func configureTableView() {
@@ -153,6 +177,10 @@ class TeamsVC: PROJXTableViewController {
         return teamInfo
     }
 
+    @objc private func searchButtonOnClick() {
+        searchController.searchBar.becomeFirstResponder()
+    }
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         dataSource.count
     }
@@ -167,6 +195,7 @@ class TeamsVC: PROJXTableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: PROJXImageTextCell.identifier, for: indexPath) as! PROJXImageTextCell
+        Util.configureCustomSelectionStyle(for: cell)
         cell.accessoryType = .disclosureIndicator
         cell.cellImageView.contentMode = .scaleAspectFill
         cell.configureCellData(text: dataSource[indexPath.section].rows[indexPath.row].teamName ?? "---", image: dataSource[indexPath.section].rows[indexPath.row].getTeamIcon(reduceTo: CGSize(width: 15, height: 15)))
@@ -210,3 +239,34 @@ extension TeamsVC: JoinTeamDelegate, CreateEditTeamDelegate, TeamExitDelegate {
     }
 
 }
+
+extension TeamsVC: UISearchBarDelegate, UISearchControllerDelegate {
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            configureDatasource()
+        } else {
+            
+            let userTeams = SessionManager.shared.signedInUser?.teams
+            guard let userTeams = userTeams else { return }
+            let currentTeam = userTeams.first(where: { $0.teamID != nil && $0.teamID == SessionManager.shared.signedInUser?.selectedTeamID })
+            currentTeamID = currentTeam?.teamID?.uuidString
+            let otherTeams = userTeams.filter({ $0.teamID != nil && $0.teamID != SessionManager.shared.signedInUser?.selectedTeamID })
+            if currentTeam == nil && otherTeams.isEmpty {
+                noDataTableBackgroundView.isHidden = false
+                return
+            }
+            dataSource = []
+            dataSource.append(SectionData(section: 0, sectionHeader: "Current Team", rows: currentTeam != nil ? [currentTeam!].filter({ $0.teamName!.starts(with: searchText) }) : []))
+            dataSource.append(SectionData(section: 1, sectionHeader: "Your Teams", rows: otherTeams.filter({ $0.teamName!.starts(with: searchText) })))
+            
+        }
+        tableView.reloadData()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        configureDatasource()
+        tableView.reloadData()
+    }
+}
+

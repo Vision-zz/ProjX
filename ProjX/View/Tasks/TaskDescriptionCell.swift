@@ -14,6 +14,8 @@ class TaskDescriptionCell: UITableViewCell {
     lazy var descriptionTextView: UITextView = {
         let tv = UITextView()
         tv.translatesAutoresizingMaskIntoConstraints = false
+        tv.textContainer.maximumNumberOfLines = 3
+        tv.textContainer.lineBreakMode = .byTruncatingTail
         tv.textAlignment = .natural
         tv.textColor = .label
         tv.font = .systemFont(ofSize: 15)

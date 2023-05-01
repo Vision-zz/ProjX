@@ -23,7 +23,6 @@ enum GlobalConstants {
             case lavender = "Lavender"
             case royalBlue = "Royal Blue"
             case sandDune = "Sand Dune"
-            case scarletRed = "Scarlet Red"
             case sunshade = "Sunshade"
             case topaz = "Topaz"
             case watermelon = "Watermelon"

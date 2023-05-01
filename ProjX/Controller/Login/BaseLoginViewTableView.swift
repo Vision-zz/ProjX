@@ -13,8 +13,8 @@ class BaseLoginViewTableView: PROJXTableViewController {
 
     lazy var passwordTextField: UITextField = {
         var textField = createTextField(placeholder: "Password*")
-        textField.isSecureTextEntry = true
         textField.enablePasswordToggle()
+        textField.isSecureTextEntry = true
         textField.textContentType = .oneTimeCode
         return textField
     }()
@@ -71,7 +71,7 @@ class BaseLoginViewTableView: PROJXTableViewController {
         label.text = ""
     }
 
-    func createTextField(placeholder: String) -> UITextField {
+    func createTextField(placeholder: String, with keyboardType: UIKeyboardType = .default) -> UITextField {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.placeholder = placeholder
@@ -81,6 +81,7 @@ class BaseLoginViewTableView: PROJXTableViewController {
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.returnKeyType = .next
+        textField.keyboardType = keyboardType
         return textField
     }
 
