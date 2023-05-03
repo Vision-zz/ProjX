@@ -93,7 +93,7 @@ class TeamInfoVC: PROJXTableViewController {
 
         let keyValueDict: [(key: String, value: String)] = [
             ("Join code", "\(team.teamJoinPasscode ?? "-")"),
-            ("Active Tasks", "\(team.tasks.filter({ $0.taskStatus == .incomplete }).count)"),
+            ("Active Tasks", "\(team.tasks.filter({ $0.taskStatus == .active }).count)"),
             ("Total Tasks", "\(team.tasks.count)")
         ]
 
@@ -183,14 +183,14 @@ class TeamInfoVC: PROJXTableViewController {
         if indexPath.section == 2 {
             if team.isSelected {
                 MainRouter.shared.routeTabbarTo(index: 0)
-                MainRouter.shared.switchTasksSegmentedControlTo(option: indexPath.row == 1 ? .incomplete : .all)
+                MainRouter.shared.switchTasksSegmentedControlTo(option: indexPath.row == 1 ? .active : .all)
             }
             else {
                 let alert = UIAlertController(title: "Switch current team?", message: "\(team.teamName!) is not your current team. Do you want to set \(team.teamName!) as your current team and proceed?", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { [unowned self] _ in
                     self.teamSelectButtonPressed()
                     MainRouter.shared.routeTabbarTo(index: 0)
-                    MainRouter.shared.switchTasksSegmentedControlTo(option: indexPath.row == 1 ? .incomplete : .all)
+                    MainRouter.shared.switchTasksSegmentedControlTo(option: indexPath.row == 1 ? .active : .all)
                 }))
                 alert.addAction(UIAlertAction(title: "No", style: .cancel))
                 self.present(alert, animated: true)

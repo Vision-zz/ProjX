@@ -55,7 +55,6 @@ class TeamsVC: PROJXTableViewController {
     }()
 
     struct SectionData {
-        var section: Int
         var sectionHeader: String
         var rows: [Team]
     }
@@ -167,8 +166,11 @@ class TeamsVC: PROJXTableViewController {
             noDataTableBackgroundView.isHidden = false
             return
         }
-        dataSource.append(SectionData(section: 0, sectionHeader: "Current Team", rows: currentTeam != nil ? [currentTeam!] : []))
-        dataSource.append(SectionData(section: 1, sectionHeader: "Your Teams", rows: otherTeams))
+        dataSource.append(SectionData(sectionHeader: "Current Team", rows: currentTeam != nil ? [currentTeam!] : []))
+        dataSource.append(SectionData(sectionHeader: "Your Teams", rows: otherTeams))
+        for i in 0..<dataSource.count {
+            dataSource[i].rows.sort(by: { $0.teamName! < $1.teamName! })
+        }
     }
 
     private func createTeamInfoVC(for team: Team) -> TeamInfoVC {
@@ -211,6 +213,98 @@ class TeamsVC: PROJXTableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         44
     }
+    
+    override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let team = dataSource[indexPath.section].rows[indexPath.row]
+        let menuElement = UIDeferredMenuElement.uncached { [weak self] completion in
+            var children: [UIMenuElement] = []
+            
+            if !team.isSelected {
+                children.append(UIAction(title: "Set as Current Team", image: UIImage(systemName: "checkmark.circle"), attributes: team.isSelected ? [.disabled] : []) { [weak self] _ in
+                    guard let self = self else { return }
+                    DataManager.shared.changeSelectedTeam(of: SessionManager.shared.signedInUser!, to: team)
+                    let oldSelectedID = self.currentTeamID
+                    guard let oldSelectedID = oldSelectedID else {
+                        configureDatasource()
+                        self.tableView.moveRow(at: indexPath, to: IndexPath(row: 0, section: 0))
+                        return
+                    }
+                    configureDatasource()
+                    let moveCurrentIndex = dataSource[1].rows.firstIndex(where: { $0.teamID?.uuidString == oldSelectedID })
+                    guard let moveCurrentIndex = moveCurrentIndex else {
+                        tableView.reloadData()
+                        return
+                    }
+                    let moveCurrentToIndexPath = IndexPath(row: moveCurrentIndex, section: 1)
+
+                    tableView.performBatchUpdates({
+                        tableView.deleteRows(at: [IndexPath(row: 0, section: 0)], with: .left)
+                        tableView.moveRow(at: indexPath, to: IndexPath(row: 0, section: 0))
+                        tableView.insertRows(at: [moveCurrentToIndexPath], with: .right)
+                    })
+                })
+            }
+            
+            if SessionManager.shared.signedInUser!.isOwner(team) {
+                children.append(UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { _ in
+                    let createTeamVc = CreateEditTeamVC()
+                    createTeamVc.delegate = self
+                    createTeamVc.configureViewForEditing(team: team)
+                    let nav = UINavigationController(rootViewController: createTeamVc)
+                    nav.modalPresentationStyle = .formSheet
+                    if let sheet = nav.sheetPresentationController {
+                        sheet.detents = [.custom(resolver: { _ in return 350 }), .large()]
+                        sheet.preferredCornerRadius = 20
+                        sheet.prefersGrabberVisible = true
+                    }
+                    self?.present(nav, animated: true)
+                })
+            }
+            
+            let exitTitle = SessionManager.shared.signedInUser!.isOwner(team) ? "Delete" : "Leave"
+            let exitImage = SessionManager.shared.signedInUser!.isOwner(team) ? UIImage(systemName: "trash") : UIImage(systemName: "rectangle.portrait.and.arrow.right")
+            children.append(UIAction(title: exitTitle, image: exitImage, attributes: .destructive) { _ in
+                if let signedInUserID = SessionManager.shared.signedInUser?.userID, team.teamOwnerID == signedInUserID {
+                    let alert = UIAlertController(title: "Are you sure?", message: "Do you want to delete team '\(team.teamName!)'", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
+                        let deleteCurrentIndex = self?.dataSource[team.isSelected ? 0 : 1].rows.firstIndex(where: { $0.teamID!.uuidString == team.teamID!.uuidString })
+                        guard let deleteCurrentIndex = deleteCurrentIndex else {
+                            tableView.reloadData()
+                            return
+                        }
+                        let indexPath = IndexPath(row: deleteCurrentIndex, section: team.isSelected ? 0 : 1)
+                        DataManager.shared.deleteTeam(team)
+                        self?.configureDatasource()
+                        self?.tableView.deleteRows(at: [indexPath], with: .left)
+                    }))
+                    alert.addAction(UIAlertAction(title: "Go back", style: .cancel))
+                    self?.present(alert, animated: true)
+                } else {
+                    let alert = UIAlertController(title: "Are you sure?", message: "Do you want to leave team '\(team.teamName!)'", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Leave", style: .destructive, handler: { [weak self] _ in
+                        guard self != nil else { return }
+                        let deleteCurrentIndex = self?.dataSource[team.isSelected ? 0 : 1].rows.firstIndex(where: { $0.teamID!.uuidString == team.teamID!.uuidString })
+                        guard let deleteCurrentIndex = deleteCurrentIndex else {
+                            tableView.reloadData()
+                            return
+                        }
+                        let indexPath = IndexPath(row: deleteCurrentIndex, section: team.isSelected ? 0 : 1)
+                        SessionManager.shared.signedInUser?.leave(team: team)
+                        self?.configureDatasource()
+                        self?.tableView.deleteRows(at: [indexPath], with: .left)
+                    }))
+                    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                    self?.present(alert, animated: true)
+                }
+            })
+            
+            completion(children)
+        }
+                
+        return UIContextMenuConfiguration(identifier: indexPath as NSCopying, previewProvider: nil, actionProvider: { _ in
+            return UIMenu(children: [menuElement])
+        })
+    }
 
 }
 
@@ -239,6 +333,47 @@ extension TeamsVC: JoinTeamDelegate, CreateEditTeamDelegate, TeamExitDelegate {
     }
 
 }
+//
+//extension TeamsVC: TeamOptionsDelegate {
+//    func teamSelectButtonPressed() {
+//        tableView.reloadSections(IndexSet(integer: 0), with: .none)
+//    }
+//
+//    func teamEditButtonPressed() {
+//        let createTeamVc = CreateEditTeamVC()
+//        createTeamVc.delegate = self
+//        createTeamVc.configureViewForEditing(team: team)
+//        let nav = UINavigationController(rootViewController: createTeamVc)
+//        nav.modalPresentationStyle = .formSheet
+//        if let sheet = nav.sheetPresentationController {
+//            sheet.detents = [.custom(resolver: { _ in return 350 }), .large()]
+//            sheet.preferredCornerRadius = 20
+//            sheet.prefersGrabberVisible = true
+//        }
+//        self.present(nav, animated: true
+//    }
+//
+//    func teamExitButtonPressed() {
+//        if let signedInUserID = SessionManager.shared.signedInUser?.userID, self.team.teamOwnerID == signedInUserID {
+//            let alert = UIAlertController(title: "Are you sure?", message: "Do you want to delete team '\(self.team.teamName!)'", preferredStyle: .alert)
+//            alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
+//                DataManager.shared.deleteTeam(self!.team)
+//                self?.delegate?.teamExited()
+//            }))
+//            alert.addAction(UIAlertAction(title: "Go back", style: .cancel))
+//            self.present(alert, animated: true)
+//        } else {
+//            let alert = UIAlertController(title: "Are you sure?", message: "Do you want to leave team '\(self.team.teamName!)'", preferredStyle: .alert)
+//            alert.addAction(UIAlertAction(title: "Leave", style: .destructive, handler: { [weak self] _ in
+//                guard self != nil else { return }
+//                SessionManager.shared.signedInUser?.leave(team: self!.team)
+//                self?.delegate?.teamExited()
+//            }))
+//            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+//            self.present(alert, animated: true)
+//        }
+//    }
+//}
 
 extension TeamsVC: UISearchBarDelegate, UISearchControllerDelegate {
 
@@ -257,8 +392,8 @@ extension TeamsVC: UISearchBarDelegate, UISearchControllerDelegate {
                 return
             }
             dataSource = []
-            dataSource.append(SectionData(section: 0, sectionHeader: "Current Team", rows: currentTeam != nil ? [currentTeam!].filter({ $0.teamName!.starts(with: searchText) }) : []))
-            dataSource.append(SectionData(section: 1, sectionHeader: "Your Teams", rows: otherTeams.filter({ $0.teamName!.starts(with: searchText) })))
+            dataSource.append(SectionData(sectionHeader: "Current Team", rows: currentTeam != nil ? [currentTeam!].filter({ $0.teamName!.starts(with: searchText) }) : []))
+            dataSource.append(SectionData(sectionHeader: "Your Teams", rows: otherTeams.filter({ $0.teamName!.starts(with: searchText) })))
             
         }
         tableView.reloadData()

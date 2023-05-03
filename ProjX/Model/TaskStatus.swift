@@ -9,6 +9,6 @@ import Foundation
 
 enum TaskStatus: Int16 {
     case unknown = 0
-    case incomplete = 1
+    case active = 1
     case complete = 2
 }

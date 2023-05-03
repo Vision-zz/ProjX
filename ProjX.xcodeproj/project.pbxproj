@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		AF0374CB29E533DB00CFDC85 /* TaskTitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0374CA29E533DB00CFDC85 /* TaskTitleCell.swift */; };
 		AF0374CD29E5358600CFDC85 /* TaskDescriptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0374CC29E5358600CFDC85 /* TaskDescriptionCell.swift */; };
+		AF235FAB2A00F2EE00B0EA5C /* TeamOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF235FAA2A00F2EE00B0EA5C /* TeamOptions.swift */; };
 		AF3DB87029C4288600097A71 /* WelcomePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF3DB86F29C4288600097A71 /* WelcomePage.swift */; };
 		AF3DB87329C433FD00097A71 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF3DB87229C433FD00097A71 /* UIColor+Extension.swift */; };
 		AF3DB87A29C4431500097A71 /* ProjXDB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = AF3DB87829C4431500097A71 /* ProjXDB.xcdatamodeld */; };
@@ -83,6 +84,7 @@
 /* Begin PBXFileReference section */
 		AF0374CA29E533DB00CFDC85 /* TaskTitleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTitleCell.swift; sourceTree = "<group>"; };
 		AF0374CC29E5358600CFDC85 /* TaskDescriptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDescriptionCell.swift; sourceTree = "<group>"; };
+		AF235FAA2A00F2EE00B0EA5C /* TeamOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamOptions.swift; sourceTree = "<group>"; };
 		AF3DB86F29C4288600097A71 /* WelcomePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomePage.swift; sourceTree = "<group>"; };
 		AF3DB87229C433FD00097A71 /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		AF3DB87929C4431500097A71 /* EnceladusDB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EnceladusDB.xcdatamodel; sourceTree = "<group>"; };
@@ -350,6 +352,7 @@
 				AF9403DD29CC1041001FAA7A /* TeamInfoVC.swift */,
 				AF869CE729CDA7BE00E0A2AE /* CreateEditTeamVC.swift */,
 				AF869CE929CDA7ED00E0A2AE /* JoinTeamVC.swift */,
+				AF235FAA2A00F2EE00B0EA5C /* TeamOptions.swift */,
 			);
 			path = Teams;
 			sourceTree = "<group>";
@@ -525,6 +528,7 @@
 				AF9403E029CC124F001FAA7A /* TaskStatus.swift in Sources */,
 				AF60B0FE29C2F3E70070B4E0 /* TasksVC.swift in Sources */,
 				AFFC942129E029CB00D32AC4 /* TasksTableViewCell.swift in Sources */,
+				AF235FAB2A00F2EE00B0EA5C /* TeamOptions.swift in Sources */,
 				AFE258D729C49DA30017ADFB /* LoginDelegates.swift in Sources */,
 				AFFC941929DEE85200D32AC4 /* TaskItem+CoreDataProperties.swift in Sources */,
 				AFE258E429C81B1D0017ADFB /* InputValidator.swift in Sources */,
@@ -620,6 +624,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = Structure/LaunchScreen;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -674,6 +679,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = Structure/LaunchScreen;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -697,7 +703,7 @@
 				INFOPLIST_FILE = ProjX/Structure/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ProjX;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = ProjX/Structure/LaunchScreen;
+				INFOPLIST_KEY_UILaunchStoryboardName = Structure/LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -729,7 +735,7 @@
 				INFOPLIST_FILE = ProjX/Structure/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ProjX;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = ProjX/Structure/LaunchScreen;
+				INFOPLIST_KEY_UILaunchStoryboardName = Structure/LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";

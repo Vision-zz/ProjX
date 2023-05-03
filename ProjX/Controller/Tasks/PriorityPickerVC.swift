@@ -31,7 +31,7 @@ class PriorityPickerVC: PROJXViewController, UIPickerViewDataSource, UIPickerVie
         view.addSubview(pickerView)
         navigationItem.largeTitleDisplayMode = .never
         view.backgroundColor = GlobalConstants.Colors.secondaryBackground
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(closeButtonClick))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeButtonClick))
         navigationController?.navigationBar.tintColor = GlobalConstants.Colors.accentColor
     }
 

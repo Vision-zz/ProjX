@@ -63,6 +63,7 @@ class PROJXImageTextCell: UITableViewCell {
 
             cellTextLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             cellTextLabel.leadingAnchor.constraint(equalTo: cellImageView.trailingAnchor, constant: 10),
+            cellTextLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
         ])
     }
 }

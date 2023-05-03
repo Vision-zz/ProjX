@@ -165,7 +165,7 @@ class DataManager {
         task.priority = priority.rawValue
         task.createdAt = Date()
         task.createdByUser = SessionManager.shared.signedInUser!
-        task.taskStatus = .incomplete
+        task.taskStatus = .active
         task.statusUpdates = []
         SessionManager.shared.signedInUser?.selectedTeam?.tasksID?.append(task.taskID!)
 

@@ -8,13 +8,13 @@
 import UIKit
 
 class TasksVC: PROJXTableViewController {
-
+    
     enum AvailableSegmentControlDisplayOptions: Int {
-        case all, complete, incomplete
+        case all, active, complete
     }
-
-    private var selectedOption: AvailableSegmentControlDisplayOptions = .incomplete
-
+    
+    private var selectedOption: AvailableSegmentControlDisplayOptions = .active
+    
     override var hidesBottomBarWhenPushed: Bool {
         get {
             return false
@@ -23,14 +23,41 @@ class TasksVC: PROJXTableViewController {
             super.hidesBottomBarWhenPushed = newValue
         }
     }
-
+    
     struct SectionData {
         let sectionName: String
         var rows: [TaskItem]
-
+        
         init(sectionName: String, rows: [TaskItem]) {
             self.sectionName = sectionName
             self.rows = rows
+        }
+    }
+    
+    enum SortOptions: String {
+        case newerFirst = "Newer First"
+        case olderFirst = "Older First"
+        case closeETAFirst = "Closer ETA First"
+        case closeETALast = "Closer ETA Last"
+    }
+    
+    enum TaskDisplayOption: String {
+        case showAllTeamTasks = "All Tasks"
+        case showCreatedByMe = "Created by Me"
+        case showAssignedToMe = "Assigned to Me"
+    }
+    
+    lazy var selectedSortOption: SortOptions = .newerFirst {
+        didSet {
+            sortAndReloadData()
+        }
+    }
+
+    lazy var selectedDisplayOption: TaskDisplayOption = .showAssignedToMe {
+        didSet {
+            configureDataSource()
+            sortAndReloadData()
+            configureHeaderViews()
         }
     }
 
@@ -46,8 +73,8 @@ class TasksVC: PROJXTableViewController {
     }()
 
     lazy var segmentControl: UISegmentedControl = {
-        let segmentControl = UISegmentedControl(items: ["All", "Completed", "Incomplete"])
-        segmentControl.selectedSegmentIndex = 2
+        let segmentControl = UISegmentedControl(items: ["All", "Active", "Completed"])
+        segmentControl.selectedSegmentIndex = 1
         segmentControl.addTarget(self, action: #selector(segmentControlValueChange), for: .valueChanged)
         segmentControl.selectedSegmentTintColor = GlobalConstants.Colors.accentColor
         segmentControl.translatesAutoresizingMaskIntoConstraints = false
@@ -80,6 +107,18 @@ class TasksVC: PROJXTableViewController {
         return leftSwipeGesture
     }()
 
+    lazy var searchController: UISearchController = {
+        let search = UISearchController()
+        search.searchBar.placeholder = "Search Teams"
+        search.searchBar.searchBarStyle = .prominent
+        search.searchBar.delegate = self
+        search.delegate = self
+        search.searchBar.autocapitalizationType = .none
+        search.hidesNavigationBarDuringPresentation = true
+        search.searchBar.returnKeyType = .search
+        return search
+    }()
+
     convenience init() {
         self.init(style: .insetGrouped)
     }
@@ -107,15 +146,19 @@ class TasksVC: PROJXTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-        configureNotifCenter()
         configureDataSource()
+        configureRightBarButtons()
+        sortAndReloadData()
+        configureNotifCenter()
         configureSwipeGestures()
+        configureHeaderViews()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureDataSource()
-        tableView.reloadData()
+        sortAndReloadData()
+        configureHeaderViews()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -127,13 +170,56 @@ class TasksVC: PROJXTableViewController {
         title = "Tasks"
         tableView.backgroundView = noDataTableBackgroundView
         tableView.register(TasksTableViewCell.self, forCellReuseIdentifier: TasksTableViewCell.identifier)
-        tableView.tableHeaderView = segmentControlView
-        let newSize = tableView.tableHeaderView!.systemLayoutSizeFitting(CGSize(width: tableView.bounds.width, height: 0))
-        tableView.tableHeaderView!.frame.size.height = newSize.height + 25
-        let addBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addBarButtonClicked))
-        navigationItem.rightBarButtonItems = [addBarButtonItem]
     }
 
+    func configureHeaderViews() {
+        if shouldShowHeaderView() {
+            tableView.tableHeaderView = segmentControlView
+            let newSize = tableView.tableHeaderView!.systemLayoutSizeFitting(CGSize(width: tableView.bounds.width, height: 0))
+            tableView.tableHeaderView!.frame.size.height = newSize.height + 25
+            navigationItem.searchController = searchController
+        } else {
+            tableView.tableHeaderView = nil
+            navigationItem.searchController = nil
+        }
+    }
+    
+    func shouldShowHeaderView() -> Bool {
+        guard let selectedTeam = selectedTeam else { return false }
+        let teamTasks = DataManager.shared.getAllTasks(for: selectedTeam).filter({ task in
+            if !selectedTeam.tasksID!.contains(task.taskID!) { return false }
+            if selectedDisplayOption == .showAssignedToMe && task.assignedTo != SessionManager.shared.signedInUser!.userID! { return false }
+            if selectedDisplayOption == .showCreatedByMe && task.createdBy != SessionManager.shared.signedInUser!.userID! { return false }
+            return true
+        })
+        return !teamTasks.isEmpty
+    }
+
+    private func configureRightBarButtons() {
+        let addBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addBarButtonClicked))
+        
+        let deferedMenuElement = UIDeferredMenuElement.uncached { [unowned self] completion in
+            let showAllTeamTask = UIAction(title: TaskDisplayOption.showAllTeamTasks.rawValue, state: self.selectedDisplayOption == .showAllTeamTasks ? .on : .off,  handler: { [weak self] _ in self?.selectedDisplayOption = .showAllTeamTasks })
+            let showTasksCreatedByMe = UIAction(title: TaskDisplayOption.showCreatedByMe.rawValue, state: self.selectedDisplayOption == .showCreatedByMe ? .on : .off, handler: { [weak self] _ in self?.selectedDisplayOption = .showCreatedByMe })
+            let showTasksAssignedToMe = UIAction(title: TaskDisplayOption.showAssignedToMe.rawValue, state: self.selectedDisplayOption == .showAssignedToMe ? .on : .off, handler: { [weak self] _ in self?.selectedDisplayOption = .showAssignedToMe })
+            let displayMenu = UIMenu(title: "Filter Tasks", options: [.displayInline, .singleSelection], children: [showTasksAssignedToMe, showTasksCreatedByMe, showAllTeamTask])
+            
+            let newerFirst = UIAction(title: SortOptions.newerFirst.rawValue, state: self.selectedSortOption == .newerFirst ? .on : .off, handler: { [weak self] _ in self?.selectedSortOption = .newerFirst })
+            let olderFirst = UIAction(title: SortOptions.olderFirst.rawValue, state: self.selectedSortOption == .olderFirst ? .on : .off, handler: { [weak self] _ in self?.selectedSortOption = .olderFirst })
+            let closeETAFirst = UIAction(title: SortOptions.closeETAFirst.rawValue, state: self.selectedSortOption == .closeETAFirst ? .on : .off, handler: { [weak self] _ in self?.selectedSortOption = .closeETAFirst })
+            let closeETALast = UIAction(title: SortOptions.closeETALast.rawValue, state: self.selectedSortOption == .closeETALast ? .on : .off, handler: { [weak self] _ in self?.selectedSortOption = .closeETALast })
+            let sortByMenu = UIMenu(title: "Sort By", subtitle: selectedSortOption.rawValue,  image: UIImage(systemName: "arrow.up.arrow.down"), options: [.singleSelection],  children: [newerFirst, olderFirst, closeETAFirst, closeETALast])
+            
+            let children = [displayMenu, sortByMenu]
+            
+            completion(children)
+        }
+        
+        let menu = UIMenu(options: [.displayInline], children: [deferedMenuElement])
+        let optionsBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "ellipsis.circle"), menu: menu)
+        navigationItem.rightBarButtonItems = [optionsBarButtonItem, addBarButtonItem]
+    }
+    
     private func configureSwipeGestures() {
         tableView.addGestureRecognizer(rightSwipeGesture)
         tableView.addGestureRecognizer(leftSwipeGesture)
@@ -151,9 +237,11 @@ class TasksVC: PROJXTableViewController {
 
         let teamTasks = DataManager.shared.getAllTasks(for: selectedTeam).filter({ task in
             if !selectedTeam.tasksID!.contains(task.taskID!) { return false }
+            if selectedDisplayOption == .showAssignedToMe && task.assignedTo != SessionManager.shared.signedInUser!.userID! { return false }
+            if selectedDisplayOption == .showCreatedByMe && task.createdBy != SessionManager.shared.signedInUser!.userID! { return false }
             if selectedOption == .all { return true }
             if selectedOption == .complete && task.taskStatus == .complete { return true }
-            if selectedOption == .incomplete && task.taskStatus == .incomplete { return true }
+            if selectedOption == .active && task.taskStatus == .active { return true }
             return false
         })
 
@@ -177,10 +265,32 @@ class TasksVC: PROJXTableViewController {
                 noDataTableBackgroundView.attributedText = generateNoDataLabelString(with: "Press the + icon to create a task")
             } else if selectedOption == .complete {
                 noDataTableBackgroundView.attributedText = generateNoDataLabelString(with: "Probably there are no completed tasks")
-            } else if selectedOption == .incomplete {
-                noDataTableBackgroundView.attributedText = generateNoDataLabelString(with: "Good job! There are no incomplete tasks")
+            } else if selectedOption == .active {
+                noDataTableBackgroundView.attributedText = generateNoDataLabelString(with: "Good job! There are no active tasks")
             }
         }
+    }
+    
+    func sortAndReloadData() {
+        switch selectedSortOption {
+            case .newerFirst:
+                for i in 0..<dataSource.count {
+                    dataSource[i].rows.sort { $0.createdAt!.timeIntervalSince1970 > $1.createdAt!.timeIntervalSince1970 }
+                }
+            case .olderFirst:
+                for i in 0..<dataSource.count {
+                    dataSource[i].rows.sort { $0.createdAt!.timeIntervalSince1970 < $1.createdAt!.timeIntervalSince1970 }
+                }
+            case .closeETAFirst:
+                for i in 0..<dataSource.count {
+                    dataSource[i].rows.sort { $0.deadline!.timeIntervalSince1970 < $1.deadline!.timeIntervalSince1970 }
+                }
+            case .closeETALast:
+                for i in 0..<dataSource.count {
+                    dataSource[i].rows.sort { $0.deadline!.timeIntervalSince1970 > $1.deadline!.timeIntervalSince1970 }
+                }
+        }
+        tableView.reloadData()
     }
 
     func switchSegmentControl(to option: AvailableSegmentControlDisplayOptions) {
@@ -193,7 +303,9 @@ class TasksVC: PROJXTableViewController {
         let oldOption = selectedOption
         let newOption = AvailableSegmentControlDisplayOptions.init(rawValue: selectedOption.rawValue - 1) ?? selectedOption
         guard oldOption != newOption else { return }
-        segmentControl.selectedSegmentIndex = newOption.rawValue
+        UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut, .preferredFramesPerSecond60], animations: {
+            self.segmentControl.selectedSegmentIndex = newOption.rawValue
+        }, completion: nil)
         segmentControlValueChange(segmentControl)
     }
 
@@ -202,7 +314,9 @@ class TasksVC: PROJXTableViewController {
         let oldOption = selectedOption
         let newOption = AvailableSegmentControlDisplayOptions.init(rawValue: selectedOption.rawValue + 1) ?? selectedOption
         guard oldOption != newOption else { return }
-        segmentControl.selectedSegmentIndex = newOption.rawValue
+        UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut, .preferredFramesPerSecond60], animations: {
+            self.segmentControl.selectedSegmentIndex = newOption.rawValue
+        }, completion: nil)
         segmentControlValueChange(segmentControl)
     }
 
@@ -211,9 +325,11 @@ class TasksVC: PROJXTableViewController {
         guard let option = option, selectedOption != option else { return }
         let oldOption = selectedOption
         selectedOption = option
-        configureDataSource()
-        tableView.reloadData()
-        tableView.reloadSections(IndexSet(integersIn: 0..<tableView.numberOfSections), with: sender.selectedSegmentIndex > oldOption.rawValue ? .left : .right)
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(10), execute: { [weak self] in
+            self?.configureDataSource()
+            self?.sortAndReloadData()
+            self?.tableView.reloadSections(IndexSet(integersIn: 0..<self!.tableView.numberOfSections), with: sender.selectedSegmentIndex > oldOption.rawValue ? .left : .right)
+        })
     }
 
     @objc func addBarButtonClicked() {
@@ -223,8 +339,8 @@ class TasksVC: PROJXTableViewController {
     }
 
     private func generateNoDataLabelString(with string: String) -> NSMutableAttributedString {
-        let title = NSMutableAttributedString(string: "Can't find what you're looking for?\n", attributes: [
-            .font: UIFont.systemFont(ofSize: 22, weight: .bold),
+        let title = NSMutableAttributedString(string: "No Tasks?\n", attributes: [
+            .font: UIFont.systemFont(ofSize: 23, weight: .bold),
             .foregroundColor: UIColor.label,
         ])
 
@@ -271,8 +387,15 @@ class TasksVC: PROJXTableViewController {
 
 extension TasksVC: CreateTaskDelegate {
     func taskCreatedOrUpdated(_ task: TaskItem) {
+        configureHeaderViews()
         navigationController?.popViewController(animated: true)
         let vc = ViewTaskVC(task: task)
         navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+extension TasksVC: UISearchBarDelegate, UISearchControllerDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        print(searchText)
     }
 }

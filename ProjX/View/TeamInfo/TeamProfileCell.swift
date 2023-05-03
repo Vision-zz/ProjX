@@ -31,10 +31,21 @@ class TeamProfileCell: UITableViewCell {
         let teamNameLabel = UILabel()
         teamNameLabel.translatesAutoresizingMaskIntoConstraints = false
         teamNameLabel.textAlignment = .left
-        teamNameLabel.numberOfLines = 3
+        teamNameLabel.numberOfLines = 1
         teamNameLabel.lineBreakMode = .byTruncatingTail
         teamNameLabel.textColor = .label
+        teamNameLabel.font = .systemFont(ofSize: GlobalConstants.Device.isIpad ? 28 : 24, weight: .bold)
         return teamNameLabel
+    }()
+    
+    lazy var teamInfoLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .left
+        label.numberOfLines = 2
+        label.lineBreakMode = .byTruncatingTail
+        label.textColor = .label
+        return label
     }()
 
     lazy var teamOptionsButton: UIButton = {
@@ -59,6 +70,7 @@ class TeamProfileCell: UITableViewCell {
     private func configureViews() {
         self.contentView.addSubview(teamIcon)
         self.contentView.addSubview(teamNameLabel)
+        self.contentView.addSubview(teamInfoLabel)
         self.contentView.addSubview(teamOptionsButton)
    }
 
@@ -70,11 +82,15 @@ class TeamProfileCell: UITableViewCell {
             teamIcon.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor),
 
             teamNameLabel.leadingAnchor.constraint(equalTo: teamIcon.trailingAnchor, constant: 15),
-            teamNameLabel.centerYAnchor.constraint(equalTo: teamIcon.centerYAnchor),
+            teamNameLabel.trailingAnchor.constraint(equalTo: teamOptionsButton.leadingAnchor, constant: -10),
+            teamNameLabel.bottomAnchor.constraint(equalTo: teamIcon.centerYAnchor),
 
+            teamInfoLabel.leadingAnchor.constraint(equalTo: teamNameLabel.leadingAnchor),
+            teamInfoLabel.trailingAnchor.constraint(equalTo: teamNameLabel.trailingAnchor),
+            teamInfoLabel.topAnchor.constraint(equalTo: teamNameLabel.bottomAnchor),
+            
             teamOptionsButton.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 5),
             teamOptionsButton.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -15),
-
         ])
     }
 
@@ -86,18 +102,13 @@ class TeamProfileCell: UITableViewCell {
         self.team = team
         teamIcon.image = team.getTeamIcon(reduceTo: CGSize(width: 60, height: 60))
 
-        let teamName = NSMutableAttributedString(string: team.teamName ?? "---", attributes: [
-            .font: UIFont.systemFont(ofSize: GlobalConstants.Device.isIpad ? 28 : 24, weight: .bold),
-            .foregroundColor: UIColor.label,
-        ])
-
-        let teamCreatedAt = NSMutableAttributedString(string: "\n\(team.teamMembers.count + team.teamAdmins.count + 1) Members\nCreated on \(team.teamCreatedAt!.convertToString())", attributes: [
-            .font: UIFont.systemFont(ofSize: GlobalConstants.Device.isIpad ? 17 : 13),
+        let teamCreatedAt = NSMutableAttributedString(string: "\(team.teamMembers.count + team.teamAdmins.count + 1) Members\nCreated on \(team.teamCreatedAt!.convertToString())", attributes: [
+            .font: UIFont.systemFont(ofSize: GlobalConstants.Device.isIpad ? 17 : 12),
             .foregroundColor: UIColor.secondaryLabel,
         ])
-
-        teamName.append(teamCreatedAt)
-        teamNameLabel.attributedText = teamName
+        teamNameLabel.text = team.teamName ?? "---"
+        teamInfoLabel.attributedText = teamCreatedAt
+        
         if team.isSelected {
             teamIcon.layer.borderWidth = 2
             teamIcon.layer.borderColor = UIColor.systemGreen.cgColor

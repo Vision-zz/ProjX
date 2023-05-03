@@ -152,11 +152,11 @@ class ViewTaskVC: PROJXTableViewController {
 
     private func configureTaskStatusInfoCell(_ cell: UITableViewCell, indexPath: IndexPath) {
         cell.selectionStyle = .none
-        let status = task.taskStatus == .incomplete ? "Incomplete" : "Completed"
+        let status = task.taskStatus == .active ? "Active" : "Completed"
         let keyValueDict = [
             ("Task Status", status),
             ("Created At", task.createdAt?.convertToString() ?? "Unknown"),
-            ("Deadline", task.deadline?.convertToString() ?? "No deadline"),
+            ("ETA", task.deadline?.convertToString() ?? "No ETA"),
             ("Completed At", task.completedAt?.convertToString() ?? "Unknown")
         ]
 

@@ -224,11 +224,12 @@ class CreateEditTeamVC: PROJXViewController {
 
     @objc private func createButtonOnClick() {
         toggleButtonLoading()
-        guard let teamName = teamName, !teamName.isEmpty else {
+        guard var teamName = teamName, !teamName.isEmpty else {
             teamNameErrorLabel.text = "Team name cannot be empty"
             toggleButtonLoading()
             return
         }
+        teamName = teamName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard teamName.count <= 64 else {
             let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
             animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)

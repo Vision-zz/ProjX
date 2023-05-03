@@ -65,6 +65,7 @@ class ChangePasswordVC: PROJXTableViewController {
         title = "Change Password"
         navigationItem.largeTitleDisplayMode = .never
         newTextField.becomeFirstResponder()
+        tableView.keyboardDismissMode = .onDrag
     }
 
     private func createKeyLabel(with text: String) -> UILabel {

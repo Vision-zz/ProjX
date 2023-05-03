@@ -16,8 +16,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
 
-        DataConfiguration.configureStuff(force: false)
-
         let userID = UserDefaults.standard.string(forKey: GlobalConstants.UserDefaultsKey.currentLoggedInUserID)
         let users = DataManager.shared.getAllUsers()
         let signedInUser = users.first(where: { $0.userID != nil && $0.userID!.uuidString == userID })

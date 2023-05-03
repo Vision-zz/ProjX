@@ -58,24 +58,24 @@ class TasksTableViewCell: UITableViewCell {
         contentView.addSubview(completedIndicator)
 
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 7),
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
 
-            infoLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor, constant: 2),
             infoLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
+            infoLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor, constant: 2),
             infoLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.6),
 
             completedIndicator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -3),
             completedIndicator.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             completedIndicator.heightAnchor.constraint(equalToConstant: 8),
-            completedIndicator.widthAnchor.constraint(equalToConstant: 8)
+            completedIndicator.widthAnchor.constraint(equalToConstant: 8),
         ])
     }
 
     func configureCell(for taskItem: TaskItem, showsCompleted: Bool = false) {
         titleLabel.text = taskItem.title
-        infoLabel.text = "created by \(taskItem.createdByUser.name!)"
+        infoLabel.text = taskItem.taskDescription
         completedIndicator.isHidden = !(showsCompleted && taskItem.taskStatus == .complete)
     }
 

@@ -208,5 +208,6 @@ extension PasswordUsernameVC: PasswordUpdateDelegate {
     func passwordChanged(to newPassword: String) {
         user.password = newPassword
         DataManager.shared.saveContext()
+        navigationController?.popViewController(animated: true)
     }
 }
