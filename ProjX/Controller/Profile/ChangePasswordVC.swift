@@ -11,6 +11,21 @@ class ChangePasswordVC: PROJXTableViewController {
 
     weak var passwordChangeDelegate: PasswordUpdateDelegate? = nil
     
+    lazy var oldTextField: UITextField = {
+        let tv = UITextField()
+        tv.translatesAutoresizingMaskIntoConstraints = false
+        tv.placeholder = "old password"
+        tv.tintColor = GlobalConstants.Colors.accentColor
+        tv.keyboardType = .default
+        tv.addTarget(self, action: #selector(oldTextEdited), for: .editingChanged)
+        tv.autocorrectionType = .no
+        tv.isSecureTextEntry = true
+        tv.textContentType = .oneTimeCode
+        tv.returnKeyType = .next
+        tv.delegate = self
+        return tv
+    }()
+    
     lazy var newTextField: UITextField = {
         let tv = UITextField()
         tv.translatesAutoresizingMaskIntoConstraints = false
@@ -41,11 +56,14 @@ class ChangePasswordVC: PROJXTableViewController {
         return tv
     }()
 
+    lazy var userOldPassword: String = ""
+    lazy var oldPassword: String = ""
     lazy var newPassword: String = ""
     lazy var verifyPassword: String = ""
 
-    convenience init() {
+    convenience init(oldPassword: String) {
         self.init(style: .insetGrouped)
+        self.userOldPassword = oldPassword
     }
 
     override init(style: UITableView.Style) {
@@ -64,7 +82,7 @@ class ChangePasswordVC: PROJXTableViewController {
     private func configureView() {
         title = "Change Password"
         navigationItem.largeTitleDisplayMode = .never
-        newTextField.becomeFirstResponder()
+        oldTextField.becomeFirstResponder()
         tableView.keyboardDismissMode = .onDrag
     }
 
@@ -92,9 +110,16 @@ class ChangePasswordVC: PROJXTableViewController {
     }
 
     @objc private func doneButtonOnClick() {
-        guard let _ = newTextField.text, let _ = verifyTextField.text else {
+        
+        guard let _ = oldTextField.text, let _ = newTextField.text, let _ = verifyTextField.text else {
             showErrorAlert(title: "Error", message: "Passwords field cannot be empty")
             return
+        }
+        if oldPassword != userOldPassword {
+            showErrorAlert(title: "Error", message: "Old password is wrong", handler: { _ in
+                self.oldTextField.becomeFirstResponder()
+                self.oldTextField.selectAll(nil)
+            })
         }
         if newPassword != verifyPassword {
             showErrorAlert(title: "Error", message: "Passwords do not match", handler: { _ in
@@ -112,7 +137,7 @@ class ChangePasswordVC: PROJXTableViewController {
             return 
         }
         newPassword = newPass
-        setDoneButton(!newPassword.isEmpty && !verifyPassword.isEmpty)
+        setDoneButton(!newPassword.isEmpty && !verifyPassword.isEmpty && !oldPassword.isEmpty)
     }
 
     @objc private func verifyTextEdited() {
@@ -121,18 +146,26 @@ class ChangePasswordVC: PROJXTableViewController {
             return
         }
         verifyPassword = verifyPass
-        setDoneButton(!newPassword.isEmpty && !verifyPassword.isEmpty)
-
+        setDoneButton(!newPassword.isEmpty && !verifyPassword.isEmpty && !oldPassword.isEmpty)
+    }
+    
+    @objc private func oldTextEdited() {
+        guard let oldPass = oldTextField.text else {
+            oldPassword = ""
+            return
+        }
+        oldPassword = oldPass
+        setDoneButton(!newPassword.isEmpty && !verifyPassword.isEmpty && !oldPassword.isEmpty)
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 2
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return section == 0 ? 1 : 2
     }
 
     private func configureCell(with name: String, textField: UITextField) -> UITableViewCell {
@@ -155,6 +188,9 @@ class ChangePasswordVC: PROJXTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.section == 0 {
+            return configureCell(with: "Old", textField: oldTextField)
+        }
         if indexPath.row == 0 {
             return configureCell(with: "New", textField: newTextField)
         } else if indexPath.row == 1 {

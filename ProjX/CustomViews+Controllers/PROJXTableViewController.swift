@@ -24,7 +24,11 @@ class PROJXTableViewController: UITableViewController {
     }
 
     private func configureBaseUI() {
+        // Uncomment this line if you dont want any text to appear on the back buttons
+        // self.navigationController?.navigationBar.topItem?.backBarButtonItem = UIBarButtonItem(title: "")
+        navigationController?.navigationBar.tintColor = GlobalConstants.Colors.accentColor
         tableView.separatorColor = .secondarySystemFill
+        tableView.keyboardDismissMode = .onDrag
         self.navigationController?.navigationBar.prefersLargeTitles = true
         if tableView.style == .insetGrouped {
             self.tableView.backgroundColor = .systemGroupedBackground
@@ -32,6 +36,13 @@ class PROJXTableViewController: UITableViewController {
             self.view.backgroundColor = GlobalConstants.Colors.primaryBackground
             self.tableView.backgroundColor = GlobalConstants.Colors.primaryBackground
         }
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(onTap))
+        tapGestureRecognizer.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGestureRecognizer)
+    }
+    
+    @objc private func onTap() {
+        view.endEditing(true)
     }
 
 }

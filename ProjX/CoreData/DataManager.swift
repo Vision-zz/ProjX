@@ -18,6 +18,7 @@ class DataManager {
     private init() {}
     static let shared: DataManager = DataManager()
 
+    
     func getAllUsers() -> [User] {
         return (try? context.fetch(User.fetchRequest())) ?? []
     }
@@ -72,6 +73,12 @@ class DataManager {
         newUser.userTeams = []
         newUser.userID = userID
         newUser.notificationUpdates = []
+        let filterOptions = FilterOptions(context: context)
+        filterOptions.user = newUser
+        filterOptions.filters = Filters(assignedTo: userID)
+        filterOptions.groupAndSortBy = .priority(.highToLow, .eta(.lowToHigh))
+        newUser.taskFilterSettings = filterOptions
+//        newUser.notificationUpdates = [NotificationUpdate(message: "Hello this is a notification")]
 
         if profileImage != nil {
             DataManager.shared.saveImage(profileImage!, with: userID.uuidString)
@@ -128,6 +135,9 @@ class DataManager {
     func deleteTeam(_ team: Team) {
         team.allTeamMembers.forEach { $0.userTeams?.removeAll { $0 == team.teamID } }
         context.delete(team)
+        if SessionManager.shared.signedInUser?.selectedTeamID == team.teamID! {
+            SessionManager.shared.signedInUser?.selectedTeamID = nil
+        }
         saveContext()
     }
 
@@ -165,7 +175,7 @@ class DataManager {
         task.priority = priority.rawValue
         task.createdAt = Date()
         task.createdByUser = SessionManager.shared.signedInUser!
-        task.taskStatus = .active
+        task.taskStatus = .inProgress
         task.statusUpdates = []
         SessionManager.shared.signedInUser?.selectedTeam?.tasksID?.append(task.taskID!)
 

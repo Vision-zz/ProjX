@@ -179,7 +179,7 @@ class DataConfiguration {
                 j += 1
             }
 
-            let tasksCount = Int.random(in: 40...70)
+            let tasksCount = Int.random(in: 75...100)
             print("Configuring \(tasksCount) for \(team.teamName!)")
             for k in  0...tasksCount {
                 let createdBy = team.allTeamMembers.randomElement()!
@@ -187,11 +187,19 @@ class DataConfiguration {
 
                 let task = TaskItem(context: DataManager.shared.context)
                 task.taskID = UUID()
-                let randomDateInPreviousWeek = Date(timeInterval: TimeInterval.random(in: 0...604800), since: Calendar.current.date(byAdding: .day, value: -7, to: Date())!)
-                task.createdAt = randomDateInPreviousWeek
+                
+                let currentDate = Date()
+                let threeYearsAgo = Calendar.current.date(byAdding: .year, value: -3, to: currentDate)!
+                let createdAt = Date(timeInterval: TimeInterval(arc4random_uniform(UInt32(currentDate.timeIntervalSince(threeYearsAgo)))), since: threeYearsAgo)
+                task.createdAt = createdAt
+                
+                let threeYears: TimeInterval = 3 * 365 * 24 * 60 * 60 // 3 years in seconds
+                let futureDate = Date(timeIntervalSinceNow: threeYears)
+                let deadline = Date(timeIntervalSince1970: TimeInterval.random(in: currentDate.timeIntervalSince1970...futureDate.timeIntervalSince1970))
+                task.deadline = deadline
+                
                 task.title = "Task \(k)"
                 task.taskDescription = "This is a task that needs to be finished within a particular amount of time. This task is named task \(k)"
-                task.deadline = Date(timeInterval: TimeInterval.random(in: 0...604800), since: Calendar.current.date(byAdding: .day, value: 7, to: Date())!)
                 task.createdByUser = createdBy
                 task.assignedToUser = assignedTo
                 task.statusUpdates = []
@@ -203,7 +211,7 @@ class DataConfiguration {
                     task.taskStatus = .complete
                     task.completedAt = Date()
                 } else {
-                    task.taskStatus = .active
+                    task.taskStatus = .inProgress
                 }
                 team.tasks.append(task)
             }

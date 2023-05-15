@@ -7,12 +7,17 @@
 
 import Foundation
 
-protocol AssignedToSelectionDelegate: AnyObject {
-    func taskAssigned(to user: User)
+@objc protocol MemberSelectionDelegate: AnyObject {
+    func selected(user: User)
+    @objc optional func clearedSelection()
 }
 
 protocol PriorityPickerDelegate: AnyObject {
     func selectedPriority(_ priority: TaskPriority, dismiss: Bool)
+}
+
+protocol TaskStatusPickerDelegate: AnyObject {
+    func selectedStatus(_ status: TaskStatus, dismiss: Bool)
 }
 
 protocol CreateTaskDelegate: AnyObject {

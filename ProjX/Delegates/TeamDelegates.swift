@@ -19,6 +19,10 @@ protocol TeamExitDelegate: AnyObject {
     func teamExited()
 }
 
+protocol TeamSelectDelegate: AnyObject {
+    func teamSelected(team: Team)
+}
+
 protocol TeamOptionsDelegate: AnyObject {
     func teamSelectButtonPressed()
     func teamEditButtonPressed()

@@ -20,7 +20,7 @@ extension TaskItem {
     @NSManaged public var createdAt: Date?
     @NSManaged public var deadline: Date?
     @NSManaged public var completedAt: Date?
-    @NSManaged public var statusUpdates: [StatusUpdate]?
+    @NSManaged public var statusUpdates: [TaskStatusUpdate]?
     @NSManaged public var taskDescription: String?
     @NSManaged public var taskID: UUID?
     @NSManaged public var taskStatusID: Int16

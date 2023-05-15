@@ -57,18 +57,7 @@ class PasswordUsernameVC: PROJXTableViewController {
     }
 
     @objc private func cancelButtonClicked() {
-//        guard someValueChanged else {
-//            dismiss(animated: true)
-//            return
-//        }
-//        let alert = UIAlertController(title: "Unsaved Changes", message: "You have unsaved changes. Do you want to save them before leaving?", preferredStyle: .alert)
-//        alert.addAction(UIAlertAction(title: "Save Changes", style: .default) { [weak self] _ in
-//            self?.doneButtonClicked()
-//        })
-//        alert.addAction(UIAlertAction(title: "Discard Changes", style: .default) { [weak self] _ in
-//            self?.dismiss(animated: true)
-//        })
-//        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
         dismiss(animated: true)
     }
 
@@ -197,7 +186,7 @@ class PasswordUsernameVC: PROJXTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         guard indexPath.section == 1 else { return }
-        let vc = ChangePasswordVC()
+        let vc = ChangePasswordVC(oldPassword: user.password!)
         vc.passwordChangeDelegate = self
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -207,7 +196,9 @@ class PasswordUsernameVC: PROJXTableViewController {
 extension PasswordUsernameVC: PasswordUpdateDelegate {
     func passwordChanged(to newPassword: String) {
         user.password = newPassword
+        user.passLastUpdate = Date()
         DataManager.shared.saveContext()
         navigationController?.popViewController(animated: true)
+        tableView.reloadRows(at: [IndexPath(row: 1, section: 2)], with: .none)
     }
 }

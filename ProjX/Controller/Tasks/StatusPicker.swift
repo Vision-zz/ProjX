@@ -1,18 +1,17 @@
 //
-//  PriorityPickerVC.swift
+//  StatusPicker.swift
 //  ProjX
 //
-//  Created by Sathya on 20/04/23.
+//  Created by Sathya on 12/05/23.
 //
 
 import UIKit
 
-class PriorityPickerVC: PROJXViewController, UIPickerViewDataSource, UIPickerViewDelegate  {
-
-    let priorityOptions = ["High", "Medium", "Low"]
-
-    lazy var selectedPriority: TaskPriority = .low
-    weak var priorityPickerDelegate: PriorityPickerDelegate?
+class StatusPicker: PROJXViewController, UIPickerViewDataSource, UIPickerViewDelegate {
+    let statusOptions = ["All", "In Progress", "Completed"]
+    
+    lazy var selectedStatus: TaskStatus = .inProgress
+    weak var statusPickerDelegate: TaskStatusPickerDelegate?
     lazy var pickerView: UIPickerView = {
         let pickerView = UIPickerView()
         pickerView.translatesAutoresizingMaskIntoConstraints = false
@@ -20,13 +19,13 @@ class PriorityPickerVC: PROJXViewController, UIPickerViewDataSource, UIPickerVie
         pickerView.dataSource = self
         return pickerView
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
         configureConstraints()
     }
-
+    
     private func configureView() {
         view.addSubview(pickerView)
         navigationItem.largeTitleDisplayMode = .never
@@ -34,7 +33,7 @@ class PriorityPickerVC: PROJXViewController, UIPickerViewDataSource, UIPickerVie
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeButtonClick))
         navigationController?.navigationBar.tintColor = GlobalConstants.Colors.accentColor
     }
-
+    
     private func configureConstraints() {
         NSLayoutConstraint.activate([
             pickerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -43,36 +42,37 @@ class PriorityPickerVC: PROJXViewController, UIPickerViewDataSource, UIPickerVie
             pickerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5),
         ])
     }
-
+    
     @objc private func closeButtonClick() {
-        priorityPickerDelegate?.selectedPriority(selectedPriority, dismiss: true)
+        statusPickerDelegate?.selectedStatus(selectedStatus, dismiss: true)
     }
-
-    func setSelectedPriority(_ priority: TaskPriority) {
-        selectedPriority = priority
-        let row = priority == .high ? 0 : priority == .medium ? 1 : 2
+    
+    func setSelectedStatus(_ status: TaskStatus) {
+        selectedStatus = status
+        let row = status == .unknown ? 0 : status == .inProgress ? 1 : 2
         pickerView.selectRow(row, inComponent: 0, animated: true)
     }
-
-        // MARK: - UIPickerViewDataSource methods
-
+    
+    // MARK: - UIPickerViewDataSource methods
+    
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
-
+    
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return priorityOptions.count
+        return statusOptions.count
     }
-
-        // MARK: - UIPickerViewDelegate methods
-
+    
+    // MARK: - UIPickerViewDelegate methods
+    
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return priorityOptions[row]
+        return statusOptions[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        let status = row == 0 ? TaskStatus.unknown : row == 1 ? TaskStatus.inProgress : TaskStatus.complete
+        selectedStatus = status
+        statusPickerDelegate?.selectedStatus(status, dismiss: false)
     }
 
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let priority = row == 0 ? TaskPriority.high : row == 1 ? TaskPriority.medium : TaskPriority.low
-        selectedPriority = priority
-        priorityPickerDelegate?.selectedPriority(priority, dismiss: false)
-    }
 }

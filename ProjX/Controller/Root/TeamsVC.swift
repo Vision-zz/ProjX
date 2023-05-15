@@ -42,6 +42,26 @@ class TeamsVC: PROJXTableViewController {
         return noDataTitleLabel
     }()
     
+    lazy var noSearchResultBackgroundView: UILabel = {
+        let title = NSMutableAttributedString(string: "No search results!\n", attributes: [
+            .font: UIFont.systemFont(ofSize: 22, weight: .bold),
+            .foregroundColor: UIColor.label,
+        ])
+        let desc = NSMutableAttributedString(string: "Cannot find anything matching your search", attributes: [
+            .font: UIFont.systemFont(ofSize: 14),
+            .foregroundColor: UIColor.secondaryLabel
+        ])
+        
+        title.append(desc)
+        
+        let noDataTitleLabel = UILabel()
+        noDataTitleLabel.textColor = .label
+        noDataTitleLabel.attributedText = title
+        noDataTitleLabel.numberOfLines = 0
+        noDataTitleLabel.textAlignment = .center
+        return noDataTitleLabel
+    }()
+    
     lazy var searchController: UISearchController = {
         let search = UISearchController()
         search.searchBar.placeholder = "Search Teams"
@@ -156,20 +176,42 @@ class TeamsVC: PROJXTableViewController {
 
     private func configureDatasource() {
         dataSource = []
-        noDataTableBackgroundView.isHidden = true
+        showNoDataBackgroundView(false)
         let userTeams = SessionManager.shared.signedInUser?.teams
         guard let userTeams = userTeams else { return }
-        let currentTeam = userTeams.first(where: { $0.teamID != nil && $0.teamID == SessionManager.shared.signedInUser?.selectedTeamID })
-        currentTeamID = currentTeam?.teamID?.uuidString
+        
+        if let currentTeam = userTeams.first(where: { $0.teamID != nil && $0.teamID == SessionManager.shared.signedInUser?.selectedTeamID }) {
+            currentTeamID = currentTeam.teamID?.uuidString
+            dataSource.append(SectionData(sectionHeader: "Current Team", rows: [currentTeam]))
+        }
         let otherTeams = userTeams.filter({ $0.teamID != nil && $0.teamID != SessionManager.shared.signedInUser?.selectedTeamID })
-        if currentTeam == nil && otherTeams.isEmpty {
-            noDataTableBackgroundView.isHidden = false
+        if !otherTeams.isEmpty {
+            dataSource.append(SectionData(sectionHeader: "Your Teams", rows: otherTeams))
+        }
+        
+        guard !dataSource.isEmpty else {
+            showNoDataBackgroundView(true)
             return
         }
-        dataSource.append(SectionData(sectionHeader: "Current Team", rows: currentTeam != nil ? [currentTeam!] : []))
-        dataSource.append(SectionData(sectionHeader: "Your Teams", rows: otherTeams))
+        
         for i in 0..<dataSource.count {
             dataSource[i].rows.sort(by: { $0.teamName! < $1.teamName! })
+        }
+    }
+    
+    private func showNoDataBackgroundView(_ state: Bool) {
+        if state {
+            tableView.backgroundView = noDataTableBackgroundView
+        } else {
+            tableView.backgroundView = nil
+        }
+    }
+    
+    private func showSearchResultBackgroundView(_ state: Bool) {
+        if state {
+            tableView.backgroundView = noSearchResultBackgroundView
+        } else {
+            tableView.backgroundView = nil
         }
     }
 
@@ -200,7 +242,7 @@ class TeamsVC: PROJXTableViewController {
         Util.configureCustomSelectionStyle(for: cell)
         cell.accessoryType = .disclosureIndicator
         cell.cellImageView.contentMode = .scaleAspectFill
-        cell.configureCellData(text: dataSource[indexPath.section].rows[indexPath.row].teamName ?? "---", image: dataSource[indexPath.section].rows[indexPath.row].getTeamIcon(reduceTo: CGSize(width: 15, height: 15)))
+        cell.configureCellData(text: dataSource[indexPath.section].rows[indexPath.row].teamName ?? "---", image: dataSource[indexPath.section].rows[indexPath.row].getTeamIcon(reduceTo: CGSize(width: 30, height: 30)))
         return cell
     }
 
@@ -223,13 +265,18 @@ class TeamsVC: PROJXTableViewController {
                 children.append(UIAction(title: "Set as Current Team", image: UIImage(systemName: "checkmark.circle"), attributes: team.isSelected ? [.disabled] : []) { [weak self] _ in
                     guard let self = self else { return }
                     DataManager.shared.changeSelectedTeam(of: SessionManager.shared.signedInUser!, to: team)
+                    
+                   
                     let oldSelectedID = self.currentTeamID
+                    configureDatasource()
+                    if dataSource.count < 2 {
+                        tableView.reloadData()
+                        return
+                    }
                     guard let oldSelectedID = oldSelectedID else {
-                        configureDatasource()
                         self.tableView.moveRow(at: indexPath, to: IndexPath(row: 0, section: 0))
                         return
                     }
-                    configureDatasource()
                     let moveCurrentIndex = dataSource[1].rows.firstIndex(where: { $0.teamID?.uuidString == oldSelectedID })
                     guard let moveCurrentIndex = moveCurrentIndex else {
                         tableView.reloadData()
@@ -272,10 +319,16 @@ class TeamsVC: PROJXTableViewController {
                             tableView.reloadData()
                             return
                         }
-                        let indexPath = IndexPath(row: deleteCurrentIndex, section: team.isSelected ? 0 : 1)
+                        let section = team.isSelected ? 0 : 1
+                        let indexPath = IndexPath(row: deleteCurrentIndex, section: section)
                         DataManager.shared.deleteTeam(team)
+                        let totalSections = self?.dataSource.count
                         self?.configureDatasource()
-                        self?.tableView.deleteRows(at: [indexPath], with: .left)
+                        if totalSections != self?.dataSource.count {
+                            self?.tableView.deleteSections(IndexSet(integer: section), with: .left)
+                        } else {
+                            self?.tableView.deleteRows(at: [indexPath], with: .left)
+                        }
                     }))
                     alert.addAction(UIAlertAction(title: "Go back", style: .cancel))
                     self?.present(alert, animated: true)
@@ -288,23 +341,48 @@ class TeamsVC: PROJXTableViewController {
                             tableView.reloadData()
                             return
                         }
+                        let section = team.isSelected ? 0 : 1
                         let indexPath = IndexPath(row: deleteCurrentIndex, section: team.isSelected ? 0 : 1)
                         SessionManager.shared.signedInUser?.leave(team: team)
+                        let totalSections = self?.dataSource.count
                         self?.configureDatasource()
-                        self?.tableView.deleteRows(at: [indexPath], with: .left)
+                        if totalSections != self?.dataSource.count {
+                            self?.tableView.deleteSections(IndexSet(integer: section), with: .left)
+                        } else {
+                            self?.tableView.deleteRows(at: [indexPath], with: .left)
+                        }
                     }))
                     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
                     self?.present(alert, animated: true)
                 }
             })
             
-            completion(children)
+            DispatchQueue.main.async {
+                completion(children)
+            }
         }
                 
-        return UIContextMenuConfiguration(identifier: indexPath as NSCopying, previewProvider: nil, actionProvider: { _ in
+        return UIContextMenuConfiguration(identifier: indexPath as NSCopying, previewProvider: {
+            let previewViewController = TeamPreviewVC()
+            previewViewController.configureView(for: team)
+            previewViewController.preferredContentSize = CGSize(width: tableView.frame.width, height: 250)
+            return previewViewController
+        }, actionProvider: { _ in
             return UIMenu(children: [menuElement])
         })
+
     }
+//
+//    override func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+//        guard let indexPath = configuration.identifier as? IndexPath else { return }
+//        let team = dataSource[indexPath.section].rows[indexPath.row]
+//        let vc = createTeamInfoVC(for: team)
+//        animator.preferredCommitStyle = .pop
+//        animator.addAnimations { [weak self] in
+//            self?.navigationController?.pushViewController(vc, animated: false)
+//        }
+//    }
+//
 
 }
 
@@ -333,73 +411,44 @@ extension TeamsVC: JoinTeamDelegate, CreateEditTeamDelegate, TeamExitDelegate {
     }
 
 }
-//
-//extension TeamsVC: TeamOptionsDelegate {
-//    func teamSelectButtonPressed() {
-//        tableView.reloadSections(IndexSet(integer: 0), with: .none)
-//    }
-//
-//    func teamEditButtonPressed() {
-//        let createTeamVc = CreateEditTeamVC()
-//        createTeamVc.delegate = self
-//        createTeamVc.configureViewForEditing(team: team)
-//        let nav = UINavigationController(rootViewController: createTeamVc)
-//        nav.modalPresentationStyle = .formSheet
-//        if let sheet = nav.sheetPresentationController {
-//            sheet.detents = [.custom(resolver: { _ in return 350 }), .large()]
-//            sheet.preferredCornerRadius = 20
-//            sheet.prefersGrabberVisible = true
-//        }
-//        self.present(nav, animated: true
-//    }
-//
-//    func teamExitButtonPressed() {
-//        if let signedInUserID = SessionManager.shared.signedInUser?.userID, self.team.teamOwnerID == signedInUserID {
-//            let alert = UIAlertController(title: "Are you sure?", message: "Do you want to delete team '\(self.team.teamName!)'", preferredStyle: .alert)
-//            alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
-//                DataManager.shared.deleteTeam(self!.team)
-//                self?.delegate?.teamExited()
-//            }))
-//            alert.addAction(UIAlertAction(title: "Go back", style: .cancel))
-//            self.present(alert, animated: true)
-//        } else {
-//            let alert = UIAlertController(title: "Are you sure?", message: "Do you want to leave team '\(self.team.teamName!)'", preferredStyle: .alert)
-//            alert.addAction(UIAlertAction(title: "Leave", style: .destructive, handler: { [weak self] _ in
-//                guard self != nil else { return }
-//                SessionManager.shared.signedInUser?.leave(team: self!.team)
-//                self?.delegate?.teamExited()
-//            }))
-//            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-//            self.present(alert, animated: true)
-//        }
-//    }
-//}
 
 extension TeamsVC: UISearchBarDelegate, UISearchControllerDelegate {
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        showSearchResultBackgroundView(false)
         if searchText.isEmpty {
             configureDatasource()
         } else {
             
             let userTeams = SessionManager.shared.signedInUser?.teams
-            guard let userTeams = userTeams else { return }
-            let currentTeam = userTeams.first(where: { $0.teamID != nil && $0.teamID == SessionManager.shared.signedInUser?.selectedTeamID })
-            currentTeamID = currentTeam?.teamID?.uuidString
-            let otherTeams = userTeams.filter({ $0.teamID != nil && $0.teamID != SessionManager.shared.signedInUser?.selectedTeamID })
-            if currentTeam == nil && otherTeams.isEmpty {
-                noDataTableBackgroundView.isHidden = false
+            guard let userTeams = userTeams?.filter({ $0.teamName!.lowercased().starts(with: searchText.lowercased()) }) else {
+                dataSource = []
+                tableView.reloadData()
+                showSearchResultBackgroundView(true)
                 return
             }
+            
             dataSource = []
-            dataSource.append(SectionData(sectionHeader: "Current Team", rows: currentTeam != nil ? [currentTeam!].filter({ $0.teamName!.starts(with: searchText) }) : []))
-            dataSource.append(SectionData(sectionHeader: "Your Teams", rows: otherTeams.filter({ $0.teamName!.starts(with: searchText) })))
+            
+            if let currentTeam = userTeams.first(where: { $0.teamID != nil && $0.teamID == SessionManager.shared.signedInUser?.selectedTeamID }) {
+                currentTeamID = currentTeam.teamID?.uuidString
+                dataSource.append(SectionData(sectionHeader: "Current Team", rows: [currentTeam]))
+            }
+            let otherTeams = userTeams.filter({ $0.teamID != nil && $0.teamID != SessionManager.shared.signedInUser?.selectedTeamID })
+            if !otherTeams.isEmpty {
+                dataSource.append(SectionData(sectionHeader: "Your Teams", rows: otherTeams))
+            }
+            
+            if dataSource.isEmpty {
+                showSearchResultBackgroundView(true)
+            }
             
         }
         tableView.reloadData()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        showSearchResultBackgroundView(false)
         configureDatasource()
         tableView.reloadData()
     }

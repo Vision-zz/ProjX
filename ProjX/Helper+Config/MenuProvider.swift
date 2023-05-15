@@ -29,8 +29,9 @@ class MenuProvider {
             children.append(UIAction(title: exitTitle, image: exitImage, attributes: .destructive) { _ in
                 delegate?.teamExitButtonPressed()
             })
-
-            completion(children)
+            DispatchQueue.main.async {
+                completion(children)
+            }
         }
 
         let menu = UIMenu(children: [menuElement])

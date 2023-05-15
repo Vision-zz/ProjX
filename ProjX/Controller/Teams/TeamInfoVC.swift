@@ -35,10 +35,10 @@ class TeamInfoVC: PROJXTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+//        navigationItem.backButtonDisplayMode = .minimal
     }
 
     private func configureView() {
-        tableView.allowsSelection = true
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TeamInfoKeyValueCell")
         tableView.register(TeamProfileCell.self, forCellReuseIdentifier: TeamProfileCell.identifier)
         tableView.register(TeamOwnerCell.self, forCellReuseIdentifier: TeamOwnerCell.identifier)
@@ -93,7 +93,7 @@ class TeamInfoVC: PROJXTableViewController {
 
         let keyValueDict: [(key: String, value: String)] = [
             ("Join code", "\(team.teamJoinPasscode ?? "-")"),
-            ("Active Tasks", "\(team.tasks.filter({ $0.taskStatus == .active }).count)"),
+            ("Tasks In Progress", "\(team.tasks.filter({ $0.taskStatus == .inProgress }).count)"),
             ("Total Tasks", "\(team.tasks.count)")
         ]
 
@@ -117,12 +117,12 @@ class TeamInfoVC: PROJXTableViewController {
 
     private func configureMembersViewCell(for cell: PROJXImageTextCell, at indexPath: IndexPath) {
         let users = indexPath.section == 3 ? teamAdmins : teamMembers
-        cell.accessoryType = .disclosureIndicator
         cell.cellImageView.contentMode = .scaleAspectFill
         var name = users[indexPath.row].name ?? "---"
         if users[indexPath.row].userID == SessionManager.shared.signedInUser?.userID {
             name += " (You)"
         }
+        
         cell.configureCellData(text: name, image: users[indexPath.row].getUserProfileIcon(reduceTo: CGSize(width: 30, height: 30)))
     }
 
@@ -148,6 +148,7 @@ class TeamInfoVC: PROJXTableViewController {
                 let cell = tableView.dequeueReusableCell(withIdentifier: PROJXImageTextCell.identifier, for: indexPath) as! PROJXImageTextCell
                 configureMembersViewCell(for: cell, at: indexPath)
                 Util.configureCustomSelectionStyle(for: cell)
+                cell.accessoryType = .disclosureIndicator
                 return cell
         }
     }
@@ -176,25 +177,42 @@ class TeamInfoVC: PROJXTableViewController {
         }
         return nil
     }
+    
+    private func showFilterModificationAlert(allTasks: Bool) {
+        let alert = UIAlertController(title: "Are you sure?", message: "This will modify your filter settings. Do you want to proceed?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Proceed", style: .destructive, handler: { _ in
+            if allTasks {
+                MainRouter.shared.showActiveTeamTasks(for: SessionManager.shared.signedInUser!)
+            } else {
+                MainRouter.shared.showAllTeamTasks(for: SessionManager.shared.signedInUser!)
+            }
+        }))
+        alert.addAction(UIAlertAction(title: "Go Back", style: .cancel))
+        self.present(alert, animated: true)
+    }
+
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard [2, 3, 4].contains(indexPath.section) else { return }
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.section == 2 {
             if team.isSelected {
-                MainRouter.shared.routeTabbarTo(index: 0)
-                MainRouter.shared.switchTasksSegmentedControlTo(option: indexPath.row == 1 ? .active : .all)
+                showFilterModificationAlert(allTasks: indexPath.row == 0)
             }
             else {
                 let alert = UIAlertController(title: "Switch current team?", message: "\(team.teamName!) is not your current team. Do you want to set \(team.teamName!) as your current team and proceed?", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { [unowned self] _ in
                     self.teamSelectButtonPressed()
-                    MainRouter.shared.routeTabbarTo(index: 0)
-                    MainRouter.shared.switchTasksSegmentedControlTo(option: indexPath.row == 1 ? .active : .all)
+                    showFilterModificationAlert(allTasks: indexPath.row == 0)
                 }))
                 alert.addAction(UIAlertAction(title: "No", style: .cancel))
                 self.present(alert, animated: true)
             }
+        }
+        if [3, 4].contains(indexPath.section) {
+            let user = (indexPath.section == 3 ? teamAdmins : teamMembers)[indexPath.row]
+            let vc = UserInfoVC(user: user, team: team)
+            navigationController?.pushViewController(vc, animated: true)
         }
     }
 

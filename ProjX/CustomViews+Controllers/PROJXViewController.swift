@@ -24,8 +24,17 @@ class PROJXViewController: UIViewController {
     }
 
     private func configureBaseUI() {
+        // Uncomment this line if you dont want any text to appear on the back buttons
+        // self.navigationController?.navigationBar.topItem?.backBarButtonItem = UIBarButtonItem(title: "")
         self.view.backgroundColor = GlobalConstants.Colors.primaryBackground
+        navigationController?.navigationBar.tintColor = GlobalConstants.Colors.accentColor
         self.navigationController?.navigationBar.prefersLargeTitles = true
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(onTap))
+        tapGestureRecognizer.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGestureRecognizer)
     }
-
+    
+    @objc private func onTap() {
+        view.endEditing(true)
+    }
 }

@@ -50,6 +50,9 @@ class TeamProfileCell: UITableViewCell {
 
     lazy var teamOptionsButton: UIButton = {
         let button = UIButton()
+        var config = UIButton.Configuration.plain()
+        config.buttonSize = .medium
+        button.configuration = config
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         button.tintColor = GlobalConstants.Colors.accentColor
@@ -91,6 +94,7 @@ class TeamProfileCell: UITableViewCell {
             
             teamOptionsButton.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 5),
             teamOptionsButton.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -15),
+            teamOptionsButton.widthAnchor.constraint(equalToConstant: 25),
         ])
     }
 

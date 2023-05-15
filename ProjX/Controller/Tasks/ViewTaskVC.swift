@@ -24,6 +24,11 @@ class ViewTaskVC: PROJXTableViewController {
     var isCreatedByCurrentUser: Bool {
         task.createdBy != nil && task.createdBy! == SessionManager.shared.signedInUser?.userID
     }
+    
+    var isUserAdmin: Bool {
+        let role = SessionManager.shared.signedInUser?.roleInCurrentTeam
+        return role == .admin || role == .owner
+    }
 
     lazy var titleLabel: MarqueeLabel = {
         let label = MarqueeLabel()
@@ -91,7 +96,7 @@ class ViewTaskVC: PROJXTableViewController {
         if isAssignedToCurrentUser && task.taskStatus != .complete {
             sections += 1
         }
-        if isCreatedByCurrentUser {
+        if isCreatedByCurrentUser || isUserAdmin {
             sections += 1
         }
         return sections
@@ -152,7 +157,7 @@ class ViewTaskVC: PROJXTableViewController {
 
     private func configureTaskStatusInfoCell(_ cell: UITableViewCell, indexPath: IndexPath) {
         cell.selectionStyle = .none
-        let status = task.taskStatus == .active ? "Active" : "Completed"
+        let status = task.taskStatus == .inProgress ? "In Progress" : "Completed"
         let keyValueDict = [
             ("Task Status", status),
             ("Created At", task.createdAt?.convertToString() ?? "Unknown"),

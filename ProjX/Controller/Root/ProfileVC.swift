@@ -134,6 +134,7 @@ class ProfileVC: PROJXTableViewController {
             config.text = "Delete my Account"
             config.image = UIImage(systemName: "trash")
         }
+        cell.accessoryType = .none
         cell.contentConfiguration = config
     }
 

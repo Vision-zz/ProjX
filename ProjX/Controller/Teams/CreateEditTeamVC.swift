@@ -145,6 +145,7 @@ class CreateEditTeamVC: PROJXViewController {
 
         view.addSubview(teamInfoStack)
         view.addSubview(endButton)
+        teamNameTextField.becomeFirstResponder()
     }
 
     func configureViewForEditing(team: Team) {
@@ -154,7 +155,7 @@ class CreateEditTeamVC: PROJXViewController {
         endButton.setTitle("Done", for: .normal)
         if team.hasTeamIcon() {
             teamIconIsCustomized = true
-            self.teamIcon = team.getTeamIcon(reduceTo: CGSize(width: 40, height: 40))
+            self.teamIcon = team.getTeamIcon(reduceTo: CGSize(width: 100, height: 100))
         }
     }
 
@@ -199,11 +200,13 @@ class CreateEditTeamVC: PROJXViewController {
                     guard let image = image else { return }
                     DispatchQueue.main.async {
                         self.teamIconIsCustomized = true
-                        self.teamIcon = Util.downsampleImage(from: image.jpegData(compressionQuality: 0.75)!, to: CGSize(width: 40, height: 40))
+                        self.teamIcon = Util.downsampleImage(from: image.jpegData(compressionQuality: 0.75)!, to: CGSize(width: 100, height: 100))
                     }
                 }
             })
-            completion(children)
+            DispatchQueue.main.async {
+                completion(children)
+            }
         }
         return UIMenu(children: [menuElement])
     }
@@ -254,7 +257,7 @@ class CreateEditTeamVC: PROJXViewController {
 
     private func toggleButtonLoading() {
         endButton.configuration!.showsActivityIndicator.toggle()
-        endButton.backgroundColor = endButton.configuration!.showsActivityIndicator ? .systemGray : .systemBlue
+        endButton.backgroundColor = endButton.configuration!.showsActivityIndicator ? .systemGray : GlobalConstants.Colors.accentColor
         endButton.setTitle(endButton.configuration!.showsActivityIndicator ? nil : isCreatingTeam ? "Create" : "Done", for: .normal)
     }
 

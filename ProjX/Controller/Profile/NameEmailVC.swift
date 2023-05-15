@@ -109,7 +109,7 @@ class NameEmailVC: PROJXTableViewController {
     @objc private func nameTextEdited() {
         someValueChanged = true
         guard let udpatedName = nameTextField.text, !udpatedName.isEmpty else {
-            showErrorAlert(title: "Empty Field", message: "Name address cannot be empty")
+            name = ""
             return
         }
         name = nameTextField.text
@@ -118,26 +118,13 @@ class NameEmailVC: PROJXTableViewController {
     @objc private func emailTextEdited() {
         someValueChanged = true
         guard let udpatedEmail = emailTextField.text, !udpatedEmail.isEmpty else {
-            showErrorAlert(title: "Empty Field", message: "Email address cannot be empty")
+            name = ""
             return
         }
         email = emailTextField.text
     }
 
     @objc private func cancelButtonClicked() {
-//        guard someValueChanged else {
-//            dismiss(animated: true)
-//            return
-//        }
-//        let alert = UIAlertController(title: "Unsaved Changes", message: "You have unsaved changes. Do you want to save them before leaving?", preferredStyle: .alert)
-//        alert.addAction(UIAlertAction(title: "Save Changes", style: .default) { [weak self] _ in
-//            self?.doneButtonClicked()
-//        })
-//        alert.addAction(UIAlertAction(title: "Discard Changes", style: .default) { [weak self] _ in
-//            self?.dismiss(animated: true)
-//        })
-//        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-//        present(alert, animated: true)
         dismiss(animated: true)
     }
 
@@ -193,7 +180,9 @@ class NameEmailVC: PROJXTableViewController {
                     }
                 }
             })
-            completion(children)
+            DispatchQueue.main.async {
+                completion(children)
+            }
         }
         return UIMenu(children: [menuElement])
     }
@@ -233,6 +222,7 @@ class NameEmailVC: PROJXTableViewController {
         let cell = UITableViewCell()
         cell.contentView.addSubview(icon)
         cell.backgroundColor = .clear
+        cell.selectionStyle = .none
         NSLayoutConstraint.activate([
             icon.heightAnchor.constraint(equalToConstant: 100),
             icon.widthAnchor.constraint(equalToConstant: 100),

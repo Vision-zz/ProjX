@@ -12,9 +12,9 @@ class AddOrEditTaskVC: PROJXTableViewController {
     lazy var isEditingTask: Bool = false
     lazy var editingTask: TaskItem? = nil
     lazy var assignedToUser: User? = SessionManager.shared.signedInUser
-    lazy var priority: TaskPriority = .low
     weak var createTaskDelegate: CreateTaskDelegate?
 
+    lazy var priority: TaskPriority = .low
     var priorityString: String {
         get {
             switch priority {
@@ -104,19 +104,32 @@ class AddOrEditTaskVC: PROJXTableViewController {
         tableView.keyboardDismissMode = .onDrag
         tableView.separatorStyle = .none
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneButtonOnClick))
+        titleTextField.becomeFirstResponder()
+    }
+    
+    func cleanInputString(from string: String?) -> String? {
+        guard let string = string else { return nil }
+        let regex = try! NSRegularExpression(pattern: "\\s+", options: .caseInsensitive)
+        let cleanedString = regex.stringByReplacingMatches(
+            in: string,
+            options: [],
+            range: NSRange(location: 0, length: string.utf16.count),
+            withTemplate: " "
+        )
+        return cleanedString.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     @objc private func doneButtonOnClick() {
 
-        guard let titleText = titleTextField.text, !titleText.isEmpty else {
-            let alert = UIAlertController(title: "Missing Title", message: "Title for the task is a required field", preferredStyle: .alert)
+        guard let titleText = cleanInputString(from: titleTextField.text),  !titleText.isEmpty else {
+            let alert = UIAlertController(title: "Invalid Title", message: "Enter a valid title for the task", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default))
             present(alert, animated: true)
             return
         }
 
-        guard let descText = descriptionTextView.text, !descText.isEmpty else {
-            let alert = UIAlertController(title: "Missing Description", message: "Description for the task is a required field", preferredStyle: .alert)
+        guard let descText = cleanInputString(from: descriptionTextView.text), !descText.isEmpty else {
+            let alert = UIAlertController(title: "Invalid Description", message: "Enter a valid description for the task", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default))
             present(alert, animated: true)
             return
@@ -188,7 +201,6 @@ class AddOrEditTaskVC: PROJXTableViewController {
                     NSLayoutConstraint.activate([
                         self.deadlineDatePicker.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
                         self.deadlineDatePicker.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 10)
-
                     ])
                 }
             case 3:
@@ -240,7 +252,7 @@ class AddOrEditTaskVC: PROJXTableViewController {
                 let nav = UINavigationController(rootViewController: vc)
                 nav.modalPresentationStyle = .formSheet
                 if let sheet = nav.sheetPresentationController {
-                    sheet.detents = [.custom(resolver: { _ in return 250 })]
+                    sheet.detents = [.custom(resolver: { _ in return 200 })]
                     sheet.preferredCornerRadius = 20
                 }
                 present(nav, animated: true)
@@ -264,8 +276,8 @@ class AddOrEditTaskVC: PROJXTableViewController {
     }
 }
 
-extension AddOrEditTaskVC: AssignedToSelectionDelegate {
-    func taskAssigned(to user: User) {
+extension AddOrEditTaskVC: MemberSelectionDelegate {
+    func selected(user: User) {
         assignedToUser = user
         assignedToLabel.text = user.name
         navigationController?.popViewController(animated: true)

@@ -1,16 +1,16 @@
 //
-//  ProfileCell.swift
+//  UserProfileNameCell.swift
 //  ProjX
 //
-//  Created by Sathya on 20/04/23.
+//  Created by Sathya on 14/05/23.
 //
 
 import UIKit
 
-class ProfileCell: UITableViewCell {
-
-    static let identifier = "ProfileCell"
-
+class UserProfileNameCell: UITableViewCell {
+    
+    static let identifier = "UserProfileNameCell"
+    
     let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -20,20 +20,25 @@ class ProfileCell: UITableViewCell {
         imageView.clipsToBounds = true
         return imageView
     }()
-
-    let nameLabel: UILabel = {
-        let label = UILabel()
+    
+    lazy var nameLabel: MarqueeLabel = {
+        let label = MarqueeLabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
         label.textColor = .label
+        label.type = .continuous
+        label.numberOfLines = 1
+        label.textAlignment = .center
+        label.speed = .rate(40)
+        label.font = .systemFont(ofSize: 20, weight: .semibold)
         return label
     }()
 
-    let emailLabel: UILabel = {
+    let teamName: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .secondaryLabel
+        label.textAlignment = .center
         return label
     }()
 
@@ -47,33 +52,32 @@ class ProfileCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func configureCellView() {
+    private func configureCellView() { 
         contentView.addSubview(profileImageView)
         contentView.addSubview(nameLabel)
-        contentView.addSubview(emailLabel)
+        contentView.addSubview(teamName)
     }
-
+    
     private func configureConstraints() {
         NSLayoutConstraint.activate([
-            profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            profileImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            profileImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            profileImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
             profileImageView.widthAnchor.constraint(equalToConstant: 70),
             profileImageView.heightAnchor.constraint(equalToConstant: 70),
-
-            nameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 10),
-            nameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -12),
-            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
-
-            emailLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 10),
-            emailLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: 12),
-            emailLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
+            
+            nameLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            nameLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 10),
+            nameLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.75),
+            
+            teamName.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            teamName.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 3),
+            teamName.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.75),
         ])
     }
-
-    func configure(with user: User) {
+    
+    func configure(with user: User, team: Team) {
         nameLabel.text = user.name
-        emailLabel.text = user.emailID
         profileImageView.image = user.getUserProfileIcon()
+        teamName.text = "(\(team.teamName!))"
     }
-
 }

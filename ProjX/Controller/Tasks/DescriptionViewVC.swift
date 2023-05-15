@@ -31,8 +31,6 @@ class DescriptionViewVC: PROJXViewController {
         configureConstraints()
     }
 
-    
-
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         descriptionTextView.contentOffset.y = 0

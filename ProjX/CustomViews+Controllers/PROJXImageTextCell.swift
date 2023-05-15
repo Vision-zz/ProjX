@@ -48,6 +48,10 @@ class PROJXImageTextCell: UITableViewCell {
         self.cellTextLabel.text = text
         self.cellImageView.image = image
     }
+    
+    func changeImage(_ image: UIImage?) {
+        self.cellImageView.image = image
+    }
 
     private func configureCellUI() {
         contentView.addSubview(cellImageView)

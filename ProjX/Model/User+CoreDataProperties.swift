@@ -26,6 +26,7 @@ extension User {
     @NSManaged public var selectedTeamID: UUID?
     @NSManaged public var createdAt: Date?
     @NSManaged public var passLastUpdate: Date?
+    @NSManaged public var taskFilterSettings: FilterOptions?
 
 }
 

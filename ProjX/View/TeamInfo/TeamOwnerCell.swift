@@ -20,7 +20,7 @@ class TeamOwnerCell: UITableViewCell {
         let icon = UIImageView()
         icon.translatesAutoresizingMaskIntoConstraints = false
         icon.clipsToBounds = true
-        icon.contentMode = .scaleAspectFit
+        icon.contentMode = .scaleAspectFill
         icon.layer.cornerRadius = 3
         icon.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         icon.tintColor = .label

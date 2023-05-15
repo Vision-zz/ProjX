@@ -11,6 +11,7 @@ class TeamMemberSelector: PROJXTableViewController {
 
     lazy var team: Team! = nil
     lazy var selectedUser: User? = nil
+    lazy var canClearSelection: Bool = false
 
     struct SectionData {
         let sectionName: String
@@ -19,7 +20,7 @@ class TeamMemberSelector: PROJXTableViewController {
 
     var dataSource = [SectionData]()
 
-    weak var selectionDelegate: AssignedToSelectionDelegate?
+    weak var selectionDelegate: MemberSelectionDelegate?
 
     lazy var searchController: UISearchController = {
         let search = UISearchController()
@@ -60,9 +61,10 @@ class TeamMemberSelector: PROJXTableViewController {
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = true
         tableView.register(PROJXImageTextCell.self, forCellReuseIdentifier: PROJXImageTextCell.identifier)
-        if !GlobalConstants.Device.isIpad {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchButtonClicked))            
+        if canClearSelection {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Clear", style: .plain, target: self, action: #selector(clearButtonClicked))
         }
+        
     }
 
     private func configureDataSource() {
@@ -72,8 +74,8 @@ class TeamMemberSelector: PROJXTableViewController {
         dataSource.append(SectionData(sectionName: "Members", rows: team.teamMembers.sorted(by: { $0.name! < $1.name! })))
     }
 
-    @objc private func searchButtonClicked() {
-        searchController.searchBar.becomeFirstResponder()
+    @objc private func clearButtonClicked() {
+        selectionDelegate?.clearedSelection?()
     }
 
     // MARK: - Table view data source
@@ -88,6 +90,10 @@ class TeamMemberSelector: PROJXTableViewController {
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         dataSource[section].sectionName
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        44
     }
 
     private func configureMembersViewCell(for cell: PROJXImageTextCell, at indexPath: IndexPath) {
@@ -115,7 +121,7 @@ class TeamMemberSelector: PROJXTableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let user = dataSource[indexPath.section].rows[indexPath.row]
-        selectionDelegate?.taskAssigned(to: user)
+        selectionDelegate?.selected(user: user)
     }
 
 }

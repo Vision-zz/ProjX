@@ -72,7 +72,6 @@ class MainTabbar: UITabBarController {
     @objc private func updateTheme() {
         self.tabBar.tintColor = GlobalConstants.Colors.accentColor
         updateAccentColor()
-        print("Done main tabbar")
     }
 
     private func updateAccentColor() {

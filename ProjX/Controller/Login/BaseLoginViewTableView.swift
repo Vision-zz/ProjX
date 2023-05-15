@@ -39,7 +39,6 @@ class BaseLoginViewTableView: PROJXTableViewController {
 
     private func configureBaseUI() {
         navigationController?.navigationBar.prefersLargeTitles = false
-        tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(onTap)))
         view.backgroundColor = GlobalConstants.Colors.primaryBackground
         tableView.backgroundColor = GlobalConstants.Colors.primaryBackground
         tableView.separatorStyle = .none
@@ -133,10 +132,6 @@ class BaseLoginViewTableView: PROJXTableViewController {
             customView.centerXAnchor.constraint(equalTo: cell.contentView.centerXAnchor),
         ])
 
-    }
-
-    @objc private func onTap() {
-        view.endEditing(true)
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

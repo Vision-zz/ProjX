@@ -32,6 +32,7 @@ enum GlobalConstants {
         static var primaryBackground: UIColor { UIColor(named: "UIPrimaryBackground")! }
         static var secondaryBackground: UIColor { UIColor(named:"UISecondaryBackground")! }
         static var tertiaryBackground: UIColor { UIColor(named: "UITertiaryBackground")! }
+        static var previewViewBackground: UIColor { UIColor(dynamicProvider: { trait in return trait.userInterfaceStyle == .dark ? tertiaryBackground : primaryBackground }) }
         static var accentColor: UIColor {
             let selection = UserDefaults.standard.string(forKey: UserDefaultsKey.selectedAccentColor) ?? AccentColor.defaultAccent.rawValue
             if selection == AccentColor.system.rawValue {

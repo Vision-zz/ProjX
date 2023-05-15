@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum TaskStatus: Int16 {
+enum TaskStatus: Int16, Codable {
     case unknown = 0
-    case active = 1
+    case inProgress = 1
     case complete = 2
 }
