@@ -53,5 +53,6 @@ class TaskDescriptionCell: UITableViewCell {
 
     func configureDescription(_ text: String) {
         descriptionTextView.text = text
+        print(descriptionTextView.bounds.size)
     }
 }

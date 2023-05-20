@@ -139,7 +139,7 @@ class PasswordUsernameVC: PROJXTableViewController {
     func configureAccountOverviewCell(for indexPath: IndexPath) -> UITableViewCell{
         let cell = UITableViewCell()
         let keyValue: [(key:String, value:String)] = [
-            ("Created At", SessionManager.shared.signedInUser!.createdAt!.convertToString()),
+            ("Created Time", SessionManager.shared.signedInUser!.createdAt!.convertToString()),
             ("Last Password update", SessionManager.shared.signedInUser!.passLastUpdate!.convertToString()),
         ]
 

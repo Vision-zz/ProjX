@@ -22,35 +22,121 @@ class Util {
         return String((0..<length).map { _ in letters.randomElement()! })
     }
 
-    public static func generateInitialImage(from name: String) -> UIImage? {
+//    public static func generateInitialImage(from name: String) -> UIImage? {
+//        let frame = CGRect(x: 0, y: 0, width: 200, height: 200)
+//        let nameLabel = UILabel(frame: frame)
+//        nameLabel.textAlignment = .center
+//        nameLabel.backgroundColor = GlobalConstants.Colors.accentColor
+//        nameLabel.textColor = .white
+//        nameLabel.font = UIFont.boldSystemFont(ofSize: 90)
+//        var initials = ""
+//        let initialsArray = name.trimmingCharacters(in: CharacterSet(charactersIn: " ")).components(separatedBy: " ")
+//        if let firstWord = initialsArray.first {
+//            if let firstLetter = firstWord.first {
+//                initials += String(firstLetter).capitalized
+//            }
+//        }
+//        if initialsArray.count > 1, let lastWord = initialsArray.last {
+//            if let lastLetter = lastWord.first {
+//                initials += String(lastLetter).capitalized
+//            }
+//        }
+//
+//        nameLabel.text = initials
+//        UIGraphicsBeginImageContext(frame.size)
+//        if let currentContext = UIGraphicsGetCurrentContext() {
+//            nameLabel.layer.render(in: currentContext)
+//            let nameImage = UIGraphicsGetImageFromCurrentImageContext()
+//            return nameImage
+//        }
+//        return nil
+//    }
+    
+//    public static func generateInitialImage(from name: String) -> UIImage? {
+//        let frame = CGRect(x: 0, y: 0, width: 200, height: 200)
+//        let nameLabel = UILabel(frame: frame)
+//        nameLabel.textAlignment = .center
+//
+//        let gradientLayer = CAGradientLayer()
+//        gradientLayer.frame = nameLabel.bounds
+//        gradientLayer.colors = [UIColor.white.cgColor, GlobalConstants.Colors.accentColor.cgColor]
+//        gradientLayer.startPoint = CGPoint(x: 1, y: -0.8)
+//        gradientLayer.endPoint = CGPoint(x: 0.7, y: 0.5)
+//
+//        let textMaskLayer = CALayer()
+//        textMaskLayer.frame = nameLabel.bounds
+//        textMaskLayer.masksToBounds = true
+//        textMaskLayer.cornerRadius = frame.width / 2
+//        textMaskLayer.backgroundColor = UIColor.white.cgColor
+//        textMaskLayer.mask = nameLabel.layer
+//
+//        let containerLayer = CALayer()
+//        containerLayer.frame = nameLabel.bounds
+//        containerLayer.addSublayer(gradientLayer)
+//        containerLayer.addSublayer(textMaskLayer)
+//
+//        nameLabel.font = UIFont.boldSystemFont(ofSize: 90)
+//        var initials = ""
+//        let initialsArray = name.trimmingCharacters(in: .whitespaces).components(separatedBy: " ")
+//        if let firstWord = initialsArray.first, let firstLetter = firstWord.first {
+//            initials += String(firstLetter).capitalized
+//        }
+//        if initialsArray.count > 1, let lastWord = initialsArray.last, let lastLetter = lastWord.first {
+//            initials += String(lastLetter).capitalized
+//        }
+//
+//        nameLabel.text = initials
+//
+//        UIGraphicsBeginImageContextWithOptions(frame.size, false, 0.0)
+//        if let currentContext = UIGraphicsGetCurrentContext() {
+//            containerLayer.render(in: currentContext)
+//            let nameImage = UIGraphicsGetImageFromCurrentImageContext()
+//            UIGraphicsEndImageContext()
+//            return nameImage
+//        }
+//        UIGraphicsEndImageContext()
+//        return nil
+//    }
+
+    private static var gradientLayer: CAGradientLayer = {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = CGRect(x: 0, y: 0, width: 200, height: 200)
+        gradientLayer.startPoint = CGPoint(x: 1.1, y: -1.4)
+        gradientLayer.endPoint = CGPoint(x: 0.6, y: 0.73)
+        return gradientLayer
+    }()
+    
+    private static var renderer = UIGraphicsImageRenderer(size: CGRect(x: 0, y: 0, width: 200, height: 200).size)
+    
+    public static func generateInitialImage(from name: String) -> UIImage {
         let frame = CGRect(x: 0, y: 0, width: 200, height: 200)
         let nameLabel = UILabel(frame: frame)
         nameLabel.textAlignment = .center
-        nameLabel.backgroundColor = GlobalConstants.Colors.accentColor
-        nameLabel.textColor = .white
-        nameLabel.font = UIFont.boldSystemFont(ofSize: 90)
+        nameLabel.backgroundColor = GlobalConstants.Colors.accentColor.withAlphaComponent(0.35)
+        nameLabel.textColor = UIColor.white
+        nameLabel.font = UIFont.boldSystemFont(ofSize: 95)
+        
         var initials = ""
-        let initialsArray = name.trimmingCharacters(in: CharacterSet(charactersIn: " ")).components(separatedBy: " ")
-        if let firstWord = initialsArray.first {
-            if let firstLetter = firstWord.first {
-                initials += String(firstLetter).capitalized
-            }
+        let initialsArray = name.trimmingCharacters(in: .whitespaces).components(separatedBy: " ")
+        if let firstWord = initialsArray.first, let firstLetter = firstWord.first {
+            initials += String(firstLetter).capitalized
         }
-        if initialsArray.count > 1, let lastWord = initialsArray.last {
-            if let lastLetter = lastWord.first {
-                initials += String(lastLetter).capitalized
-            }
+        if initialsArray.count > 1, let lastWord = initialsArray.last, let lastLetter = lastWord.first {
+            initials += String(lastLetter).capitalized
         }
-
+        
         nameLabel.text = initials
-        UIGraphicsBeginImageContext(frame.size)
-        if let currentContext = UIGraphicsGetCurrentContext() {
-            nameLabel.layer.render(in: currentContext)
-            let nameImage = UIGraphicsGetImageFromCurrentImageContext()
-            return nameImage
+        gradientLayer.colors = [GlobalConstants.Colors.accentColor.lighter(by: 0.66).cgColor, GlobalConstants.Colors.accentColor.cgColor]
+        
+        let nameImage = renderer.image { _ in
+            gradientLayer.render(in: UIGraphicsGetCurrentContext()!)
+            nameLabel.layer.render(in: UIGraphicsGetCurrentContext()!)
         }
-        return nil
+        
+        return nameImage
     }
+
+
 
     public static func downsampleImage(from data: Data, to pointSize: CGSize, scale: CGFloat = UIScreen.main.scale) -> UIImage? {
         let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
@@ -72,6 +158,30 @@ class Util {
         selectedView.backgroundColor = color.withAlphaComponent(0.15)
         cell.selectedBackgroundView = selectedView
         cell.multipleSelectionBackgroundView = selectedView
+    }
+    
+    public static func cleanInputString(from string: String?) -> String? {
+        guard let string = string else { return nil }
+        let regex = try! NSRegularExpression(pattern: "(\\s)+", options: .caseInsensitive)
+        let cleanedString = regex.stringByReplacingMatches(
+            in: string,
+            options: [],
+            range: NSRange(location: 0, length: string.utf16.count),
+            withTemplate: "$1"
+        )
+        return cleanedString.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    public static func findRange(of searchString: String, in mainString: String) -> NSRange? {
+        let regex = try? NSRegularExpression(pattern: "\\b\(searchString)", options: .caseInsensitive)
+        guard let regex = regex else { return nil }
+        let range = NSRange(location: 0, length: mainString.utf16.count)
+        let match = regex.firstMatch(in: mainString, options: [], range: range)
+        guard let matchedRange = match?.range else { return nil }
+        let startIndex = matchedRange.lowerBound
+        let length = matchedRange.upperBound - startIndex
+        return NSRange(location: startIndex, length: length)
+        
     }
 
 }

@@ -13,6 +13,48 @@ class TeamSelectionVC: PROJXTableViewController {
     
     var dataSource = [Team]()
     var selectedTeam: Team? = nil
+    lazy var searchString: String? = nil
+    
+    lazy var noDataTableBackgroundView: UILabel = {
+        
+        let title = NSMutableAttributedString(string: "Don't see anything here?\n", attributes: [
+            .font: UIFont.systemFont(ofSize: 22, weight: .bold),
+            .foregroundColor: UIColor.label,
+        ])
+        let desc = NSMutableAttributedString(string: "Press the + to create / join a team", attributes: [
+            .font: UIFont.systemFont(ofSize: 14),
+            .foregroundColor: UIColor.secondaryLabel
+        ])
+        
+        title.append(desc)
+        
+        let noDataTitleLabel = UILabel()
+        noDataTitleLabel.textColor = .label
+        noDataTitleLabel.attributedText = title
+        noDataTitleLabel.numberOfLines = 0
+        noDataTitleLabel.textAlignment = .center
+        return noDataTitleLabel
+    }()
+    
+    lazy var noSearchResultBackgroundView: UILabel = {
+        let title = NSMutableAttributedString(string: "No search results!\n", attributes: [
+            .font: UIFont.systemFont(ofSize: 22, weight: .bold),
+            .foregroundColor: UIColor.label,
+        ])
+        let desc = NSMutableAttributedString(string: "Cannot find anything matching your search", attributes: [
+            .font: UIFont.systemFont(ofSize: 14),
+            .foregroundColor: UIColor.secondaryLabel
+        ])
+        
+        title.append(desc)
+        
+        let noDataTitleLabel = UILabel()
+        noDataTitleLabel.textColor = .label
+        noDataTitleLabel.attributedText = title
+        noDataTitleLabel.numberOfLines = 0
+        noDataTitleLabel.textAlignment = .center
+        return noDataTitleLabel
+    }()
     
     lazy var searchController: UISearchController = {
         let search = UISearchController()
@@ -58,8 +100,32 @@ class TeamSelectionVC: PROJXTableViewController {
     }
     
     private func configureDatasource() {
+        showNoDataBackgroundView(false)
         selectedTeam = SessionManager.shared.signedInUser?.selectedTeam
-        dataSource = SessionManager.shared.signedInUser?.teams.sorted(by: { $0.teamName! < $1.teamName! }) ?? []
+        dataSource = SessionManager.shared.signedInUser?.teams
+            .filter({ searchString == nil ? true : Util.findRange(of: searchString!.lowercased(), in: $0.teamName!) != nil })
+            .sorted(by: { $0.teamName! < $1.teamName! }) ?? []
+        
+        guard !dataSource.isEmpty else {
+            showNoDataBackgroundView(true)
+            return
+        }
+    }
+    
+    private func showNoDataBackgroundView(_ state: Bool) {
+        if state {
+            tableView.backgroundView = noDataTableBackgroundView
+        } else {
+            tableView.backgroundView = nil
+        }
+    }
+    
+    private func showSearchResultBackgroundView(_ state: Bool) {
+        if state {
+            tableView.backgroundView = noSearchResultBackgroundView
+        } else {
+            tableView.backgroundView = nil
+        }
     }
     
     @objc private func closeButtonOnClick() {
@@ -86,7 +152,10 @@ class TeamSelectionVC: PROJXTableViewController {
         let team = dataSource[indexPath.row]
         cell.accessoryType = SessionManager.shared.signedInUser?.selectedTeamID == team.teamID && team.teamID != nil ? .checkmark : .none
         cell.cellImageView.contentMode = .scaleAspectFill
-        cell.configureCellData(text: team.teamName ?? "---", image: team.getTeamIcon(reduceTo: CGSize(width: 30, height: 30)))
+        let teamName = team.teamName ?? "---"
+        let nsRange = searchString != nil ? Util.findRange(of: searchString!, in: teamName) : nil
+        cell.setTitle(teamName ,withHighLightRange: nsRange)
+        cell.setImage(image: team.getTeamIcon(reduceTo: CGSize(width: 30, height: 30)))
         return cell
     }
     
@@ -112,17 +181,21 @@ class TeamSelectionVC: PROJXTableViewController {
 extension TeamSelectionVC: UISearchBarDelegate, UISearchControllerDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        showSearchResultBackgroundView(false)
         if searchText.isEmpty {
+            searchString = nil
             configureDatasource()
         } else {
-            let userTeams = SessionManager.shared.signedInUser?.teams
-            guard let userTeams = userTeams else { return }
-            dataSource = userTeams.filter({ $0.teamName!.lowercased().starts(with: searchText.lowercased()) })
+            searchString = searchText.lowercased()
+            configureDatasource()
+            showSearchResultBackgroundView(dataSource.isEmpty)
         }
         tableView.reloadData()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchString = nil
+        showSearchResultBackgroundView(false)
         configureDatasource()
         tableView.reloadData()
     }

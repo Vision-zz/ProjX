@@ -108,7 +108,7 @@ public class Team: NSManagedObject {
     }
 
     func getTeamIcon(reduceTo size: CGSize? = nil) -> UIImage {
-        let defaultImage = Util.generateInitialImage(from: teamName!) ?? UIImage(systemName: "questionmark.square.fill")!
+        let defaultImage = Util.generateInitialImage(from: teamName!)
         guard let name = teamID?.uuidString else { return defaultImage }
         let image = DataManager.shared.loadImage(with: name)
 

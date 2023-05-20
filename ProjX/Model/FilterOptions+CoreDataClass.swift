@@ -16,7 +16,7 @@ public class FilterOptions: NSManagedObject {
             guard let groupAndSortByString = groupAndSortByString,
                   let obj = try? JSONDecoder().decode(GroupByOption.self, from: Data(groupAndSortByString.utf8))
             else {
-                return .priority(.highToLow, .createdAt(.highToLow))
+                return .priority(.highToLow, .createdTime(.highToLow))
             }
             return obj
         }
@@ -30,12 +30,12 @@ public class FilterOptions: NSManagedObject {
         }
     }
     
-    var filters: Filters? {
+    var filters: Filters {
         get {
             guard let filtersString = filtersString,
                   let obj = try? JSONDecoder().decode(Filters.self, from: Data(filtersString.utf8))
             else {
-                return nil
+                return Filters()
             }
             return obj
         }
@@ -49,36 +49,36 @@ public class FilterOptions: NSManagedObject {
         }
     }
     
+ 
     func groupAndFilter(_ tasks: [TaskItem]) -> [TasksVC.SectionData]? {
         var data = tasks
-        if let filters = filters {
+        
+        data = tasks.filter({ item in
+            var filtersSatisfied = 0
             
-            data = tasks.filter({ item in
-                var filtersSatisfied = 0
-                
-                if let assignedTo = filters.assignedTo, let itemAssignedTo = item.assignedTo, assignedTo == itemAssignedTo {
-                    filtersSatisfied += 1
-                }
-                
-                if let createdBy = filters.createdBy, let itemCreatedBy = item.createdBy, createdBy == itemCreatedBy {
-                    filtersSatisfied += 1
-                }
-                
-                if filters.taskStatus == .unknown || (filters.taskStatus != .unknown && filters.taskStatus == item.taskStatus) {
-                    filtersSatisfied += 1
-                }
-                
-                if let createdBetween = filters.createdBetween, let createdAt = item.createdAt, createdAt >= createdBetween.start && createdAt <= createdBetween.end {
-                    filtersSatisfied += 1
-                }
-                
-                if let etaBetween = filters.etaBetween, let eta = item.deadline, eta >= etaBetween.start && eta <= etaBetween.end {
-                    filtersSatisfied += 1
-                }
-                
-                return filtersSatisfied == filters.totalSelectedFilters
-            })
-        }
+            if let assignedTo = filters.assignedTo, let itemAssignedTo = item.assignedTo, assignedTo == itemAssignedTo {
+                filtersSatisfied += 1
+            }
+            
+            if let createdBy = filters.createdBy, let itemCreatedBy = item.createdBy, createdBy == itemCreatedBy {
+                filtersSatisfied += 1
+            }
+            
+            if filters.taskStatus == .unknown || (filters.taskStatus != .unknown && filters.taskStatus == item.taskStatus) {
+                filtersSatisfied += 1
+            }
+            
+            if let createdBetween = filters.createdBetween, let createdAt = item.createdAt, createdAt >= createdBetween.start && createdAt <= createdBetween.end {
+                filtersSatisfied += 1
+            }
+            
+            if let etaBetween = filters.etaBetween, let eta = item.deadline, eta >= etaBetween.start && eta <= etaBetween.end {
+                filtersSatisfied += 1
+            }
+            
+            return filtersSatisfied == filters.totalSelectedFilters
+        })
+        
         
         var datasource = [TasksVC.SectionData]()
         
@@ -86,26 +86,24 @@ public class FilterOptions: NSManagedObject {
             case .priority(let level, let sortOption):
                 datasource = groupByPriority(tasks: data, sortLevel: level)
                 switch sortOption {
-                    case .createdAt(let inlineLevel):
+                    case .createdTime(let inlineLevel):
                         datasource = sortDataByDate(datasource: datasource, createdAt: true, sortLevel: inlineLevel)
-                    case .eta(let inlineLevel):
+                    case .estimatedTime(let inlineLevel):
                         datasource = sortDataByDate(datasource: datasource, createdAt: false, sortLevel: inlineLevel)
-                    case .none:
-                        break
                 }
-            case .createdAt(let sortOption):
-                datasource = groupByDate(tasks: data, createdAt: true)
+            case .createdTime(let level, let sortOption):
+                datasource = groupByDate(tasks: data, createdAt: true, sortLevel: level)
                 switch sortOption {
-                    case .priority(let level):
-                        datasource = sortDataByPriority(datasource: datasource, sortLevel: level)
+                    case .priority(let inlineLevel):
+                        datasource = sortDataByPriority(datasource: datasource, sortLevel: inlineLevel)
                     default:
                         break
                 }
-            case .eta(let sortOption):
-                datasource = groupByDate(tasks: data, createdAt: false)
+            case .estimatedTime(let level, let sortOption):
+                datasource = groupByDate(tasks: data, createdAt: false, sortLevel: level)
                 switch sortOption {
-                    case .priority(let level):
-                        datasource = sortDataByPriority(datasource: datasource, sortLevel: level)
+                    case .priority(let inlineLevel):
+                        datasource = sortDataByPriority(datasource: datasource, sortLevel: inlineLevel)
                     default:
                         break
                 }
@@ -181,7 +179,7 @@ public class FilterOptions: NSManagedObject {
         
     }
     
-    private func groupByDate(tasks: [TaskItem], createdAt: Bool) -> [TasksVC.SectionData] {
+    private func groupByDate(tasks: [TaskItem], createdAt: Bool, sortLevel: SortLevel) -> [TasksVC.SectionData] {
         let currentDate = Date()
         
         struct Key: Hashable {
@@ -213,7 +211,7 @@ public class FilterOptions: NSManagedObject {
             }
         }
         
-        let sections = objectsByMonth
+        var sections = objectsByMonth
             .sorted(by: { t1, t2 in
                 if createdAt {
                     return t1.key.sectionDate > t2.key.sectionDate
@@ -223,6 +221,10 @@ public class FilterOptions: NSManagedObject {
             })
             .map { (key, objects) -> TasksVC.SectionData in
                 return TasksVC.SectionData(sectionName: key.sectionName, rows: objects)
+        }
+        
+        if sortLevel == .lowToHigh {
+            sections.reverse()
         }
         
         return sections

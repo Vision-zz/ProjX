@@ -16,16 +16,17 @@
         <attribute name="createdBy" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="deadline" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="priority" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="statusUpdates" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[TaskStatusUpdate]"/>
         <attribute name="taskDescription" attributeType="String"/>
         <attribute name="taskID" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="taskStatusID" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" attributeType="String"/>
+        <relationship name="updates" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TaskStatusUpdate" inverseName="task" inverseEntity="TaskStatusUpdate"/>
     </entity>
     <entity name="TaskStatusUpdate" representedClassName=".TaskStatusUpdate" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="statusDescription" optional="YES" attributeType="String"/>
         <attribute name="subject" optional="YES" attributeType="String"/>
+        <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TaskItem" inverseName="updates" inverseEntity="TaskItem"/>
     </entity>
     <entity name="Team" representedClassName=".Team" syncable="YES">
         <attribute name="tasksID" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[UUID]"/>
@@ -39,6 +40,7 @@
     </entity>
     <entity name="User" representedClassName=".User" syncable="YES">
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="doNotShowAgain" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="emailID" attributeType="String"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="notificationUpdates" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[NotificationUpdate]"/>

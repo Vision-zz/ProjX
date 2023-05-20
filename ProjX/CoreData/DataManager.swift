@@ -22,7 +22,7 @@ class DataManager {
     func getAllUsers() -> [User] {
         return (try? context.fetch(User.fetchRequest())) ?? []
     }
-
+    
     func getUserMatching(_ predicate: (User) -> Bool) -> User? {
         let users = getAllUsers()
         for user in users {
@@ -47,12 +47,12 @@ class DataManager {
         return nil
     }
 
-    func getAllTasks(for team: Team) -> [TaskItem] {
+    func getTasks(for team: Team) -> [TaskItem] {
         return (try? context.fetch(TaskItem.fetchRequest())) ?? []
     }
 
     func getTasks(for team: Team, matching predicate: (TaskItem) -> Bool) -> [TaskItem] {
-        return getAllTasks(for: team).filter(predicate)
+        return getTasks(for: team).filter(predicate)
     }
 
     @discardableResult
@@ -76,7 +76,7 @@ class DataManager {
         let filterOptions = FilterOptions(context: context)
         filterOptions.user = newUser
         filterOptions.filters = Filters(assignedTo: userID)
-        filterOptions.groupAndSortBy = .priority(.highToLow, .eta(.lowToHigh))
+        filterOptions.groupAndSortBy = .priority(.highToLow, .estimatedTime(.lowToHigh))
         newUser.taskFilterSettings = filterOptions
 //        newUser.notificationUpdates = [NotificationUpdate(message: "Hello this is a notification")]
 
@@ -138,6 +138,11 @@ class DataManager {
         if SessionManager.shared.signedInUser?.selectedTeamID == team.teamID! {
             SessionManager.shared.signedInUser?.selectedTeamID = nil
         }
+        saveContext()
+    }
+    
+    func deleteStatusUpdate(_ statusUpdate: TaskStatusUpdate) {
+        context.delete(statusUpdate)
         saveContext()
     }
 

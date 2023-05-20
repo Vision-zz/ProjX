@@ -65,6 +65,8 @@ class MainRouter {
     }
     
     func routeTabbarTo(index: Int) {
+        tasksVC?.navigationController?.popToRootViewController(animated: false)
+        teamsVC?.navigationController?.popToRootViewController(animated: false)
         tabbarController?.selectedIndex = index
     }
 
@@ -74,5 +76,18 @@ class MainRouter {
 
     func routeToHomePage() {
         GlobalConstants.StructureDelegates.sceneDelegate?.switchToHomePageVC()
+    }
+    
+    func scrollToTop(tabbarIndex: Int) {
+        switch tabbarIndex {
+            case 0:
+                guard let view = tasksVC?.tableView, view.numberOfSections > 0 && view.numberOfRows(inSection: 0) > 0 else { return }
+                tasksVC?.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+            case 1:
+                guard let view = teamsVC?.tableView, view.numberOfSections > 0 && view.numberOfRows(inSection: 0) > 0 else { return }
+                teamsVC?.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+            default:
+                return
+        }
     }
 }

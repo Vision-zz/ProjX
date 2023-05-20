@@ -7,6 +7,9 @@
 
 import Foundation
 
-enum UserRole {
-    case owner, admin, member, none
+enum UserRole: Int {
+    case owner = 0
+    case admin = 1
+    case member = 2
+    case none = 3
 }

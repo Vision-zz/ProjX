@@ -10,6 +10,9 @@ import UIKit
 class TasksTableViewCell: UITableViewCell {
 
     static let identifier = "TasksTableViewCell"
+    
+    lazy var taskItem: TaskItem? = nil
+    weak var delegate: MarkAsCompleteActionDelegate? = nil
 
     lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -28,7 +31,6 @@ class TasksTableViewCell: UITableViewCell {
         label.textAlignment = .natural
         label.lineBreakMode = .byTruncatingTail
         label.numberOfLines = 1
-        label.font = .systemFont(ofSize: 13)
         return label
     }()
     
@@ -42,18 +44,53 @@ class TasksTableViewCell: UITableViewCell {
         return label
     }()
     
-    private lazy var checkMark: UIImageView = {
-        let checkMark = UIImageView(image: UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .semibold)))
-        checkMark.translatesAutoresizingMaskIntoConstraints = false
-        checkMark.tintColor = GlobalConstants.Colors.accentColor
-        checkMark.isHidden = true
-        checkMark.backgroundColor = .clear
-        return checkMark
+    var checkMarkImage: UIImage {
+        get {
+            guard let taskItem = taskItem else {
+                return UIImage(systemName: "questionmark.square")!
+            }
+            if taskItem.taskStatus != .complete {
+                return UIImage(systemName: "square")!
+            } else {
+                return UIImage(systemName: "checkmark.square")!
+            }
+        }
+    }
+    
+    var checkMarkTintColor: UIColor {
+        get {
+            if let taskItem = taskItem, let assignedTo = taskItem.assignedTo, assignedTo == SessionManager.shared.signedInUser?.userID {
+                return GlobalConstants.Colors.accentColor
+            } else {
+                return GlobalConstants.Colors.accentColor.dim
+            }
+        }
+    }
+
+    lazy var checkMark: UIButton = {
+        let check = UIButton()
+        check.isUserInteractionEnabled = true
+        check.translatesAutoresizingMaskIntoConstraints = false
+        check.tintColor = checkMarkTintColor
+        check.backgroundColor = .clear
+        check.addTarget(self, action: #selector(checkMarkclicked), for: .touchUpInside)
+        check.configuration = buttonConfig
+        return check
     }()
+
+    var buttonConfig: UIButton.Configuration {
+        get {
+            var config = UIButton.Configuration.plain()
+            config.image = checkMarkImage
+            config.buttonSize = .medium
+            return config
+        }
+    }
     
     override func prepareForReuse() {
-        checkMark.isHidden = true
-        checkMark.tintColor = GlobalConstants.Colors.accentColor
+        taskItem = nil
+        checkMark.tintColor = checkMarkTintColor
+        checkMark.configuration = nil
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -66,20 +103,20 @@ class TasksTableViewCell: UITableViewCell {
     }
 
     private func configureCellView() {
-        contentView.clipsToBounds = true
+        separatorInset = UIEdgeInsets(top: 0, left: 43, bottom: 0, right: 0)
         contentView.addSubview(titleLabel)
         contentView.addSubview(infoLabel)
         contentView.addSubview(statusLabel)
         contentView.addSubview(checkMark)
 
         NSLayoutConstraint.activate([
-            checkMark.heightAnchor.constraint(equalToConstant: 17),
-            checkMark.widthAnchor.constraint(equalToConstant: 17),
-            checkMark.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -3),
+            checkMark.heightAnchor.constraint(equalToConstant: 25),
+            checkMark.widthAnchor.constraint(equalToConstant: 25),
+            checkMark.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             checkMark.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 7),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            titleLabel.leadingAnchor.constraint(equalTo: checkMark.trailingAnchor, constant: 8),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
 
             infoLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 3),
@@ -91,12 +128,37 @@ class TasksTableViewCell: UITableViewCell {
             statusLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.7)
         ])
     }
-
+    
     func configureCell(for taskItem: TaskItem, showsCompleted: Bool = false) {
+        self.taskItem = taskItem
         titleLabel.text = taskItem.title
-        infoLabel.text = "Assigned To: \(taskItem.assignedToUser?.name ?? "Unknown")"
+        
+        let infoString = NSMutableAttributedString(string: "Assigned To: ", attributes: [
+            .font: UIFont.systemFont(ofSize: 13),
+            .foregroundColor: UIColor.secondaryLabel,
+        ])
+        
+        if let assignedTo = taskItem.assignedTo, SessionManager.shared.signedInUser?.userID == assignedTo {
+            infoString.append(NSMutableAttributedString(string: "You", attributes: [
+                .font: UIFont.systemFont(ofSize: 13, weight: .semibold),
+                .foregroundColor: UIColor.label
+            ]))
+        } else {
+            infoString.append(NSMutableAttributedString(string: "\(taskItem.assignedToUser?.name ?? "Unknown")", attributes: [
+                .font: UIFont.systemFont(ofSize: 13),
+                .foregroundColor: UIColor.secondaryLabel
+            ]))
+        }
+        
+        infoLabel.attributedText = infoString
         statusLabel.text = "ETA: \(taskItem.deadline!.convertToString())"
-        checkMark.isHidden = !(showsCompleted && taskItem.taskStatus == .complete)
+        checkMark.configuration = buttonConfig
+        checkMark.tintColor = checkMarkTintColor
     }
-
+    
+    @objc private func checkMarkclicked() {
+        guard let taskItem = taskItem, taskItem.taskStatus != .complete else { return }
+        delegate?.markAsCompletedActionTriggered(for: taskItem)
+    }
+    
 }

@@ -73,6 +73,10 @@ class ViewTaskVC: PROJXTableViewController {
         configureView()
         configureTitleLabelView()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        tableView.reloadRows(at: [IndexPath(row: 1, section: 3)], with: .none)
+    }
 
     private func configureView() {
         tableView.allowsSelection = true
@@ -86,17 +90,17 @@ class ViewTaskVC: PROJXTableViewController {
         titleLabel.text = task.title
         tableView.tableHeaderView = titleHeaderView
         let newSize = tableView.tableHeaderView!.systemLayoutSizeFitting(CGSize(width: tableView.bounds.width, height: 0))
-        tableView.tableHeaderView!.frame.size.height = newSize.height + 10
+        tableView.tableHeaderView!.frame.size.height = newSize.height + 35
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         var sections = 4
-        if isAssignedToCurrentUser && task.taskStatus != .complete {
+        if isCreatedByCurrentUser || isUserAdmin {
             sections += 1
         }
-        if isCreatedByCurrentUser || isUserAdmin {
+        if isAssignedToCurrentUser && task.taskStatus != .complete {
             sections += 1
         }
         return sections
@@ -111,9 +115,9 @@ class ViewTaskVC: PROJXTableViewController {
             case 2:
                 return 2
             case 3:
-                return task.taskStatus == .complete ? 4 : 3
+                return task.taskStatus == .complete ? 5 : 4
             case 4:
-                return (isAssignedToCurrentUser && task.taskStatus != .complete) || (task.taskStatus == .complete) ? 1 : 2
+                return (isAssignedToCurrentUser && task.taskStatus != .complete) ? 2 : (task.taskStatus == .complete) ? 1 : 2
             case 5:
                 return task.taskStatus == .complete ? 1 : 2
             default:
@@ -137,6 +141,7 @@ class ViewTaskVC: PROJXTableViewController {
 
     private func configureUserInfoCell(_ cell: UITableViewCell, indexPath: IndexPath) {
         cell.selectionStyle = .none
+        cell.accessoryType = .none
         let keyValueDict = [
             ("Created By", task.createdByUser.name ?? "Unknown"),
             ("Assigned To", task.assignedToUser?.name ?? "None")
@@ -160,10 +165,19 @@ class ViewTaskVC: PROJXTableViewController {
         let status = task.taskStatus == .inProgress ? "In Progress" : "Completed"
         let keyValueDict = [
             ("Task Status", status),
-            ("Created At", task.createdAt?.convertToString() ?? "Unknown"),
+            ("Status Updates", "\(task.statusUpdates.count)"),
+            ("Created Time", task.createdAt?.convertToString() ?? "Unknown"),
             ("ETA", task.deadline?.convertToString() ?? "No ETA"),
             ("Completed At", task.completedAt?.convertToString() ?? "Unknown")
         ]
+        
+        if indexPath.row == 1 {
+            cell.accessoryType = .disclosureIndicator
+            cell.selectionStyle = .default
+            Util.configureCustomSelectionStyle(for: cell)
+        } else {
+            cell.accessoryType = .none
+        }
 
         var config = UIListContentConfiguration.valueCell()
         config.text = keyValueDict[indexPath.row].0
@@ -177,34 +191,42 @@ class ViewTaskVC: PROJXTableViewController {
 
         cell.contentConfiguration = config
     }
-
-    private func configureMarkAsCompletedCell(_ cell: UITableViewCell) {
+    
+    private func configureTaskStatusCell(_ cell: UITableViewCell, indexPath: IndexPath) {
+        cell.accessoryType = .none
         var config = cell.defaultContentConfiguration()
+        Util.configureCustomSelectionStyle(for: cell, with: .systemBlue)
         config.textProperties.color = .systemBlue
         config.imageProperties.tintColor = .systemBlue
-        config.text = "Mark as Completed"
-        config.image = UIImage(systemName: "checkmark.square")
+        if indexPath.row == 0 {
+            config.text = "Add Status Update"
+            config.image = UIImage(systemName: "plus.circle")
+            cell.tag = 501
+        } else if indexPath.row == 1 {
+            config.text = "Mark as Completed"
+            config.image = UIImage(systemName: "checkmark.square")
+            cell.tag = 502
+        }
         cell.contentConfiguration = config
-        Util.configureCustomSelectionStyle(for: cell)
-        cell.tag = 500
     }
 
     private func configureTaskOperationsCell(_ cell: UITableViewCell, indexPath: IndexPath) {
         var config = cell.defaultContentConfiguration()
+        cell.accessoryType = .none
         if (indexPath.row == 0 && task.taskStatus == .complete) || indexPath.row == 1 {
             Util.configureCustomSelectionStyle(for: cell, with: .systemRed)
             config.text = "Delete Task"
             config.image = UIImage(systemName: "trash")
             config.textProperties.color = .systemRed
             config.imageProperties.tintColor = .systemRed
-            cell.tag = 501
+            cell.tag = 601
         } else if indexPath.row == 0 && task.taskStatus != .complete {
             Util.configureCustomSelectionStyle(for: cell)
             config.text = "Edit Task"
             config.image = UIImage(systemName: "square.and.pencil")
             config.textProperties.color = .systemBlue
             config.imageProperties.tintColor = .systemBlue
-            cell.tag = 502
+            cell.tag = 600
         }
         cell.contentConfiguration = config
     }
@@ -222,15 +244,8 @@ class ViewTaskVC: PROJXTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        if indexPath.section == 0 || indexPath.section == 4 || indexPath.section == 5 {
+        if [0, 4, 5].contains(indexPath.section) || (indexPath.section == 3 && indexPath.row == 1) {
             return indexPath
-        }
-        return nil
-    }
-
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0 {
-            return "Description"
         }
         return nil
     }
@@ -258,7 +273,7 @@ class ViewTaskVC: PROJXTableViewController {
             case 4:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ViewTaskCell", for: indexPath)
                 if isAssignedToCurrentUser && task.taskStatus != .complete {
-                    configureMarkAsCompletedCell(cell)
+                    configureTaskStatusCell(cell, indexPath: indexPath)
                 } else {
                     configureTaskOperationsCell(cell, indexPath: indexPath)
                 }
@@ -288,12 +303,22 @@ class ViewTaskVC: PROJXTableViewController {
             }
             present(nav, animated: true)
         }
+        
+        if indexPath.section == 3 && indexPath.row == 1 {
+            let vc = StatusUpdatesVC(statusUpdates: task.statusUpdates, assignedUser: task.assignedToUser!)
+            navigationController?.pushViewController(vc, animated: true)
+        }
 
         if indexPath.section == 4 || indexPath.section == 5 {
             let cell = tableView.cellForRow(at: indexPath)
             guard let cell = cell else { return }
             switch cell.tag {
-                case 500:
+                case 501:
+                    let vc = AddOrEditStatusUpdateVC()
+                    vc.delegate = self
+                    navigationController?.pushViewController(vc, animated: true)
+                    return
+                case 502:
                     let alert = UIAlertController(title: "Are you sure?", message: "Do you want to mark this task as completed", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Mark as Completed", style: .default, handler: { [weak self] _ in
                         self?.task.markTaskAsCompleted()
@@ -301,7 +326,7 @@ class ViewTaskVC: PROJXTableViewController {
                     }))
                     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
                     present(alert, animated: true)
-                case 501:
+                case 601:
                     let alert = UIAlertController(title: "Are you sure?", message: "Do you want to delete this task permanently?", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
                         DataManager.shared.deleteTask(self!.task)
@@ -309,7 +334,7 @@ class ViewTaskVC: PROJXTableViewController {
                     }))
                     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
                     present(alert, animated: true)
-                case 502:
+                case 600:
                     let vc = AddOrEditTaskVC()
                     vc.configureViewForEditing(task: task)
                     vc.createTaskDelegate = self
@@ -334,5 +359,18 @@ extension ViewTaskVC: CreateTaskDelegate {
         navigationController?.popViewController(animated: true)
         titleLabel.text = task.title
         tableView.reloadData()
+    }
+}
+
+extension ViewTaskVC: StatusUpdateDelegate {
+    func statusUpdateCreated(_ statusUpdate: TaskStatusUpdate) {
+        task.addToUpdates(statusUpdate)
+        DataManager.shared.saveContext()
+        navigationController?.popViewController(animated: true)
+    }
+    
+    func statusUpdateEdited(_ statusUpdate: TaskStatusUpdate) {
+        DataManager.shared.saveContext()
+        navigationController?.popViewController(animated: true)
     }
 }

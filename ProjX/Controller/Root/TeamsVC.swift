@@ -20,6 +20,7 @@ class TeamsVC: PROJXTableViewController {
     }
 
     lazy var currentTeamID: String? = nil
+    lazy var searchString: String? = nil
 
     lazy var noDataTableBackgroundView: UILabel = {
 
@@ -177,7 +178,7 @@ class TeamsVC: PROJXTableViewController {
     private func configureDatasource() {
         dataSource = []
         showNoDataBackgroundView(false)
-        let userTeams = SessionManager.shared.signedInUser?.teams
+        let userTeams = SessionManager.shared.signedInUser?.teams.filter({ searchString == nil ? true : Util.findRange(of: searchString!.lowercased(), in: $0.teamName!) != nil })
         guard let userTeams = userTeams else { return }
         
         if let currentTeam = userTeams.first(where: { $0.teamID != nil && $0.teamID == SessionManager.shared.signedInUser?.selectedTeamID }) {
@@ -185,6 +186,7 @@ class TeamsVC: PROJXTableViewController {
             dataSource.append(SectionData(sectionHeader: "Current Team", rows: [currentTeam]))
         }
         let otherTeams = userTeams.filter({ $0.teamID != nil && $0.teamID != SessionManager.shared.signedInUser?.selectedTeamID })
+            .sorted(by: { $0.teamName! < $1.teamName! })
         if !otherTeams.isEmpty {
             dataSource.append(SectionData(sectionHeader: "Your Teams", rows: otherTeams))
         }
@@ -193,10 +195,7 @@ class TeamsVC: PROJXTableViewController {
             showNoDataBackgroundView(true)
             return
         }
-        
-        for i in 0..<dataSource.count {
-            dataSource[i].rows.sort(by: { $0.teamName! < $1.teamName! })
-        }
+
     }
     
     private func showNoDataBackgroundView(_ state: Bool) {
@@ -242,7 +241,11 @@ class TeamsVC: PROJXTableViewController {
         Util.configureCustomSelectionStyle(for: cell)
         cell.accessoryType = .disclosureIndicator
         cell.cellImageView.contentMode = .scaleAspectFill
-        cell.configureCellData(text: dataSource[indexPath.section].rows[indexPath.row].teamName ?? "---", image: dataSource[indexPath.section].rows[indexPath.row].getTeamIcon(reduceTo: CGSize(width: 30, height: 30)))
+        let team = dataSource[indexPath.section].rows[indexPath.row]
+        let teamName = team.teamName ?? "---"
+        let nsRange = searchString != nil ? Util.findRange(of: searchString!, in: teamName) : nil
+        cell.setTitle(teamName ,withHighLightRange: nsRange)
+        cell.setImage(image: team.getTeamIcon(reduceTo: CGSize(width: 30, height: 30)))
         return cell
     }
 
@@ -266,12 +269,18 @@ class TeamsVC: PROJXTableViewController {
                     guard let self = self else { return }
                     DataManager.shared.changeSelectedTeam(of: SessionManager.shared.signedInUser!, to: team)
                     
-                   
                     let oldSelectedID = self.currentTeamID
+                    let oldDataCount = dataSource.count
                     configureDatasource()
                     if dataSource.count < 2 {
                         tableView.reloadData()
                         return
+                    }
+                    if oldDataCount < 2 && dataSource.count == 2 {
+                        tableView.performBatchUpdates({
+                            tableView.insertSections(IndexSet(integer: 0), with: .right)
+                            self.tableView.moveRow(at: indexPath, to: IndexPath(row: 0, section: 0))
+                        })
                     }
                     guard let oldSelectedID = oldSelectedID else {
                         self.tableView.moveRow(at: indexPath, to: IndexPath(row: 0, section: 0))
@@ -330,7 +339,7 @@ class TeamsVC: PROJXTableViewController {
                             self?.tableView.deleteRows(at: [indexPath], with: .left)
                         }
                     }))
-                    alert.addAction(UIAlertAction(title: "Go back", style: .cancel))
+                    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
                     self?.present(alert, animated: true)
                 } else {
                     let alert = UIAlertController(title: "Are you sure?", message: "Do you want to leave team '\(team.teamName!)'", preferredStyle: .alert)
@@ -417,37 +426,18 @@ extension TeamsVC: UISearchBarDelegate, UISearchControllerDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         showSearchResultBackgroundView(false)
         if searchText.isEmpty {
+            searchString = nil
             configureDatasource()
         } else {
-            
-            let userTeams = SessionManager.shared.signedInUser?.teams
-            guard let userTeams = userTeams?.filter({ $0.teamName!.lowercased().starts(with: searchText.lowercased()) }) else {
-                dataSource = []
-                tableView.reloadData()
-                showSearchResultBackgroundView(true)
-                return
-            }
-            
-            dataSource = []
-            
-            if let currentTeam = userTeams.first(where: { $0.teamID != nil && $0.teamID == SessionManager.shared.signedInUser?.selectedTeamID }) {
-                currentTeamID = currentTeam.teamID?.uuidString
-                dataSource.append(SectionData(sectionHeader: "Current Team", rows: [currentTeam]))
-            }
-            let otherTeams = userTeams.filter({ $0.teamID != nil && $0.teamID != SessionManager.shared.signedInUser?.selectedTeamID })
-            if !otherTeams.isEmpty {
-                dataSource.append(SectionData(sectionHeader: "Your Teams", rows: otherTeams))
-            }
-            
-            if dataSource.isEmpty {
-                showSearchResultBackgroundView(true)
-            }
-            
+            searchString = searchText.lowercased()
+            configureDatasource()
+            showSearchResultBackgroundView(dataSource.isEmpty)
         }
         tableView.reloadData()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchString = nil
         showSearchResultBackgroundView(false)
         configureDatasource()
         tableView.reloadData()

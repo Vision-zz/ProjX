@@ -39,8 +39,19 @@ class AddOrEditTaskVC: PROJXTableViewController {
         textField.returnKeyType = .next
         textField.allowsEditingTextAttributes = true
         textField.isUserInteractionEnabled = true
+        textField.delegate = self
         textField.tintColor = GlobalConstants.Colors.accentColor
         return textField
+    }()
+    
+    private lazy var titleCharCountLabel: PROJXLabel = {
+        let label = PROJXLabel()
+        label.insets = UIEdgeInsets(top: 0, left: 3, bottom: 0, right: 0)
+        label.text = "\(64-(titleTextField.text?.count ?? 0))"
+        label.textColor = .secondaryLabel
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 13)
+        return label
     }()
 
     lazy var descriptionTextView: UITextView = {
@@ -50,6 +61,16 @@ class AddOrEditTaskVC: PROJXTableViewController {
         textView.tintColor = GlobalConstants.Colors.accentColor
         textView.font = .systemFont(ofSize: 16)
         return textView
+    }()
+    
+    private lazy var descCharCountLabel: PROJXLabel = {
+        let label = PROJXLabel()
+        label.insets = UIEdgeInsets(top: 0, left: 3, bottom: 0, right: 0)
+        label.text = "\(64-(titleTextField.text?.count ?? 0))"
+        label.textColor = .secondaryLabel
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 13)
+        return label
     }()
 
     lazy var deadlineDatePicker: UIDatePicker = {
@@ -100,37 +121,25 @@ class AddOrEditTaskVC: PROJXTableViewController {
         title = isEditingTask ? "Edit task" : "Add Task"
         navigationItem.largeTitleDisplayMode = .always
         tableView.backgroundColor = GlobalConstants.Colors.primaryBackground
-        tableView.register(AddTaskTableViewCell.self, forCellReuseIdentifier: AddTaskTableViewCell.identifier)
+        tableView.register(FormsTableViewCell.self, forCellReuseIdentifier: FormsTableViewCell.identifier)
         tableView.keyboardDismissMode = .onDrag
         tableView.separatorStyle = .none
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneButtonOnClick))
         titleTextField.becomeFirstResponder()
     }
     
-    func cleanInputString(from string: String?) -> String? {
-        guard let string = string else { return nil }
-        let regex = try! NSRegularExpression(pattern: "\\s+", options: .caseInsensitive)
-        let cleanedString = regex.stringByReplacingMatches(
-            in: string,
-            options: [],
-            range: NSRange(location: 0, length: string.utf16.count),
-            withTemplate: " "
-        )
-        return cleanedString.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-
     @objc private func doneButtonOnClick() {
 
-        guard let titleText = cleanInputString(from: titleTextField.text),  !titleText.isEmpty else {
+        guard let titleText = Util.cleanInputString(from: titleTextField.text),  !titleText.isEmpty else {
             let alert = UIAlertController(title: "Invalid Title", message: "Enter a valid title for the task", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel))
             present(alert, animated: true)
             return
         }
 
-        guard let descText = cleanInputString(from: descriptionTextView.text), !descText.isEmpty else {
+        guard let descText = Util.cleanInputString(from: descriptionTextView.text), !descText.isEmpty else {
             let alert = UIAlertController(title: "Invalid Description", message: "Enter a valid description for the task", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel))
             present(alert, animated: true)
             return
         }
@@ -172,7 +181,7 @@ class AddOrEditTaskVC: PROJXTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: AddTaskTableViewCell.identifier, for: indexPath) as! AddTaskTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: FormsTableViewCell.identifier, for: indexPath) as! FormsTableViewCell
 
         switch indexPath.row {
             case 0:
@@ -182,7 +191,7 @@ class AddOrEditTaskVC: PROJXTableViewController {
                         self.titleTextField.topAnchor.constraint(equalTo: cellView.topAnchor),
                         self.titleTextField.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 5),
                         self.titleTextField.bottomAnchor.constraint(equalTo: cellView.bottomAnchor),
-                        self.titleTextField.trailingAnchor.constraint(equalTo: cellView.trailingAnchor),
+                        self.titleTextField.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -5),
                     ])
                 }
             case 1:
@@ -242,7 +251,7 @@ class AddOrEditTaskVC: PROJXTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
             case 3:
-                let vc = TeamMemberSelector(team: SessionManager.shared.signedInUser!.selectedTeam!, selectedUser: assignedToUser)
+                let vc = SelectUserVC(team: SessionManager.shared.signedInUser!.selectedTeam!, selectedUser: assignedToUser)
                 vc.selectionDelegate = self
                 navigationController?.pushViewController(vc, animated: true)
             case 4:
@@ -291,5 +300,11 @@ extension AddOrEditTaskVC: PriorityPickerDelegate {
         if dismiss {
             self.dismiss(animated: true)
         }
+    }
+}
+
+extension AddOrEditTaskVC: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        descriptionTextView.becomeFirstResponder()
     }
 }

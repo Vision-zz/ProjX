@@ -202,7 +202,6 @@ class DataConfiguration {
                 task.taskDescription = "This is a task that needs to be finished within a particular amount of time. This task is named task \(k)"
                 task.createdByUser = createdBy
                 task.assignedToUser = assignedTo
-                task.statusUpdates = []
                 
                 let priority = Int16.random(in: 0...2)
                 task.taskPriority = TaskPriority(rawValue: priority) ?? .low
@@ -213,6 +212,24 @@ class DataConfiguration {
                 } else {
                     task.taskStatus = .inProgress
                 }
+                
+                let statusUpdateCount = Int.random(in: 10...20)
+                
+                var statusUpdates = [TaskStatusUpdate]()
+                for n in 0...statusUpdateCount {
+                    let statusUpdate = TaskStatusUpdate(context: DataManager.shared.context)
+                    statusUpdate.subject = "Status update \(n)"
+                    statusUpdate.statusDescription = "This is a new status update, this is updated on some day and some time. This is the \(n) update"
+                    let start = createdAt.timeIntervalSince1970
+                    let end = Date().timeIntervalSince1970
+                    let randomTimeInterval = TimeInterval.random(in: min(start, end)...max(start, end))
+                    let randomDate = Date(timeIntervalSince1970: randomTimeInterval)
+                    statusUpdate.createdAt = randomDate
+                    statusUpdates.append(statusUpdate)
+                }
+                
+                task.statusUpdates = statusUpdates
+                
                 team.tasks.append(task)
             }
         }

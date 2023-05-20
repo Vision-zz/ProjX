@@ -61,6 +61,11 @@ class MainTabbar: UITabBarController {
     }
 
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        
+        if let currentIndex = tabBar.items?.firstIndex(of: item), currentIndex == selectedIndex {
+            MainRouter.shared.scrollToTop(tabbarIndex: currentIndex)
+        }
+        
         guard let barItemView = item.value(forKey: "view") as? UIView else { return }
         let propertyAnimator = UIViewPropertyAnimator(duration: 0.3, dampingRatio: 1) {
             barItemView.transform = CGAffineTransform.identity.scaledBy(x: 0.865, y: 0.865)

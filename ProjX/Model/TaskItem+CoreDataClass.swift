@@ -2,7 +2,7 @@
 //  TaskItem+CoreDataClass.swift
 //  ProjX
 //
-//  Created by Sathya on 06/04/23.
+//  Created by Sathya on 15/05/23.
 //
 //
 
@@ -15,7 +15,7 @@ public class TaskItem: NSManagedObject {
     public override var description: String {
         "TaskItem"
     }
-
+    
     var taskStatus: TaskStatus {
         get {
             let rawValue = taskStatusID < 0 ? 0 : taskStatusID
@@ -25,7 +25,7 @@ public class TaskItem: NSManagedObject {
             taskStatusID = newValue.rawValue
         }
     }
-
+    
     var taskPriority: TaskPriority {
         get {
             let rawValue = priority < 0 ? 0 : priority
@@ -35,7 +35,7 @@ public class TaskItem: NSManagedObject {
             priority = newValue.rawValue
         }
     }
-
+    
     var assignedToUser: User? {
         get {
             guard let assignedTo = assignedTo else { return nil }
@@ -45,7 +45,7 @@ public class TaskItem: NSManagedObject {
             assignedTo = newValue?.userID
         }
     }
-
+    
     var createdByUser: User {
         get {
             return DataManager.shared.getUserMatching({ $0.userID != nil && $0.userID == createdBy })!
@@ -54,7 +54,18 @@ public class TaskItem: NSManagedObject {
             createdBy = newValue.userID
         }
     }
-
+    
+    var statusUpdates: [TaskStatusUpdate] {
+        get {
+            guard let updates = updates, let statusUpdates = updates.allObjects as? [TaskStatusUpdate] else { return [] }
+            return statusUpdates
+        }
+        set {
+            let set = NSSet(array: newValue)
+            updates = set
+        }
+    }
+    
     func markTaskAsCompleted() {
         taskStatus = .complete
         completedAt = Date()

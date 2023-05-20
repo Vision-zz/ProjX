@@ -35,7 +35,6 @@ class TeamInfoVC: PROJXTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-//        navigationItem.backButtonDisplayMode = .minimal
     }
 
     private func configureView() {
@@ -96,7 +95,7 @@ class TeamInfoVC: PROJXTableViewController {
             ("Tasks In Progress", "\(team.tasks.filter({ $0.taskStatus == .inProgress }).count)"),
             ("Total Tasks", "\(team.tasks.count)")
         ]
-
+        
         if indexPath.row != 0 {
             Util.configureCustomSelectionStyle(for: cell)
             cell.accessoryType = .disclosureIndicator
@@ -181,33 +180,49 @@ class TeamInfoVC: PROJXTableViewController {
     private func showFilterModificationAlert(allTasks: Bool) {
         let alert = UIAlertController(title: "Are you sure?", message: "This will modify your filter settings. Do you want to proceed?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Proceed", style: .destructive, handler: { _ in
-            if allTasks {
-                MainRouter.shared.showActiveTeamTasks(for: SessionManager.shared.signedInUser!)
-            } else {
-                MainRouter.shared.showAllTeamTasks(for: SessionManager.shared.signedInUser!)
-            }
+            self.routeToTasks(allTasks: allTasks)
         }))
-        alert.addAction(UIAlertAction(title: "Go Back", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Don't show again", style: .default, handler: { _ in
+            self.routeToTasks(allTasks: allTasks)
+            SessionManager.shared.signedInUser?.doNotShowAgain(true)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
         self.present(alert, animated: true)
     }
 
+    func routeToTasks(allTasks: Bool) {
+        if allTasks {
+            MainRouter.shared.showActiveTeamTasks(for: SessionManager.shared.signedInUser!)
+        } else {
+            MainRouter.shared.showAllTeamTasks(for: SessionManager.shared.signedInUser!)
+        }
+    }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard [2, 3, 4].contains(indexPath.section) else { return }
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.section == 2 {
-            if team.isSelected {
-                showFilterModificationAlert(allTasks: indexPath.row == 0)
-            }
-            else {
+            if !team.isSelected {
                 let alert = UIAlertController(title: "Switch current team?", message: "\(team.teamName!) is not your current team. Do you want to set \(team.teamName!) as your current team and proceed?", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { [unowned self] _ in
+                alert.addAction(UIAlertAction(title: "Proceed", style: .destructive, handler: { [unowned self] _ in
                     self.teamSelectButtonPressed()
-                    showFilterModificationAlert(allTasks: indexPath.row == 0)
+                    if !SessionManager.shared.signedInUser!.doNotShowAgain {
+                        self.showFilterModificationAlert(allTasks: indexPath.row == 0)
+                    } else {
+                        self.routeToTasks(allTasks: indexPath.row == 0)
+                    }
                 }))
-                alert.addAction(UIAlertAction(title: "No", style: .cancel))
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
                 self.present(alert, animated: true)
+            } else {
+                if !SessionManager.shared.signedInUser!.doNotShowAgain {
+                    showFilterModificationAlert(allTasks: indexPath.row == 0)
+                } else {
+                    routeToTasks(allTasks: indexPath.row == 0)
+                }
             }
+            
         }
         if [3, 4].contains(indexPath.section) {
             let user = (indexPath.section == 3 ? teamAdmins : teamMembers)[indexPath.row]
@@ -347,7 +362,7 @@ extension TeamInfoVC: TeamOptionsDelegate {
                 DataManager.shared.deleteTeam(self!.team)
                 self?.delegate?.teamExited()
             }))
-            alert.addAction(UIAlertAction(title: "Go back", style: .cancel))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
             self.present(alert, animated: true)
         } else {
             let alert = UIAlertController(title: "Are you sure?", message: "Do you want to leave team '\(self.team.teamName!)'", preferredStyle: .alert)

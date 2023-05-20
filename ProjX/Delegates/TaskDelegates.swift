@@ -23,3 +23,7 @@ protocol TaskStatusPickerDelegate: AnyObject {
 protocol CreateTaskDelegate: AnyObject {
     func taskCreatedOrUpdated(_ task: TaskItem)
 }
+
+protocol MarkAsCompleteActionDelegate: AnyObject {
+    func markAsCompletedActionTriggered(for taskItem: TaskItem)
+}

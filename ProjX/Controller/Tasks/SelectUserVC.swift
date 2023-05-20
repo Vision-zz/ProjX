@@ -7,15 +7,17 @@
 
 import UIKit
 
-class TeamMemberSelector: PROJXTableViewController {
+class SelectUserVC: PROJXTableViewController {
 
     lazy var team: Team! = nil
     lazy var selectedUser: User? = nil
     lazy var canClearSelection: Bool = false
+    lazy var searchString: String? = nil
+
 
     struct SectionData {
         let sectionName: String
-        let rows: [User]
+        var rows: [User]
     }
 
     var dataSource = [SectionData]()
@@ -41,6 +43,26 @@ class TeamMemberSelector: PROJXTableViewController {
         self.team = team
         self.selectedUser = selectedUser
     }
+    
+    lazy var noSearchResultBackgroundView: UILabel = {
+        let title = NSMutableAttributedString(string: "No search results!\n", attributes: [
+            .font: UIFont.systemFont(ofSize: 22, weight: .bold),
+            .foregroundColor: UIColor.label,
+        ])
+        let desc = NSMutableAttributedString(string: "Cannot find anything matching your search", attributes: [
+            .font: UIFont.systemFont(ofSize: 14),
+            .foregroundColor: UIColor.secondaryLabel
+        ])
+        
+        title.append(desc)
+        
+        let noDataTitleLabel = UILabel()
+        noDataTitleLabel.textColor = .label
+        noDataTitleLabel.attributedText = title
+        noDataTitleLabel.numberOfLines = 0
+        noDataTitleLabel.textAlignment = .center
+        return noDataTitleLabel
+    }()
 
     override init(style: UITableView.Style) {
         super.init(style: style)
@@ -64,19 +86,40 @@ class TeamMemberSelector: PROJXTableViewController {
         if canClearSelection {
             navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Clear", style: .plain, target: self, action: #selector(clearButtonClicked))
         }
-        
     }
 
     private func configureDataSource() {
         dataSource = []
-        dataSource.append(SectionData(sectionName: "Owner", rows: [team.teamOwner!]))
-        dataSource.append(SectionData(sectionName: "Admins", rows: team.teamAdmins.sorted(by: { $0.name! < $1.name! })))
-        dataSource.append(SectionData(sectionName: "Members", rows: team.teamMembers.sorted(by: { $0.name! < $1.name! })))
+        let allMembers = team.allTeamMembers.filter({ searchString == nil ? true : Util.findRange(of: searchString!.lowercased(), in: $0.name!) != nil })
+        let users = Dictionary(grouping: allMembers, by: { $0.roleIn(team: team) })
+            .filter({ $0.key != .none })
+            .sorted(by: { $0.key.rawValue < $1.key.rawValue })
+            .map({ (role, users) -> SectionData in
+                switch role {
+                    case .owner:
+                        return SectionData(sectionName: "Owner", rows: users)
+                    case .admin:
+                        return SectionData(sectionName: "Admins", rows: users.sorted(by: { $0.name! < $1.name! }))
+                    default:
+                        return SectionData(sectionName: "Members", rows: users.sorted(by: { $0.name! < $1.name! }))
+                }
+            })
+        dataSource = users
+        
     }
 
     @objc private func clearButtonClicked() {
         selectionDelegate?.clearedSelection?()
     }
+    
+    private func showSearchResultBackgroundView(_ state: Bool) {
+        if state {
+            tableView.backgroundView = noSearchResultBackgroundView
+        } else {
+            tableView.backgroundView = nil
+        }
+    }
+    
 
     // MARK: - Table view data source
 
@@ -102,14 +145,14 @@ class TeamMemberSelector: PROJXTableViewController {
         if user.userID! == selectedUser?.userID {
             cell.accessoryType = .checkmark
         }
-        else {
-            cell.accessoryType = .none
-        }
+        
         var name = user.name ?? "---"
         if user.userID == SessionManager.shared.signedInUser?.userID {
             name += " (You)"
         }
-        cell.configureCellData(text: name, image: user.getUserProfileIcon(reduceTo: CGSize(width: 15, height: 15)))
+        let nsRange = searchString != nil ? Util.findRange(of: searchString!, in: name) : nil
+        cell.setTitle(name,withHighLightRange: nsRange)
+        cell.setImage(image: user.getUserProfileIcon(reduceTo: CGSize(width: 15, height: 15)))
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -126,45 +169,23 @@ class TeamMemberSelector: PROJXTableViewController {
 
 }
 
-extension TeamMemberSelector: UISearchBarDelegate, UISearchControllerDelegate {
+extension SelectUserVC: UISearchBarDelegate, UISearchControllerDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-
+        showSearchResultBackgroundView(false)
         if searchText.isEmpty {
+            searchString = nil
             configureDataSource()
+        } else {
+            searchString = searchText.lowercased()
+            configureDataSource()
+            showSearchResultBackgroundView(dataSource.isEmpty)
         }
-        else {
-            var ownerArr = [User]()
-            var adminArr = [User]()
-            var memberArr = [User]()
-            
-            for member in team.allTeamMembers {
-                let match = member.name?.lowercased().starts(with: searchText.lowercased())
-                guard let _ = match, match == true else { continue }
-                if member.roleIn(team: team) == .owner {
-                    ownerArr.append(member)
-                } else if member.roleIn(team: team) == .admin {
-                    adminArr.append(member)
-                } else {
-                    memberArr.append(member)
-                }
-            }
-
-            dataSource = []
-            if !ownerArr.isEmpty {
-                dataSource.append(SectionData(sectionName: "Owner", rows: ownerArr))
-            }
-            if !adminArr.isEmpty {
-                dataSource.append(SectionData(sectionName: "Admins", rows: adminArr))
-            }
-            if !memberArr.isEmpty {
-                dataSource.append(SectionData(sectionName: "Members", rows: memberArr))
-            }
-        }
-
         tableView.reloadData()
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchString = nil
+        showSearchResultBackgroundView(false)
         configureDataSource()
         tableView.reloadData()
     }

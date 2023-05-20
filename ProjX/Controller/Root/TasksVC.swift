@@ -18,6 +18,8 @@ class TasksVC: PROJXTableViewController {
         }
     }
     
+    var showsFilterButton: Bool = false
+    
     struct SectionData {
         let sectionName: String
         var rows: [TaskItem]
@@ -31,7 +33,7 @@ class TasksVC: PROJXTableViewController {
     var firstLaunch = true
     lazy var dataSource: [SectionData] = []
     lazy var collapsedSections = [Int]()
-    weak var selectedTeam: Team? = nil
+    lazy var selectedTeam: Team? = nil
     weak var filterOptions: FilterOptions! = nil
 
     lazy var noDataTableBackgroundView: UILabel = {
@@ -83,8 +85,9 @@ class TasksVC: PROJXTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        configureRightBarButtons()
         if (selectedTeam == nil && SessionManager.shared.signedInUser?.selectedTeamID != nil)
-            || (selectedTeam != nil && selectedTeam!.teamID! != SessionManager.shared.signedInUser?.selectedTeamID)
+            || (SessionManager.shared.signedInUser?.selectedTeamID != nil && selectedTeam?.teamID != SessionManager.shared.signedInUser?.selectedTeamID)
         {
             collapsedSections = []
         }
@@ -112,8 +115,19 @@ class TasksVC: PROJXTableViewController {
 
     private func configureRightBarButtons() {
         let addBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addBarButtonClicked))
-        let filterBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.3.horizontal.decrease"), style: .plain, target: self, action: #selector(filterButtonClicked))
-        navigationItem.rightBarButtonItems = [addBarButtonItem, filterBarButtonItem]
+        let tasksVCMenu = TasksVCMenu()
+        tasksVCMenu.delegate = self
+        let optionsButtonItem = UIBarButtonItem(image: UIImage(systemName: "ellipsis.circle"), menu: tasksVCMenu.getMenu())
+        var barButtonItems = [optionsButtonItem, addBarButtonItem]
+        if !filterOptions.filters.isDefaultFilterOption(of: SessionManager.shared.signedInUser!) {
+            let filterButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.3.horizontal.decrease.circle.fill"), style: .done, target: self, action: #selector(filterButtonClicked))
+            barButtonItems.append(filterButtonItem)
+        }
+        navigationItem.setRightBarButtonItems(barButtonItems, animated: true)
+    }
+    
+    @objc private func filterButtonClicked() {
+        showFilterVC()
     }
 
 
@@ -129,7 +143,7 @@ class TasksVC: PROJXTableViewController {
             return
         }
 
-        let teamTasks = DataManager.shared.getAllTasks(for: selectedTeam).filter({ selectedTeam.tasksID!.contains($0.taskID!) })
+        let teamTasks = DataManager.shared.getTasks(for: selectedTeam).filter({ selectedTeam.tasksID!.contains($0.taskID!) })
 
         dataSource = filterOptions?.groupAndFilter(teamTasks) ?? []
         collapsedSections.forEach({ dataSource[$0].rows = [] })
@@ -138,17 +152,10 @@ class TasksVC: PROJXTableViewController {
             tableView.backgroundView?.isHidden = false
             if teamTasks.isEmpty {
                 noDataTableBackgroundView.attributedText = generateNoDataLabelString(with: "Press the + icon to create a task")
-            } else if filterOptions.filters!.totalSelectedFilters > 0 {
+            } else if filterOptions.filters.totalSelectedFilters > 0 {
                 noDataTableBackgroundView.attributedText = generateNoDataLabelString(with: "No tasks satisfy the selected filters")
             }
         }
-    }
-    
-    @objc private func filterButtonClicked() {
-        let vc = GroupAndSortConfigVC(currentSettings: filterOptions, for: selectedTeam!)
-        vc.delegate = self
-        let nav = UINavigationController(rootViewController: vc)
-        present(nav, animated: true)
     }
     
     @objc private func teamSelectButtonClick() {
@@ -165,13 +172,20 @@ class TasksVC: PROJXTableViewController {
     }
     
     @objc func addBarButtonClicked() {
+        guard let _ = selectedTeam else {
+            let alert = UIAlertController(title: "Current team not set", message: "You need to set a team as your current team to Add tasks", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+            present(alert, animated: true)
+            return
+        }
+        
         let vc = AddOrEditTaskVC()
         vc.createTaskDelegate = self
         navigationController?.pushViewController(vc, animated: true)
     }
 
     private func generateNoDataLabelString(with string: String) -> NSMutableAttributedString {
-        let title = NSMutableAttributedString(string: "No Tasks?\n", attributes: [
+        let title = NSMutableAttributedString(string: "Can't find anything?\n", attributes: [
             .font: UIFont.systemFont(ofSize: 23, weight: .bold),
             .foregroundColor: UIColor.label,
         ])
@@ -196,6 +210,7 @@ class TasksVC: PROJXTableViewController {
         let task = dataSource[indexPath.section].rows[indexPath.row]
         cell.configureCell(for: task, showsCompleted: true)
         cell.accessoryType = .disclosureIndicator
+        cell.delegate = self
         Util.configureCustomSelectionStyle(for: cell)
         return cell
     }
@@ -214,7 +229,7 @@ class TasksVC: PROJXTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        70
+        return 70
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -251,14 +266,48 @@ extension TasksVC: TeamSelectDelegate {
 }
 
 extension TasksVC: GroupSortAndFilterDelegate {
-    func settingsChanged(groupAndSortBy: GroupByOption, filters: Filters) {
-        filterOptions.groupAndSortBy = groupAndSortBy
+    func filtersChanged(_ filters: Filters) {
         filterOptions.filters = filters
         collapsedSections = []
         configureDataSource()
         tableView.reloadData()
         DataManager.shared.saveContext()
+        configureRightBarButtons()
         dismiss(animated: true)
+    }
+    
+    func groupAndSortConfigChanged(_ config: GroupByOption) {
+        filterOptions.groupAndSortBy = config
+        collapsedSections = []
+        configureDataSource()
+        tableView.performBatchUpdates({
+            tableView.deleteSections(IndexSet(integersIn: 0..<tableView.numberOfSections), with: .fade)
+            tableView.insertSections(IndexSet(integersIn: 0..<dataSource.count), with: .fade)
+        })
+        tableView.reloadData()
+        DataManager.shared.saveContext()
+    }
+    
+    func getCurrentGroupSortConfig() -> GroupByOption {
+        return filterOptions.groupAndSortBy
+    }
+    
+    func getCurrentFilters() -> Filters {
+        return filterOptions.filters
+    }
+    
+    func showFilterVC() {
+        guard let selectedTeam = selectedTeam else {
+            let alert = UIAlertController(title: "Current team not set", message: "You need to set a team as your current team to view and filter tasks.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+            present(alert, animated: true)
+            return
+        }
+        
+        let vc = FiltersVC(currentSettings: filterOptions, for: selectedTeam)
+        vc.delegate = self
+        let nav = UINavigationController(rootViewController: vc)
+        present(nav, animated: true)
     }
 }
 
@@ -266,6 +315,7 @@ extension TasksVC: TaskSectionExpandDelegate {
     func sectionExpanded(_ section: Int) {
         guard collapsedSections.contains(section) else { return }
         collapsedSections.removeAll(where: { $0 == section })
+        tableView.beginUpdates()
         configureDataSource()
         let numberOfRows = dataSource[section].rows.count
         var indexPaths = [IndexPath]()
@@ -273,12 +323,14 @@ extension TasksVC: TaskSectionExpandDelegate {
             indexPaths.append(IndexPath(row: row, section: section))
         }
         tableView.insertRows(at: indexPaths, with: .fade)
+        tableView.endUpdates()
         return
     }
     
     func sectionCollapsed(_ section: Int) {
         guard !collapsedSections.contains(section) else { return }
         collapsedSections.append(section)
+        tableView.beginUpdates()
         configureDataSource()
         let numberOfRows = tableView.numberOfRows(inSection: section)
         var indexPaths = [IndexPath]()
@@ -286,6 +338,35 @@ extension TasksVC: TaskSectionExpandDelegate {
             indexPaths.append(IndexPath(row: row, section: section))
         }
         tableView.deleteRows(at: indexPaths, with: .fade)
+        tableView.endUpdates()
         return
+    }
+}
+
+
+extension TasksVC: MarkAsCompleteActionDelegate {
+    func markAsCompletedActionTriggered(for taskItem: TaskItem) {
+        var indexPath: IndexPath? = nil
+        for (section, sectionData) in dataSource.enumerated() {
+            for (row, rowData) in sectionData.rows.enumerated() {
+                if rowData.taskID == taskItem.taskID {
+                    indexPath = IndexPath(row: row, section: section)
+                }
+            }
+        }
+        guard let assignedTo = taskItem.assignedTo, SessionManager.shared.signedInUser?.userID == assignedTo else {
+            let alert = UIAlertController(title: "Permission Denied", message: "You are not allowed to do this action. This task is not assigned to you.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+            present(alert, animated: true)
+            return
+        }
+        guard let indexPath = indexPath else { return }
+        let alert = UIAlertController(title: "Are you sure?", message: "Do you want to mark this task as completed", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Mark as Completed", style: .default, handler: { [weak self] _ in
+            taskItem.markTaskAsCompleted()
+            self?.tableView.reloadRows(at: [indexPath], with: .none)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
     }
 }

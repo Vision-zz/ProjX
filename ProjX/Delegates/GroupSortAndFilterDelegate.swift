@@ -8,5 +8,9 @@
 import Foundation
 
 protocol GroupSortAndFilterDelegate: AnyObject {
-    func settingsChanged(groupAndSortBy: GroupByOption, filters: Filters)
+    func filtersChanged(_ filters: Filters)
+    func groupAndSortConfigChanged(_ config: GroupByOption)
+    func getCurrentGroupSortConfig() -> GroupByOption
+    func getCurrentFilters() -> Filters
+    func showFilterVC()
 }

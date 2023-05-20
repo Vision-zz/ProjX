@@ -194,7 +194,7 @@ class ProfileVC: PROJXTableViewController {
                 alert.addAction(UIAlertAction(title: "Proceed", style: .destructive) { _ in
                     DataManager.shared.deleteUser(username: SessionManager.shared.signedInUser!.username!)
                 })
-                alert.addAction(UIAlertAction(title: "Go Back", style: .cancel))
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
                 present(alert, animated: true)
             }
         }

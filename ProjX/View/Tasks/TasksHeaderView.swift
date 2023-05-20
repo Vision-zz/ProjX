@@ -61,6 +61,10 @@ class TasksHeaderView: UITableViewHeaderFooterView {
     private func configureCellView() {
         contentView.addSubview(label)
         contentView.addSubview(expandButton)
+        var config = UIBackgroundConfiguration.listGroupedHeaderFooter()
+        config.backgroundColor = .systemGroupedBackground
+        isOpaque = true
+        backgroundConfiguration = config
         let tap = UITapGestureRecognizer(target: self, action: #selector(headerTapped))
         self.addGestureRecognizer(tap)
     }

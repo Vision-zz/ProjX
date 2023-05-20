@@ -7,25 +7,29 @@
 
 import UIKit
 
-class AddTaskTableViewCell: UITableViewCell {
+class FormsTableViewCell: UITableViewCell {
 
     static let identifier = "AddTaskTableViewCell"
 
-    lazy var keyLabel: PROJXLabel = {
-        let label = PROJXLabel()
+    lazy var keyLabel: UITextView = {
+        let label = UITextView()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.backgroundColor = GlobalConstants.Colors.tertiaryBackground
         label.textColor = .secondaryLabel
-        label.insets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 8)
-        label.contentMode = .top
         label.textAlignment = .right
-        label.font = .systemFont(ofSize: 13)
-        label.lineBreakMode = .byWordWrapping
-        label.backgroundColor = .systemGray.withAlphaComponent(0.05)
-        label.numberOfLines = 0
+        label.font = .systemFont(ofSize: 11.5)
+        label.textContainer.lineBreakMode = .byWordWrapping
+        label.backgroundColor = .clear
+        label.textContainer.maximumNumberOfLines = 0
         return label
     }()
 
+    lazy var keyView: UIView = {
+        let keyView = UIView()
+        keyView.translatesAutoresizingMaskIntoConstraints = false
+        keyView.backgroundColor = .systemGray.withAlphaComponent(0.05)
+        return keyView
+    }()
+    
     lazy var valueView: UIView = {
         let valueView = UIView()
         valueView.translatesAutoresizingMaskIntoConstraints = false
@@ -61,17 +65,23 @@ class AddTaskTableViewCell: UITableViewCell {
     private func configureCellView() {
         backgroundColor = GlobalConstants.Colors.secondaryBackground
         selectionStyle = .none
-        contentView.addSubview(keyLabel)
+        keyView.addSubview(keyLabel)
+        contentView.addSubview(keyView)
         contentView.addSubview(valueView)
         contentView.addSubview(separatorLine)
     }
 
     private func configureConstraints() {
         NSLayoutConstraint.activate([
-            keyLabel.topAnchor.constraint(equalTo: self.topAnchor),
-            keyLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            keyLabel.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.25),
-            keyLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            keyView.topAnchor.constraint(equalTo: self.topAnchor),
+            keyView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            keyView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.25),
+            keyView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            
+            keyLabel.topAnchor.constraint(equalTo: keyView.topAnchor, constant: 8),
+            keyLabel.leadingAnchor.constraint(equalTo: keyView.leadingAnchor),
+            keyLabel.trailingAnchor.constraint(equalTo: keyView.trailingAnchor),
+            keyLabel.bottomAnchor.constraint(equalTo: keyView.bottomAnchor),
 
             valueView.topAnchor.constraint(equalTo: self.topAnchor),
             valueView.leadingAnchor.constraint(equalTo: keyLabel.trailingAnchor),
@@ -80,7 +90,7 @@ class AddTaskTableViewCell: UITableViewCell {
 
             separatorLine.leadingAnchor.constraint(equalTo: keyLabel.trailingAnchor),
             separatorLine.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            separatorLine.topAnchor.constraint(equalTo: valueView.bottomAnchor, constant: -0.3),
+            separatorLine.bottomAnchor.constraint(equalTo: valueView.bottomAnchor),
             separatorLine.heightAnchor.constraint(equalToConstant: 0.3)
         ])
     }

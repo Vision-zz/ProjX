@@ -48,11 +48,12 @@ class UserInfoVC: PROJXTableViewController {
     }
     
     private func configureDataSource() {
-        let userTeams = user.teams
-        let myTeams = SessionManager.shared.signedInUser?.teams ?? []
+        let userTeams = Set(user.teams)
+        let myTeams = Set(SessionManager.shared.signedInUser?.teams ?? [])
         
-        let mutualTeams = Array(Set(userTeams).intersection(Set(myTeams)))
+        let mutualTeams = Array(userTeams.intersection(myTeams))
             .compactMap({ TeamData(name: $0.teamName!, image: $0.getTeamIcon(reduceTo: CGSize(width: 30, height: 30))) })
+            .sorted(by: { $0.name < $1.name })
         dataSource = mutualTeams
     }
 
@@ -109,7 +110,7 @@ class UserInfoVC: PROJXTableViewController {
             config.textProperties.color = .secondaryLabel
             config.secondaryTextProperties.font = .systemFont(ofSize: 16)
             config.secondaryTextProperties.color = .label
-            
+
             cell.contentConfiguration = config
             return cell
         } else if indexPath.section == 2 {
@@ -142,7 +143,7 @@ class UserInfoVC: PROJXTableViewController {
             return cell
         }
     }
-    
+
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         if indexPath.section == 2 {
             return indexPath
@@ -157,10 +158,20 @@ class UserInfoVC: PROJXTableViewController {
                 let alert = UIAlertController(title: "Switch current team?", message: "\(team.teamName!) is not your current team. Do you want to set \(team.teamName!) as your current team and proceed?", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Proceed", style: .destructive, handler: { _ in
                     DataManager.shared.changeSelectedTeam(of: SessionManager.shared.signedInUser!, to: self.team)
-                    self.showFilterModificationAlert(allTasks: indexPath.row == 0)
+                    if !SessionManager.shared.signedInUser!.doNotShowAgain {
+                        self.showFilterModificationAlert(allTasks: indexPath.row == 0)
+                    } else {
+                        self.routeToTasks(allTasks: indexPath.row == 0)
+                    }
                 }))
-                alert.addAction(UIAlertAction(title: "Go Back", style: .cancel))
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
                 self.present(alert, animated: true)
+            } else {
+                if !SessionManager.shared.signedInUser!.doNotShowAgain {
+                    self.showFilterModificationAlert(allTasks: indexPath.row == 0)
+                } else {
+                    self.routeToTasks(allTasks: indexPath.row == 0)
+                }
             }
         }
     }
@@ -168,14 +179,22 @@ class UserInfoVC: PROJXTableViewController {
     private func showFilterModificationAlert(allTasks: Bool) {
         let alert = UIAlertController(title: "Are you sure?", message: "This will modify your filter settings. Do you want to proceed?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Proceed", style: .destructive, handler: { [unowned self] _ in
-            if allTasks {
-                MainRouter.shared.showUserAllTasks(of: user, for: SessionManager.shared.signedInUser!)
-            } else {
-                MainRouter.shared.showUserActiveTasks(of: user, for: SessionManager.shared.signedInUser!)
-            }
+            self.routeToTasks(allTasks: allTasks)
         }))
-        alert.addAction(UIAlertAction(title: "Go Back", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Don't show again", style: .default, handler: { _ in
+            self.routeToTasks(allTasks: allTasks)
+            SessionManager.shared.signedInUser?.doNotShowAgain(true)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         self.present(alert, animated: true)
+    }
+    
+    private func routeToTasks(allTasks: Bool) {
+        if allTasks {
+            MainRouter.shared.showUserAllTasks(of: user, for: SessionManager.shared.signedInUser!)
+        } else {
+            MainRouter.shared.showUserActiveTasks(of: user, for: SessionManager.shared.signedInUser!)
+        }
     }
 
 }

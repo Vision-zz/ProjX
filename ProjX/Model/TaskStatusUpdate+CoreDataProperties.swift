@@ -2,7 +2,7 @@
 //  TaskStatusUpdate+CoreDataProperties.swift
 //  ProjX
 //
-//  Created by Sathya on 09/05/23.
+//  Created by Sathya on 15/05/23.
 //
 //
 
@@ -19,6 +19,7 @@ extension TaskStatusUpdate {
     @NSManaged public var createdAt: Date?
     @NSManaged public var statusDescription: String?
     @NSManaged public var subject: String?
+    @NSManaged public var task: TaskItem?
 
 }
 

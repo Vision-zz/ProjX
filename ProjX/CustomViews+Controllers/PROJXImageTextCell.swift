@@ -43,10 +43,35 @@ class PROJXImageTextCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func prepareForReuse() {
+        self.cellTextLabel.attributedText = nil
+        self.cellImageView.image = nil
+        self.cellTextLabel.text = nil
+        accessoryType = .none
+        accessoryView = nil
+    }
 
     func configureCellData(text: String, image: UIImage? = nil) {
-        self.cellTextLabel.text = text
+        self.cellTextLabel.attributedText = NSMutableAttributedString(string: text)
         self.cellImageView.image = image
+    }
+    
+    func setImage(image: UIImage? = nil) {
+        self.cellImageView.image = image
+    }
+    
+    func setTitle(_ string: String, withHighLightRange range: NSRange? = nil) {
+        self.cellTextLabel.text = nil
+        
+        let attributedString = NSMutableAttributedString(string: string)
+        if let range = range, range.location != NSNotFound {
+//            attributedString.addAttribute(.backgroundColor, value: UIColor.yellow, range: range)
+            attributedString.addAttribute(.foregroundColor, value: GlobalConstants.Colors.accentColor, range: range)
+            attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 17.7, weight: .bold), range: range)
+        }
+        self.cellTextLabel.attributedText = attributedString
+
     }
     
     func changeImage(_ image: UIImage?) {
@@ -54,6 +79,7 @@ class PROJXImageTextCell: UITableViewCell {
     }
 
     private func configureCellUI() {
+        separatorInset = UIEdgeInsets(top: 0, left: 50, bottom: 0, right: 0)
         contentView.addSubview(cellImageView)
         contentView.addSubview(cellTextLabel)
     }

@@ -29,6 +29,7 @@ class PROJXTableViewController: UITableViewController {
         navigationController?.navigationBar.tintColor = GlobalConstants.Colors.accentColor
         tableView.separatorColor = .secondarySystemFill
         tableView.keyboardDismissMode = .onDrag
+        navigationItem.largeTitleDisplayMode = .always
         self.navigationController?.navigationBar.prefersLargeTitles = true
         if tableView.style == .insetGrouped {
             self.tableView.backgroundColor = .systemGroupedBackground
