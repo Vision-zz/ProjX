@@ -113,7 +113,6 @@ class TeamsVC: PROJXTableViewController {
         configureUI()
         configureRightBarButtonItems()
         configureDatasource()
-        configureTableView()
         configureNotifCenter()
     }
 
@@ -131,6 +130,10 @@ class TeamsVC: PROJXTableViewController {
     private func configureUI() {
         title = "Teams"
         navigationItem.searchController = searchController
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TeamsTableViewCell")
+        tableView.register(PROJXImageTextCell.self, forCellReuseIdentifier: PROJXImageTextCell.identifier)
+        tableView.backgroundView = noDataTableBackgroundView
+        navigationItem.hidesSearchBarWhenScrolling = false
     }
     
     private func configureRightBarButtonItems() {
@@ -162,17 +165,7 @@ class TeamsVC: PROJXTableViewController {
         
         let menu = UIMenu(children: [newAction, joinAction])
 
-        var items = [ UIBarButtonItem(systemItem: .add, menu: menu) ]
-        if !GlobalConstants.Device.isIpad {
-            items.append(UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchButtonOnClick)))
-        }
-        navigationItem.rightBarButtonItems = items
-    }
-
-    private func configureTableView() {
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TeamsTableViewCell")
-        tableView.register(PROJXImageTextCell.self, forCellReuseIdentifier: PROJXImageTextCell.identifier)
-        tableView.backgroundView = noDataTableBackgroundView
+        navigationItem.rightBarButtonItem = UIBarButtonItem(systemItem: .add, menu: menu)
     }
 
     private func configureDatasource() {
@@ -221,7 +214,8 @@ class TeamsVC: PROJXTableViewController {
     }
 
     @objc private func searchButtonOnClick() {
-        searchController.searchBar.becomeFirstResponder()
+        navigationItem.titleView = searchController.searchBar
+//        searchController.searchBar.becomeFirstResponder()
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -342,6 +336,14 @@ class TeamsVC: PROJXTableViewController {
                     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
                     self?.present(alert, animated: true)
                 } else {
+                    if let deletingUser = SessionManager.shared.signedInUser, deletingUser.hasPendingTasks(in: team) {
+                        let vc = ReassignTeamTasksVC(team: team, deletingUser: deletingUser)
+                        vc.reloadDelegate = self
+                        vc.isLeavingTeam = true
+                        let nav = UINavigationController(rootViewController: vc)
+                        self?.present(nav, animated: true)
+                        return
+                    }
                     let alert = UIAlertController(title: "Are you sure?", message: "Do you want to leave team '\(team.teamName!)'", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Leave", style: .destructive, handler: { [weak self] _ in
                         guard self != nil else { return }
@@ -381,17 +383,17 @@ class TeamsVC: PROJXTableViewController {
         })
 
     }
-//
-//    override func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
-//        guard let indexPath = configuration.identifier as? IndexPath else { return }
-//        let team = dataSource[indexPath.section].rows[indexPath.row]
-//        let vc = createTeamInfoVC(for: team)
-//        animator.preferredCommitStyle = .pop
-//        animator.addAnimations { [weak self] in
-//            self?.navigationController?.pushViewController(vc, animated: false)
-//        }
-//    }
-//
+
+    override func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+        guard let indexPath = configuration.identifier as? IndexPath else { return }
+        let team = dataSource[indexPath.section].rows[indexPath.row]
+        let vc = createTeamInfoVC(for: team)
+        animator.preferredCommitStyle = .pop
+        animator.addAnimations { [weak self] in
+            self?.navigationController?.pushViewController(vc, animated: false)
+        }
+    }
+
 
 }
 
@@ -437,6 +439,7 @@ extension TeamsVC: UISearchBarDelegate, UISearchControllerDelegate {
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        navigationItem.titleView = nil
         searchString = nil
         showSearchResultBackgroundView(false)
         configureDatasource()
@@ -444,3 +447,9 @@ extension TeamsVC: UISearchBarDelegate, UISearchControllerDelegate {
     }
 }
 
+extension TeamsVC: ReloadDelegate {
+    func reloadData() {
+        configureDatasource()
+        tableView.reloadData()
+    }
+}

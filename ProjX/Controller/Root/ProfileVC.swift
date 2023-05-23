@@ -190,12 +190,7 @@ class ProfileVC: PROJXTableViewController {
                 alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
                 present(alert, animated: true)
             } else {
-                let alert = UIAlertController(title: "Are you sure?", message: "This action is not reversible and your account will be deleted permanently. Do you want to proceed?", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Proceed", style: .destructive) { _ in
-                    DataManager.shared.deleteUser(username: SessionManager.shared.signedInUser!.username!)
-                })
-                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-                present(alert, animated: true)
+                deleteAccount()
             }
         }
 
@@ -222,6 +217,26 @@ class ProfileVC: PROJXTableViewController {
             return indexPath
         }
         return nil
+    }
+}
+
+extension ProfileVC {
+    func deleteAccount() {
+        guard let user = SessionManager.shared.signedInUser else { return }
+        guard user.hasPendingTasks else {
+            let alert = UIAlertController(title: "Are you sure?", message: "This action is not reversible and your account will be deleted permanently. Do you want to proceed?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Proceed", style: .destructive) { _ in
+                DataManager.shared.deleteUser(username: SessionManager.shared.signedInUser!.username!)
+            })
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            present(alert, animated: true)
+            return
+        }
+        
+        let vc = ReassignTasksVC(deletingUser: user)
+        let nav = UINavigationController(rootViewController: vc)
+        present(nav, animated: true)
+        
     }
 }
 

@@ -47,6 +47,7 @@ class TeamSelectButton: UIButton {
     }
     
     func configureButton(for team: Team?) {
+        teamIcon.tintColor = GlobalConstants.Colors.accentColor
         if let team = team {
             teamIcon.image = team.getTeamIcon(reduceTo: CGSize(width: 30, height: 30))
         } else {

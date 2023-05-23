@@ -37,6 +37,28 @@ public class User: NSManagedObject {
         }
     }
     
+    var hasPendingTasks: Bool {
+        get {
+            return teams.contains(where: { team in
+                team.tasks.contains(where: { tas in
+                    if tas.assignedTo! == userID && tas.createdBy != userID && tas.taskStatus != .complete {
+                        return true
+                    }
+                    return false
+                })
+            })
+        }
+    }
+    
+    func hasPendingTasks(in team: Team) -> Bool {
+        return team.tasks.contains(where: { tas in
+            if tas.assignedTo! == userID && tas.createdBy != userID && tas.taskStatus != .complete {
+                return true
+            }
+            return false
+        })
+    }
+    
     var selectedTeam: Team? {
         get {
             teams.first(where: { $0.teamID != nil && $0.teamID! == selectedTeamID })

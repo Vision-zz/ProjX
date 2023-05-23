@@ -10,10 +10,10 @@ import UIKit
 class Util {
     private init() { }
 
-    public static func createGlassMorphicEffectView(for frame: CGRect) -> UIVisualEffectView {
+    public static func createGlassMorphicEffectView(for frame: CGRect? = nil) -> UIVisualEffectView {
         let blurEffect = UIBlurEffect(style: .systemChromeMaterial)
         let effect = UIVisualEffectView(effect: blurEffect)
-        effect.frame = frame
+        if let frame = frame { effect.frame = frame }
         return effect
     }
 
@@ -21,83 +21,7 @@ class Util {
         let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         return String((0..<length).map { _ in letters.randomElement()! })
     }
-
-//    public static func generateInitialImage(from name: String) -> UIImage? {
-//        let frame = CGRect(x: 0, y: 0, width: 200, height: 200)
-//        let nameLabel = UILabel(frame: frame)
-//        nameLabel.textAlignment = .center
-//        nameLabel.backgroundColor = GlobalConstants.Colors.accentColor
-//        nameLabel.textColor = .white
-//        nameLabel.font = UIFont.boldSystemFont(ofSize: 90)
-//        var initials = ""
-//        let initialsArray = name.trimmingCharacters(in: CharacterSet(charactersIn: " ")).components(separatedBy: " ")
-//        if let firstWord = initialsArray.first {
-//            if let firstLetter = firstWord.first {
-//                initials += String(firstLetter).capitalized
-//            }
-//        }
-//        if initialsArray.count > 1, let lastWord = initialsArray.last {
-//            if let lastLetter = lastWord.first {
-//                initials += String(lastLetter).capitalized
-//            }
-//        }
-//
-//        nameLabel.text = initials
-//        UIGraphicsBeginImageContext(frame.size)
-//        if let currentContext = UIGraphicsGetCurrentContext() {
-//            nameLabel.layer.render(in: currentContext)
-//            let nameImage = UIGraphicsGetImageFromCurrentImageContext()
-//            return nameImage
-//        }
-//        return nil
-//    }
     
-//    public static func generateInitialImage(from name: String) -> UIImage? {
-//        let frame = CGRect(x: 0, y: 0, width: 200, height: 200)
-//        let nameLabel = UILabel(frame: frame)
-//        nameLabel.textAlignment = .center
-//
-//        let gradientLayer = CAGradientLayer()
-//        gradientLayer.frame = nameLabel.bounds
-//        gradientLayer.colors = [UIColor.white.cgColor, GlobalConstants.Colors.accentColor.cgColor]
-//        gradientLayer.startPoint = CGPoint(x: 1, y: -0.8)
-//        gradientLayer.endPoint = CGPoint(x: 0.7, y: 0.5)
-//
-//        let textMaskLayer = CALayer()
-//        textMaskLayer.frame = nameLabel.bounds
-//        textMaskLayer.masksToBounds = true
-//        textMaskLayer.cornerRadius = frame.width / 2
-//        textMaskLayer.backgroundColor = UIColor.white.cgColor
-//        textMaskLayer.mask = nameLabel.layer
-//
-//        let containerLayer = CALayer()
-//        containerLayer.frame = nameLabel.bounds
-//        containerLayer.addSublayer(gradientLayer)
-//        containerLayer.addSublayer(textMaskLayer)
-//
-//        nameLabel.font = UIFont.boldSystemFont(ofSize: 90)
-//        var initials = ""
-//        let initialsArray = name.trimmingCharacters(in: .whitespaces).components(separatedBy: " ")
-//        if let firstWord = initialsArray.first, let firstLetter = firstWord.first {
-//            initials += String(firstLetter).capitalized
-//        }
-//        if initialsArray.count > 1, let lastWord = initialsArray.last, let lastLetter = lastWord.first {
-//            initials += String(lastLetter).capitalized
-//        }
-//
-//        nameLabel.text = initials
-//
-//        UIGraphicsBeginImageContextWithOptions(frame.size, false, 0.0)
-//        if let currentContext = UIGraphicsGetCurrentContext() {
-//            containerLayer.render(in: currentContext)
-//            let nameImage = UIGraphicsGetImageFromCurrentImageContext()
-//            UIGraphicsEndImageContext()
-//            return nameImage
-//        }
-//        UIGraphicsEndImageContext()
-//        return nil
-//    }
-
     private static var gradientLayer: CAGradientLayer = {
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = CGRect(x: 0, y: 0, width: 200, height: 200)

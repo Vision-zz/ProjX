@@ -59,9 +59,11 @@ class StatusUpdatesVC: PROJXTableViewController {
     private func configureView() {
         title = "Status Updates"
         tableView.register(StatusUpdateCell.self, forCellReuseIdentifier: StatusUpdateCell.identifier)
-        tableView.register(UITableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: "DummyHeader")
         tableView.backgroundView = noDataTableBackgroundView
         tableView.backgroundView?.isHidden = true
+        tableView.sectionHeaderTopPadding = 0
+        tableView.sectionHeaderHeight = 0
+        tableView.sectionFooterHeight = 10
     }
     
     private func configureDatasource() {
@@ -81,14 +83,6 @@ class StatusUpdatesVC: PROJXTableViewController {
         return 1
     }
     
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return tableView.dequeueReusableHeaderFooterView(withIdentifier: "DummyHeader")
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0
-    }
-    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         heightTestCell.configureCell(with: statusUpdates[indexPath.section])
         if let expandedIndexpath = expandedSection, expandedIndexpath == indexPath.section {
@@ -97,7 +91,6 @@ class StatusUpdatesVC: PROJXTableViewController {
             heightTestCell.isCollapsed = true
         }
         return heightTestCell.cellHeight
-//        return UITableView.automaticDimension
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -121,6 +114,12 @@ class StatusUpdatesVC: PROJXTableViewController {
                 self.statusUpdates.remove(at: indexPath.section)
                 self.configureDatasource()
                 tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
+                self.expandedSection = nil
+                for i in 0..<tableView.numberOfSections {
+                    let cell = tableView.cellForRow(at: IndexPath(row: 0, section: i)) as? StatusUpdateCell
+                    cell?.setCellIsCollapsed(true)
+                    cell?.associatedIndexpath = IndexPath(row: 0, section: i)
+                }
                 completionHandler(true)
             }))
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in

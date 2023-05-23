@@ -46,6 +46,7 @@ class WelcomePage: PROJXViewController {
     lazy var ProjXStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [logoImage, titleLabel, welcomeDescription])
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.setCustomSpacing(30, after: logoImage)
         stackView.axis = .vertical
         stackView.spacing = 15
         stackView.alignment = .center
@@ -90,6 +91,7 @@ class WelcomePage: PROJXViewController {
     }
 
     private func configureView() {
+        view.backgroundColor = UIColor(dynamicProvider: { trait in return trait.userInterfaceStyle == .dark ? GlobalConstants.Colors.primaryBackground.lighter(by: 0.11) : GlobalConstants.Colors.primaryBackground })
         view.addSubview(ProjXStackView)
         view.addSubview(loginButton)
         animateImageView()

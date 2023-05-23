@@ -8,6 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		AF0374CD29E5358600CFDC85 /* TaskDescriptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0374CC29E5358600CFDC85 /* TaskDescriptionCell.swift */; };
+		AF129D392A1B4D0E00ABEF23 /* ReassignTasksVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF129D382A1B4D0E00ABEF23 /* ReassignTasksVC.swift */; };
+		AF129D3C2A1B66CE00ABEF23 /* ReassignTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF129D3B2A1B66CE00ABEF23 /* ReassignTaskCell.swift */; };
+		AF129D3E2A1B6C3200ABEF23 /* ReassignDelegates.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF129D3D2A1B6C3200ABEF23 /* ReassignDelegates.swift */; };
+		AF129D402A1B6C6E00ABEF23 /* ReassignOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF129D3F2A1B6C6E00ABEF23 /* ReassignOptions.swift */; };
+		AF129D422A1B78A100ABEF23 /* ReassignTeamTasksVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF129D412A1B78A100ABEF23 /* ReassignTeamTasksVC.swift */; };
+		AF129D462A1B8A4700ABEF23 /* ReassignTeamTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF129D452A1B8A4700ABEF23 /* ReassignTeamTaskCell.swift */; };
+		AF129D482A1B9FA600ABEF23 /* SelectUserForAssigningTaskVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF129D472A1B9FA600ABEF23 /* SelectUserForAssigningTaskVC.swift */; };
 		AF235FAD2A03652300B0EA5C /* TeamSelectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF235FAC2A03652300B0EA5C /* TeamSelectionVC.swift */; };
 		AF235FAF2A0369A500B0EA5C /* TeamPreviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF235FAE2A0369A500B0EA5C /* TeamPreviewVC.swift */; };
 		AF235FB12A03856B00B0EA5C /* TeamSelectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF235FB02A03856B00B0EA5C /* TeamSelectButton.swift */; };
@@ -104,6 +111,13 @@
 
 /* Begin PBXFileReference section */
 		AF0374CC29E5358600CFDC85 /* TaskDescriptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDescriptionCell.swift; sourceTree = "<group>"; };
+		AF129D382A1B4D0E00ABEF23 /* ReassignTasksVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReassignTasksVC.swift; sourceTree = "<group>"; };
+		AF129D3B2A1B66CE00ABEF23 /* ReassignTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReassignTaskCell.swift; sourceTree = "<group>"; };
+		AF129D3D2A1B6C3200ABEF23 /* ReassignDelegates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReassignDelegates.swift; sourceTree = "<group>"; };
+		AF129D3F2A1B6C6E00ABEF23 /* ReassignOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReassignOptions.swift; sourceTree = "<group>"; };
+		AF129D412A1B78A100ABEF23 /* ReassignTeamTasksVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReassignTeamTasksVC.swift; sourceTree = "<group>"; };
+		AF129D452A1B8A4700ABEF23 /* ReassignTeamTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReassignTeamTaskCell.swift; sourceTree = "<group>"; };
+		AF129D472A1B9FA600ABEF23 /* SelectUserForAssigningTaskVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectUserForAssigningTaskVC.swift; sourceTree = "<group>"; };
 		AF235FAC2A03652300B0EA5C /* TeamSelectionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamSelectionVC.swift; sourceTree = "<group>"; };
 		AF235FAE2A0369A500B0EA5C /* TeamPreviewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamPreviewVC.swift; sourceTree = "<group>"; };
 		AF235FB02A03856B00B0EA5C /* TeamSelectButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamSelectButton.swift; sourceTree = "<group>"; };
@@ -211,9 +225,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AF129D352A1B37BD00ABEF23 /* ReassignTasks */ = {
+			isa = PBXGroup;
+			children = (
+				AF129D382A1B4D0E00ABEF23 /* ReassignTasksVC.swift */,
+				AF129D412A1B78A100ABEF23 /* ReassignTeamTasksVC.swift */,
+				AF129D472A1B9FA600ABEF23 /* SelectUserForAssigningTaskVC.swift */,
+			);
+			path = ReassignTasks;
+			sourceTree = "<group>";
+		};
+		AF129D3A2A1B66AF00ABEF23 /* ReassignTasks */ = {
+			isa = PBXGroup;
+			children = (
+				AF129D3B2A1B66CE00ABEF23 /* ReassignTaskCell.swift */,
+				AF129D452A1B8A4700ABEF23 /* ReassignTeamTaskCell.swift */,
+			);
+			path = ReassignTasks;
+			sourceTree = "<group>";
+		};
 		AF3DB85A29C317D500097A71 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				AF129D3A2A1B66AF00ABEF23 /* ReassignTasks */,
 				AF60EF262A120CFB0061287A /* StatusUpdates */,
 				AFDAB29529F15A1800CE9BD9 /* Profile */,
 				AFFC941A29DFD48800D32AC4 /* Tasks */,
@@ -272,6 +306,7 @@
 				AFCB994D2A0BA54D0061FE72 /* GroupSortAndFilterDelegate.swift */,
 				AFCB99512A0BD2D70061FE72 /* TasksSectionExpandDelegate.swift */,
 				AF60EF292A121C890061287A /* StatusUpdateDelegate.swift */,
+				AF129D3D2A1B6C3200ABEF23 /* ReassignDelegates.swift */,
 			);
 			path = Delegates;
 			sourceTree = "<group>";
@@ -360,6 +395,7 @@
 				AF9403D529CAE71A001FAA7A /* UserRole.swift */,
 				AF9403DF29CC124F001FAA7A /* TaskStatus.swift */,
 				AFFA872C29ED4A92007E1179 /* TaskPriority.swift */,
+				AF129D3F2A1B6C6E00ABEF23 /* ReassignOptions.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -367,6 +403,7 @@
 		AF60B0F729C2F1070070B4E0 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				AF129D352A1B37BD00ABEF23 /* ReassignTasks */,
 				AF60EF252A120CE40061287A /* StatusUpdates */,
 				AFC9998D29FA358E004EAD7F /* Profile */,
 				AFFC941B29DFD63000D32AC4 /* Tasks */,
@@ -566,6 +603,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AF129D462A1B8A4700ABEF23 /* ReassignTeamTaskCell.swift in Sources */,
 				AF3930D42A04248700F3FCE1 /* GroupSortCell.swift in Sources */,
 				AFCB99482A0A4B8C0061FE72 /* GroupSort+Filters.swift in Sources */,
 				AF59E0B029D18F9800B4AF7C /* SignupStatus.swift in Sources */,
@@ -582,12 +620,14 @@
 				AFCB99522A0BD2D70061FE72 /* TasksSectionExpandDelegate.swift in Sources */,
 				AF9403D429CAE5CA001FAA7A /* HomeCollectionViewEmptyPlaceholderCell.swift in Sources */,
 				AF60B0F929C2F1F30070B4E0 /* MainTabbar.swift in Sources */,
+				AF129D3E2A1B6C3200ABEF23 /* ReassignDelegates.swift in Sources */,
 				AF60EF1D2A0F3E130061287A /* UserInfoVC.swift in Sources */,
 				AF94039929C9B00C001FAA7A /* HomeCollectionViewTaskCell.swift in Sources */,
 				AFC9998C29FA018E004EAD7F /* MainRouter.swift in Sources */,
 				AF3DB87029C4288600097A71 /* WelcomePage.swift in Sources */,
 				AF59E0AC29D03AFE00B4AF7C /* Util.swift in Sources */,
 				AFC9999729FB82EB004EAD7F /* ChangePasswordVC.swift in Sources */,
+				AF129D3C2A1B66CE00ABEF23 /* ReassignTaskCell.swift in Sources */,
 				AF235FAD2A03652300B0EA5C /* TeamSelectionVC.swift in Sources */,
 				AF59E0C329D5706300B4AF7C /* PROJXImagePicker.swift in Sources */,
 				AFC9998F29FA35EB004EAD7F /* NameEmailVC.swift in Sources */,
@@ -598,6 +638,7 @@
 				AF60EF302A123F120061287A /* TaskStatusUpdate+CoreDataProperties.swift in Sources */,
 				AF9403D029CA9BCF001FAA7A /* HomeCollectionViewHeaderView.swift in Sources */,
 				AF59E0BF29D448EC00B4AF7C /* MenuProvider.swift in Sources */,
+				AF129D392A1B4D0E00ABEF23 /* ReassignTasksVC.swift in Sources */,
 				AFFA873129F106FC007E1179 /* PriorityPickerVC.swift in Sources */,
 				AF60EF282A120D100061287A /* StatusUpdateCell.swift in Sources */,
 				AF60B10229C2F4100070B4E0 /* UpdatesVC.swift in Sources */,
@@ -614,8 +655,10 @@
 				AF9403E029CC124F001FAA7A /* TaskStatus.swift in Sources */,
 				AF60B0FE29C2F3E70070B4E0 /* TasksVC.swift in Sources */,
 				AFFC942129E029CB00D32AC4 /* TasksTableViewCell.swift in Sources */,
+				AF129D402A1B6C6E00ABEF23 /* ReassignOptions.swift in Sources */,
 				AFE258D729C49DA30017ADFB /* LoginDelegates.swift in Sources */,
 				AFE258E429C81B1D0017ADFB /* InputValidator.swift in Sources */,
+				AF129D422A1B78A100ABEF23 /* ReassignTeamTasksVC.swift in Sources */,
 				AFCB99502A0BBAF40061FE72 /* TasksHeaderView.swift in Sources */,
 				AF60EF342A135BE50061287A /* AddOrEditStatusUpdateVC.swift in Sources */,
 				AF94037F29C9711B001FAA7A /* DataConfiguration.swift in Sources */,
@@ -632,6 +675,7 @@
 				AF60EF212A10D5340061287A /* UserProfileNameCell.swift in Sources */,
 				AF9403CE29CA12E2001FAA7A /* Date+Extension.swift in Sources */,
 				AF235FB12A03856B00B0EA5C /* TeamSelectButton.swift in Sources */,
+				AF129D482A1B9FA600ABEF23 /* SelectUserForAssigningTaskVC.swift in Sources */,
 				AF60B0F229C2EDFF0070B4E0 /* PROJXViewController.swift in Sources */,
 				AF60EF2A2A121C890061287A /* StatusUpdateDelegate.swift in Sources */,
 				AFE258D329C496580017ADFB /* SignupVC.swift in Sources */,
@@ -799,7 +843,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = J44V4WNT38;
+				DEVELOPMENT_TEAM = MB6KJ5KCCL;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ProjX/Structure/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ProjX;
@@ -814,7 +858,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.vtouch.zcrm.demo.ProjX;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.vtouch.zcrm.demo.-ProjX";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -832,7 +876,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = J44V4WNT38;
+				DEVELOPMENT_TEAM = MB6KJ5KCCL;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ProjX/Structure/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ProjX;
@@ -847,7 +891,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.vtouch.zcrm.demo.ProjX;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.vtouch.zcrm.demo.-ProjX";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;

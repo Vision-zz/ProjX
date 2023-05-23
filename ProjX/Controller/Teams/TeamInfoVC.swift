@@ -365,6 +365,14 @@ extension TeamInfoVC: TeamOptionsDelegate {
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
             self.present(alert, animated: true)
         } else {
+            if let deletingUser = SessionManager.shared.signedInUser, deletingUser.hasPendingTasks(in: team) {
+                let vc = ReassignTeamTasksVC(team: team, deletingUser: deletingUser)
+                vc.leaveTeamDelegate = self
+                vc.isLeavingTeam = true
+                let nav = UINavigationController(rootViewController: vc)
+                self.present(nav, animated: true)
+                return
+            }
             let alert = UIAlertController(title: "Are you sure?", message: "Do you want to leave team '\(self.team.teamName!)'", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Leave", style: .destructive, handler: { [weak self] _ in
                 guard self != nil else { return }
@@ -383,5 +391,11 @@ extension TeamInfoVC: CreateEditTeamDelegate {
         dismiss(animated: true) { [weak self] in
             self?.tableView.reloadData()
         }
+    }
+}
+
+extension TeamInfoVC: LeaveTeamDelegate {
+    func leftTeamAfterReassigning() {
+        navigationController?.popToRootViewController(animated: true)
     }
 }

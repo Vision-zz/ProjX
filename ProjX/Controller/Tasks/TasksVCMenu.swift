@@ -21,7 +21,7 @@ class TasksVCMenu {
             }
             let systemImage = filters.isDefaultFilterOption(of: SessionManager.shared.signedInUser!)
             ? UIImage(systemName: "line.3.horizontal.decrease.circle")
-            : UIImage(systemName: "line.3.horizontal.decrease.circle.fill", withConfiguration: UIImage.SymbolConfiguration(paletteColors: [.systemBlue]))
+            : UIImage(systemName: "line.3.horizontal.decrease.circle.fill", withConfiguration: UIImage.SymbolConfiguration(paletteColors: [GlobalConstants.Colors.accentColor]))
         
             let showFiltersAction = UIAction(title: "Filters", image: systemImage, handler: { _ in
                 delegate?.showFilterVC()

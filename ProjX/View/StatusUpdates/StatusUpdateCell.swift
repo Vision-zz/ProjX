@@ -34,7 +34,7 @@ class StatusUpdateCell: UITableViewCell {
         label.textColor = .label
         label.textAlignment = .natural
         label.lineBreakMode = .byTruncatingTail
-        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.font = .systemFont(ofSize: 16, weight: .semibold)
         label.numberOfLines = 1
         return label
     }()
@@ -101,7 +101,7 @@ class StatusUpdateCell: UITableViewCell {
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            titleLabel.trailingAnchor.constraint(equalTo: expandButton.leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: expandButton.leadingAnchor, constant: -5),
             titleLabel.heightAnchor.constraint(equalToConstant: 18),
             
             statusLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 2.5),
@@ -110,7 +110,7 @@ class StatusUpdateCell: UITableViewCell {
             statusLabel.heightAnchor.constraint(equalToConstant: 11),
             
             descriptionLabel.topAnchor.constraint(equalTo: statusLabel.bottomAnchor, constant: 8),
-            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            descriptionLabel.leadingAnchor.constraint(equalTo: statusLabel.leadingAnchor),
             descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             
             expandButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),

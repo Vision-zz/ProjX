@@ -335,6 +335,4 @@ extension FiltersVC: TaskStatusPickerDelegate {
             self.dismiss(animated: true)
         }
     }
-    
-    
 }

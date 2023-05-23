@@ -9,6 +9,7 @@ import UIKit
 
 class MenuProvider {
     static func getTeamProfileOptionsMenu(for team: Team, delegate: TeamOptionsDelegate?) -> UIMenu {
+        
         let menuElement = UIDeferredMenuElement.uncached { [weak delegate] completion in
             var children: [UIMenuElement] = []
 

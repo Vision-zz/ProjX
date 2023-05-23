@@ -72,6 +72,7 @@ class TasksVC: PROJXTableViewController {
 
     @objc private func updateTheme() {
         tableView.reloadData()
+        teamSelectButton.configureButton(for: selectedTeam)
     }
 
     override func viewDidLoad() {
@@ -103,6 +104,7 @@ class TasksVC: PROJXTableViewController {
     func updateView() {
         configureDataSource()
         tableView.reloadData()
+        configureRightBarButtons()
     }
 
     private func configureView() {
@@ -129,7 +131,6 @@ class TasksVC: PROJXTableViewController {
     @objc private func filterButtonClicked() {
         showFilterVC()
     }
-
 
     private func configureDataSource() {
         filterOptions = SessionManager.shared.signedInUser!.taskFilterSettings
@@ -346,25 +347,17 @@ extension TasksVC: TaskSectionExpandDelegate {
 
 extension TasksVC: MarkAsCompleteActionDelegate {
     func markAsCompletedActionTriggered(for taskItem: TaskItem) {
-        var indexPath: IndexPath? = nil
-        for (section, sectionData) in dataSource.enumerated() {
-            for (row, rowData) in sectionData.rows.enumerated() {
-                if rowData.taskID == taskItem.taskID {
-                    indexPath = IndexPath(row: row, section: section)
-                }
-            }
-        }
         guard let assignedTo = taskItem.assignedTo, SessionManager.shared.signedInUser?.userID == assignedTo else {
             let alert = UIAlertController(title: "Permission Denied", message: "You are not allowed to do this action. This task is not assigned to you.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .cancel))
             present(alert, animated: true)
             return
         }
-        guard let indexPath = indexPath else { return }
         let alert = UIAlertController(title: "Are you sure?", message: "Do you want to mark this task as completed", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Mark as Completed", style: .default, handler: { [weak self] _ in
             taskItem.markTaskAsCompleted()
-            self?.tableView.reloadRows(at: [indexPath], with: .none)
+            self?.configureDataSource()
+            self?.tableView.reloadData()
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         present(alert, animated: true)

@@ -20,6 +20,10 @@ class FormsTableViewCell: UITableViewCell {
         label.textContainer.lineBreakMode = .byWordWrapping
         label.backgroundColor = .clear
         label.textContainer.maximumNumberOfLines = 0
+        label.isEditable = false
+        label.isUserInteractionEnabled = false
+        label.allowsEditingTextAttributes = false
+        label.isSelectable = false
         return label
     }()
 

@@ -21,7 +21,7 @@ class TeamSelectionVC: PROJXTableViewController {
             .font: UIFont.systemFont(ofSize: 22, weight: .bold),
             .foregroundColor: UIColor.label,
         ])
-        let desc = NSMutableAttributedString(string: "Press the + to create / join a team", attributes: [
+        let desc = NSMutableAttributedString(string: "Head over to teams tab to get yourself into a team", attributes: [
             .font: UIFont.systemFont(ofSize: 14),
             .foregroundColor: UIColor.secondaryLabel
         ])
@@ -63,11 +63,12 @@ class TeamSelectionVC: PROJXTableViewController {
         search.searchBar.delegate = self
         search.delegate = self
         search.searchBar.autocapitalizationType = .none
-        search.hidesNavigationBarDuringPresentation = true
+//        search.hidesNavigationBarDuringPresentation = false
         search.searchBar.returnKeyType = .search
+        search.searchBar.insetsLayoutMarginsFromSafeArea = true
         return search
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -93,12 +94,12 @@ class TeamSelectionVC: PROJXTableViewController {
     private func configureView() {
         title = "Select Team"
         navigationItem.largeTitleDisplayMode = .never
+        navigationController?.additionalSafeAreaInsets.top = 7.5
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeButtonOnClick))
         tableView.register(PROJXImageTextCell.self, forCellReuseIdentifier: PROJXImageTextCell.identifier)
         navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = true
     }
-    
+
     private func configureDatasource() {
         showNoDataBackgroundView(false)
         selectedTeam = SessionManager.shared.signedInUser?.selectedTeam
@@ -198,5 +199,13 @@ extension TeamSelectionVC: UISearchBarDelegate, UISearchControllerDelegate {
         showSearchResultBackgroundView(false)
         configureDatasource()
         tableView.reloadData()
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchBar.setShowsCancelButton(true, animated: true)
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchBar.setShowsCancelButton(false, animated: true)
     }
 }

@@ -266,5 +266,17 @@ class DataManager {
         user.selectedTeam = team
         saveContext()
     }
+    
+    func changeTaskAssignedUser(of task: TaskItem, to user: User) {
+        task.assignedToUser = user
+        saveContext()
+    }
+    
+    func changeTaskAssignedUser(of tasks: [TaskItem], to user: User) {
+        for task in tasks {
+            task.assignedToUser = user
+            saveContext()
+        }
+    }
 
 }

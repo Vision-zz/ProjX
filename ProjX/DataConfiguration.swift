@@ -158,7 +158,7 @@ class DataConfiguration {
             var i = 0
             while i < 3 {
                 let user = users.randomElement()!
-                guard user.roleIn(team: team) == .none else { continue }
+                guard user.roleIn(team: team) == .none, !user.userTeams!.contains(team.teamID!) else { continue }
                 team.teamAdmins.append(user)
                 user.teams.append(team)
                 if user.selectedTeam == nil {
