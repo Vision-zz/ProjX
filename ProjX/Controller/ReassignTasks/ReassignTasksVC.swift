@@ -152,7 +152,7 @@ class ReassignTasksVC: PROJXTableViewController {
     @objc private func deleteButtonOnClick() {
         if canDeleteAccount {
             let alert = UIAlertController(title: "Are you sure?", message: "This action is not reversible and your account will be deleted permanently. Do you want to proceed?", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Proceed", style: .destructive) { _ in
+            alert.addAction(UIAlertAction(title: "Proceed", style: .default) { _ in
                 DataManager.shared.deleteUser(username: SessionManager.shared.signedInUser!.username!)
             })
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))

@@ -61,7 +61,6 @@ class MainTabbar: UITabBarController {
     }
 
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        
         if let currentIndex = tabBar.items?.firstIndex(of: item), currentIndex == selectedIndex {
             MainRouter.shared.scrollToTop(tabbarIndex: currentIndex)
         }

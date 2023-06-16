@@ -381,6 +381,7 @@ class TeamsVC: PROJXTableViewController {
         }, actionProvider: { _ in
             return UIMenu(children: [menuElement])
         })
+        
 
     }
 

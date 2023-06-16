@@ -156,7 +156,7 @@ class UserInfoVC: PROJXTableViewController {
         if indexPath.section == 2 {
             if !team.isSelected {
                 let alert = UIAlertController(title: "Switch current team?", message: "\(team.teamName!) is not your current team. Do you want to set \(team.teamName!) as your current team and proceed?", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Proceed", style: .destructive, handler: { _ in
+                alert.addAction(UIAlertAction(title: "Proceed", style: .default, handler: { _ in
                     DataManager.shared.changeSelectedTeam(of: SessionManager.shared.signedInUser!, to: self.team)
                     if !SessionManager.shared.signedInUser!.doNotShowAgain {
                         self.showFilterModificationAlert(allTasks: indexPath.row == 0)
@@ -178,7 +178,7 @@ class UserInfoVC: PROJXTableViewController {
     
     private func showFilterModificationAlert(allTasks: Bool) {
         let alert = UIAlertController(title: "Are you sure?", message: "This will modify your filter settings. Do you want to proceed?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Proceed", style: .destructive, handler: { [unowned self] _ in
+        alert.addAction(UIAlertAction(title: "Proceed", style: .default, handler: { [unowned self] _ in
             self.routeToTasks(allTasks: allTasks)
         }))
         alert.addAction(UIAlertAction(title: "Don't show again", style: .default, handler: { _ in

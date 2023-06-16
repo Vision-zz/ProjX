@@ -291,7 +291,9 @@ class ViewTaskVC: PROJXTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.section == 0 {
-            guard let desc = task.taskDescription else { return }
+            guard let desc = task.taskDescription else {
+                return
+            }
             let descView = DescriptionViewVC()
             descView.setDescription(desc)
             let nav = UINavigationController(rootViewController: descView)
@@ -311,7 +313,9 @@ class ViewTaskVC: PROJXTableViewController {
 
         if indexPath.section == 4 || indexPath.section == 5 {
             let cell = tableView.cellForRow(at: indexPath)
-            guard let cell = cell else { return }
+            guard let cell = cell else {
+                return
+            }
             switch cell.tag {
                 case 501:
                     let vc = AddOrEditStatusUpdateVC()

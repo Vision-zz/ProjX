@@ -64,15 +64,29 @@ class AddOrEditStatusUpdateVC: PROJXTableViewController {
 
     @objc private func doneButtonOnClick() {
         
-        guard let titleText = Util.cleanInputString(from: subjectTextField.text),  !titleText.isEmpty else {
-            let alert = UIAlertController(title: "Invalid Subject", message: "Enter a valid Subject for the update", preferredStyle: .alert)
+        guard let title = subjectTextField.text,  !title.isEmpty else {
+            let alert = UIAlertController(title: "Mandatory Field", message: "Subject is a mandatory field", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .cancel))
             present(alert, animated: true)
             return
         }
         
-        guard let descText = Util.cleanInputString(from: descriptionTextView.text), !descText.isEmpty else {
-            let alert = UIAlertController(title: "Invalid Description", message: "Enter a valid description for the update", preferredStyle: .alert)
+        guard let titleText = Util.cleanInputString(from: title),  !titleText.isEmpty else {
+            let alert = UIAlertController(title: "Invalid Subject", message: "Enter a valid non-empty subject for the update", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+            present(alert, animated: true)
+            return
+        }
+        
+        guard let desc = Util.cleanInputString(from: descriptionTextView.text), !desc.isEmpty else {
+            let alert = UIAlertController(title: "Mandatory Field", message: "Description is a mandatory field", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+            present(alert, animated: true)
+            return
+        }
+        
+        guard let descText = Util.cleanInputString(from: desc), !descText.isEmpty else {
+            let alert = UIAlertController(title: "Invalid Description", message: "Enter a valid non-empty description for the update", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .cancel))
             present(alert, animated: true)
             return

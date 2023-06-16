@@ -109,7 +109,7 @@ class StatusUpdatesVC: PROJXTableViewController {
             guard let self = self else { return }
             
             let alert = UIAlertController(title: "Are you sure?", message: "Do you want to delete this Status update permanently?", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Proceed", style: .destructive, handler: { [unowned self] _ in
+            alert.addAction(UIAlertAction(title: "Proceed", style: .default, handler: { [unowned self] _ in
                 DataManager.shared.deleteStatusUpdate(self.statusUpdates[indexPath.section])
                 self.statusUpdates.remove(at: indexPath.section)
                 self.configureDatasource()
